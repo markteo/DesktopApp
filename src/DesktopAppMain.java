@@ -2,55 +2,86 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+
 public class DesktopAppMain {
+	private static String apiURL = "";
+	private static final String bucket = "superadmin/";
+	private static String api = "";
 
 	public static void main(String args[]){
 		
+		String apiURL = Helper.readString("Enter api url > ");
+		api = "login";
+		String targetURL = apiURL + bucket + api;
+		String urlParameters;
+		try {
+			urlParameters = "user-name=" + URLEncoder.encode("root", "UTF-8") +
+			"&password=" + URLEncoder.encode("root", "UTF-8");
+			String response = executePost(targetURL,  urlParameters);
+			System.out.println(response);
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+		
+		
+		
 	}
 	
-	public static String excutePost(String targetURL, String urlParameters) {
-		  HttpURLConnection connection = null;  
-		  try {
-		    //Create connection
-		    URL url = new URL(targetURL);
-		    connection = (HttpURLConnection)url.openConnection();
-		    connection.setRequestMethod("POST");
-		    connection.setRequestProperty("Content-Type", 
-		        "application/x-www-form-urlencoded");
+	public static String executePost(String targetURL, String urlParameters) {
+		URL url;
+	    HttpURLConnection connection = null;  
+	    try {
+	      //Create connection
+	      url = new URL(targetURL);
+	      connection = (HttpURLConnection)url.openConnection();
+	      connection.setRequestMethod("POST");
+	      connection.setRequestProperty("Content-Type", 
+	           "application/x-www-form-urlencoded");
+				
+	      connection.setRequestProperty("Content-Length", "" + 
+	               Integer.toString(urlParameters.getBytes().length));
+	      connection.setRequestProperty("Content-Language", "en-US");  
+				
+	      connection.setUseCaches (false);
+	      connection.setDoInput(true);
+	      connection.setDoOutput(true);
 
-		    connection.setRequestProperty("Content-Length", 
-		        Integer.toString(urlParameters.getBytes().length));
-		    connection.setRequestProperty("Content-Language", "en-US");  
+	      //Send request
+	      DataOutputStream wr = new DataOutputStream (
+	                  connection.getOutputStream ());
+	      wr.writeBytes (urlParameters);
+	      wr.flush ();
+	      wr.close ();
 
-		    connection.setUseCaches(false);
-		    connection.setDoOutput(true);
+	      //Get Response	
+	      InputStream is = connection.getInputStream();
+	      BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+	      String line;
+	      StringBuffer response = new StringBuffer(); 
+	      while((line = rd.readLine()) != null) {
+	        response.append(line);
+	        response.append('\r');
+	      }
+	      rd.close();
+	      return response.toString();
 
-		    //Send request
-		    DataOutputStream wr = new DataOutputStream (
-		        connection.getOutputStream());
-		    wr.writeBytes(urlParameters);
-		    wr.close();
+	    } catch (Exception e) {
 
-		    //Get Response  
-		    InputStream is = connection.getInputStream();
-		    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-		    StringBuilder response = new StringBuilder(); // or StringBuffer if not Java 5+ 
-		    String line;
-		    while((line = rd.readLine()) != null) {
-		      response.append(line);
-		      response.append('\r');
-		    }
-		    rd.close();
-		    return response.toString();
-		  } catch (Exception e) {
-		    e.printStackTrace();
-		    return null;
-		  } finally {
-		    if(connection != null) {
-		      connection.disconnect(); 
-		    }
-		  }
+	      e.printStackTrace();
+	      return null;
+
+	    } finally {
+
+	      if(connection != null) {
+	        connection.disconnect(); 
+	      }
+	    }
 		}
 }
