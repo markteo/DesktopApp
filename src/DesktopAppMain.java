@@ -9,29 +9,39 @@ import java.net.URLEncoder;
 
 public class DesktopAppMain {
 	private static String apiURL = "";
-	private static final String bucket = "superadmin/";
+	private static final String bucket = "/api/superadmin/";
 	private static String api = "";
 
 	public static void main(String args[]){
 		
 		String apiURL = Helper.readString("Enter api url > ");
-		api = "login";
-		String targetURL = apiURL + bucket + api;
+		
+		String targetURL = apiURL + bucket;
+		
+		//Login to bucket
+		String response = loginBucket(targetURL);
+		
+	}
+	
+	public static String loginBucket(String targetURL){
+		String api = "login";
+		targetURL = targetURL + api;
 		String urlParameters;
 		try {
-			urlParameters = "user-name=" + URLEncoder.encode("root", "UTF-8") +
-			"&password=" + URLEncoder.encode("root", "UTF-8");
-			String response = executePost(targetURL,  urlParameters);
+			String username = Helper.readString("Enter username > ");
+			String password = Helper.readString("Enter password > ");
+			urlParameters = "user-name="
+					+ URLEncoder.encode(username, "UTF-8") + "&password="
+					+ URLEncoder.encode(password, "UTF-8");
+			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
-
+			return response;
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-
+		}
 		
-		
-		
+		return null;
 	}
 	
 	public static String executePost(String targetURL, String urlParameters) {
