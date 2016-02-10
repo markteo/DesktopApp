@@ -12,8 +12,8 @@ public class DesktopAppMain {
 	private static final String bucket = "/api/superadmin/";
 	private static String api = "";
 
-	public static void main(String args[]){
-		
+	public static void main(String args[]) {
+
 		String apiURL = Helper.readString("Enter api url > ");
 		
 		String targetURL = apiURL + bucket;
@@ -28,11 +28,15 @@ public class DesktopAppMain {
 		targetURL = targetURL + api;
 		String urlParameters;
 		try {
+
 			String username = Helper.readString("Enter username > ");
 			String password = Helper.readString("Enter password > ");
 			urlParameters = "user-name="
 					+ URLEncoder.encode(username, "UTF-8") + "&password="
 					+ URLEncoder.encode(password, "UTF-8");
+			urlParameters = "user-name=" + URLEncoder.encode("root", "UTF-8") + "&password="
+					+ URLEncoder.encode("root", "UTF-8");
+
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
@@ -40,58 +44,57 @@ public class DesktopAppMain {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
+
+
 	}
-	
+
 	public static String executePost(String targetURL, String urlParameters) {
 		URL url;
-	    HttpURLConnection connection = null;  
-	    try {
-	      //Create connection
-	      url = new URL(targetURL);
-	      connection = (HttpURLConnection)url.openConnection();
-	      connection.setRequestMethod("POST");
-	      connection.setRequestProperty("Content-Type", 
-	           "application/x-www-form-urlencoded");
-				
-	      connection.setRequestProperty("Content-Length", "" + 
-	               Integer.toString(urlParameters.getBytes().length));
-	      connection.setRequestProperty("Content-Language", "en-US");  
-				
-	      connection.setUseCaches (false);
-	      connection.setDoInput(true);
-	      connection.setDoOutput(true);
+		HttpURLConnection connection = null;
+		try {
+			// Create connection
+			url = new URL(targetURL);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-	      //Send request
-	      DataOutputStream wr = new DataOutputStream (
-	                  connection.getOutputStream ());
-	      wr.writeBytes (urlParameters);
-	      wr.flush ();
-	      wr.close ();
+			connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+			connection.setRequestProperty("Content-Language", "en-US");
 
-	      //Get Response	
-	      InputStream is = connection.getInputStream();
-	      BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-	      String line;
-	      StringBuffer response = new StringBuffer(); 
-	      while((line = rd.readLine()) != null) {
-	        response.append(line);
-	        response.append('\r');
-	      }
-	      rd.close();
-	      return response.toString();
+			connection.setUseCaches(false);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
 
-	    } catch (Exception e) {
+			// Send request
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
 
-	      e.printStackTrace();
-	      return null;
+			// Get Response
+			InputStream is = connection.getInputStream();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+			String line;
+			StringBuffer response = new StringBuffer();
+			while ((line = rd.readLine()) != null) {
+				response.append(line);
+				response.append('\r');
+			}
+			rd.close();
+			return response.toString();
 
-	    } finally {
+		} catch (Exception e) {
 
-	      if(connection != null) {
-	        connection.disconnect(); 
-	      }
-	    }
+			e.printStackTrace();
+			return null;
+
+		} finally {
+
+			if (connection != null) {
+				connection.disconnect();
+			}
 		}
+	}
 }
