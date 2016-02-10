@@ -1,3 +1,5 @@
+package APICalls;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
@@ -6,23 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import main.Helper;
 
-public class DesktopAppMain {
-	private static String apiURL = "";
-	private static final String bucket = "/api/superadmin/";
-	private static String api = "";
-
-	public static void main(String args[]) {
-
-		String apiURL = Helper.readString("Enter api url > ");
-		
-		String targetURL = apiURL + bucket;
-		
-		//Login to bucket
-		String response = loginBucket(targetURL);
-		
-	}
-	
+public class APICall {
 	public static String loginBucket(String targetURL){
 		String api = "login";
 		targetURL = targetURL + api;
@@ -98,3 +86,4 @@ public class DesktopAppMain {
 		}
 	}
 }
+
