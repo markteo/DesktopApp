@@ -15,6 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class APICall {
+	
+	public static final String enc = "UTF-8";
 
 	public static String loginBucket(String targetURL) {
 		String api = "login";
@@ -24,8 +26,8 @@ public class APICall {
 
 			String username = Helper.readString("Enter username > ");
 			String password = Helper.readString("Enter password > ");
-			urlParameters = "user-name=" + URLEncoder.encode(username, "UTF-8")
-					+ "&password=" + URLEncoder.encode(password, "UTF-8");
+			urlParameters = "user-name=" + URLEncoder.encode(username, enc)
+					+ "&password=" + URLEncoder.encode(password, enc);
 
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
@@ -45,7 +47,7 @@ public class APICall {
 		String urlParameters;
 		try {
 			urlParameters = "session-key="
-					+ URLEncoder.encode(sessionKey, "UTF-8");
+					+ URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
@@ -64,11 +66,11 @@ public class APICall {
 		
 		try {
 			urlParameters = "session-key="
-					+ URLEncoder.encode(sessionKey, "UTF-8") + "&inventory-id=" 
-					+ URLEncoder.encode(inventoryDetails.getString("inventoryID"), "UTF-8")
-					+ "&registration-name=" + URLEncoder.encode(inventoryDetails.getString("registrationName"), "UTF-8")
-					+ "&model-name=" + URLEncoder.encode(inventoryDetails.getString("modelName"), "UTF-8")
-					+ "&mac-address=" + URLEncoder.encode(inventoryDetails.getString("macAddress"), "UTF-8");
+					+ URLEncoder.encode(sessionKey, enc) + "&inventory-id=" 
+					+ URLEncoder.encode(inventoryDetails.getString("inventoryID"), enc)
+					+ "&registration-name=" + URLEncoder.encode(inventoryDetails.getString("registrationName"), enc)
+					+ "&model-name=" + URLEncoder.encode(inventoryDetails.getString("modelName"), enc)
+					+ "&mac-address=" + URLEncoder.encode(inventoryDetails.getString("macAddress"), enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
@@ -87,7 +89,7 @@ public class APICall {
 		String urlParameters;
 		try {
 			urlParameters = "session-key="
-					+ URLEncoder.encode(sessionKey, "UTF-8");
+					+ URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
@@ -104,7 +106,7 @@ public class APICall {
 		String urlParameters;
 		try{
 			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, "UTF-8");
+					+ URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			return response;
 			
@@ -122,8 +124,8 @@ public class APICall {
 		String urlParameters;
 		try{
 			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, "UTF-8") + "&bucket-id=" 
-					+ URLEncoder.encode(Integer.toString(bucketID), "UTF-8");
+					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
+					+ URLEncoder.encode(Integer.toString(bucketID), enc);
 			
 			String response = executePost(targetURL, urlParameters);
 			return response;
@@ -135,7 +137,7 @@ public class APICall {
 		return null;
 	}
 
-	public static String addNodeLicense(String targetURL, String sessionKey, int bucketID){
+	public static String addNodeLicense(String targetURL, String sessionKey, int bucketID, String features){
 		String api = "addnodelicense";
 		targetURL = targetURL + api;
 		
@@ -147,15 +149,49 @@ public class APICall {
 		
 		try{
 			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, "UTF-8") + "&bucket-id=" 
-					+ URLEncoder.encode(Integer.toString(bucketID), "UTF-8");
+					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
+					+ URLEncoder.encode(Integer.toString(bucketID), enc) + "&duration-months="
+					+ URLEncoder.encode(durationMonths, enc) + "&cloud-storage-gb="
+					+ URLEncoder.encode(cloudStorage, enc) + "&max-vca-count="
+					+ URLEncoder.encode(maxVCA, enc) + "&features="
+					+ URLEncoder.encode(features, enc);
+			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
+			return response;
 					
 		}catch(UnsupportedEncodingException e){
 			e.printStackTrace();
 		}
 		return null;
 		
+	}
+	
+	public static String updateNodeLicense(String targetURL, String sessionKey, String licenseNumber, String features){
+		String api = "updatenodelicense";
+		targetURL = targetURL + api;
 		
+		String urlParameters;
+		
+		String durationMonths = Helper.readString("Enter duration (months) > ");
+		String cloudStorage = Helper.readString("Enter cloud storage space (GB) > ");
+		String maxVCA = Helper.readString("Enter max VCA count > ");
+		
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, enc) + "&license-number=" 
+					+ URLEncoder.encode(licenseNumber, enc) + "&duration-months="
+					+ URLEncoder.encode(durationMonths, enc) + "&cloud-storage-gb="
+					+ URLEncoder.encode(cloudStorage, enc) + "&max-vca-count="
+					+ URLEncoder.encode(maxVCA, enc) + "&features="
+					+ URLEncoder.encode(features, enc);
+			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
+			return response;
+					
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static String getAssignableFeatures(String targetURL, String sessionKey, int bucketID){
@@ -165,8 +201,8 @@ public class APICall {
 
 		try{
 			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, "UTF-8") + "&bucket-id=" 
-					+ URLEncoder.encode(Integer.toString(bucketID), "UTF-8");
+					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
+					+ URLEncoder.encode(Integer.toString(bucketID), enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
@@ -177,6 +213,38 @@ public class APICall {
 		return null;
 		
 	}
+	
+	
+	public static String generateAccessKey(String targetURL, String sessionKey, int userID){
+		
+		String api = "generateaccesskey";
+		targetURL = targetURL + api;
+		String urlParameters;
+		
+		String ttl = Helper.readString("Enter ttl > ");
+		String maxUse = Helper.readString("Enter max use count > ");
+		
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
+					+ URLEncoder.encode(Integer.toString(userID), enc) + "&ttl="
+					+ URLEncoder.encode(ttl, enc) + "&max-use-count="
+					+ URLEncoder.encode(maxUse, enc);
+			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
+			return response;
+			
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		
+		
+		
+		return null;
+	}
+	
+	
+	
 	public static String executePost(String targetURL, String urlParameters) {
 		URL url;
 		HttpURLConnection connection = null;
