@@ -106,7 +106,26 @@ public class APICall {
 			urlParameters = "session-key=" 
 					+ URLEncoder.encode(sessionKey, "UTF-8");
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
+			return response;
+			
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static String getNodeLicense(String targetURL, String sessionKey, int bucketID){
+		
+		String api = "getnodelicenses";
+		targetURL = targetURL + api;
+		String urlParameters;
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, "UTF-8") + "&bucket-id=" 
+					+ URLEncoder.encode(Integer.toString(bucketID), "UTF-8");
+			
+			String response = executePost(targetURL, urlParameters);
 			return response;
 			
 		}catch(UnsupportedEncodingException e){
@@ -116,6 +135,48 @@ public class APICall {
 		return null;
 	}
 
+	public static String addNodeLicense(String targetURL, String sessionKey, int bucketID){
+		String api = "addnodelicense";
+		targetURL = targetURL + api;
+		
+		String urlParameters;
+		
+		String durationMonths = Helper.readString("Enter duration (months) > ");
+		String cloudStorage = Helper.readString("Enter cloud storage space (GB) > ");
+		String maxVCA = Helper.readString("Enter max VCA count > ");
+		
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, "UTF-8") + "&bucket-id=" 
+					+ URLEncoder.encode(Integer.toString(bucketID), "UTF-8");
+					
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		return null;
+		
+		
+	}
+	
+	public static String getAssignableFeatures(String targetURL, String sessionKey, int bucketID){
+		String api = "getassignablenodefeatures";
+		targetURL = targetURL + api;
+		String urlParameters;
+
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, "UTF-8") + "&bucket-id=" 
+					+ URLEncoder.encode(Integer.toString(bucketID), "UTF-8");
+			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
+			return response;
+			
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
 	public static String executePost(String targetURL, String urlParameters) {
 		URL url;
 		HttpURLConnection connection = null;
