@@ -28,14 +28,12 @@ public class DesktopAppMain {
 			sessionKey = responseJSON.get("session-key").toString();
 			
 			response = apicall.getBucketDevices(targetURL, sessionKey);
-			response = apicall.getInventoryItem(targetURL, sessionKey);
+			response = apicall.getInventoryList(targetURL, sessionKey);
+			response = apicall.getBuckets(targetURL, sessionKey);
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
 	}
-	
-	
-	
 }

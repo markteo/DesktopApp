@@ -8,7 +8,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+
 import main.Helper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class APICall {
 
@@ -34,7 +38,7 @@ public class APICall {
 
 	}
 
-	public static String getInventoryItem(String targetURL, String sessionKey) {
+	public static String getInventoryList(String targetURL, String sessionKey) {
 
 		String api = "getinventorylist";
 		targetURL = targetURL + api;
@@ -52,7 +56,7 @@ public class APICall {
 		return null;
 	}
 	
-	public static String updateInventoryList(String targetURL, String sessionKey){
+	public static String updateInventoryList(String targetURL, JSONObject inventoryDetails, String sessionKey){
 		
 		String api = "updateinventory";
 		targetURL = targetURL + api;
@@ -60,21 +64,25 @@ public class APICall {
 		
 		try {
 			urlParameters = "session-key="
-					+ URLEncoder.encode(sessionKey, "UTF-8");
+					+ URLEncoder.encode(sessionKey, "UTF-8") + "&inventory-id=" 
+					+ URLEncoder.encode(inventoryDetails.getString("inventoryID"), "UTF-8")
+					+ "&registration-name=" + URLEncoder.encode(inventoryDetails.getString("registrationName"), "UTF-8")
+					+ "&model-name=" + URLEncoder.encode(inventoryDetails.getString("modelName"), "UTF-8")
+					+ "&mac-address=" + URLEncoder.encode(inventoryDetails.getString("macAddress"), "UTF-8");
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-		
-		
 		return null;
 	}
 	
 	public static String getBucketDevices(String targetURL, String sessionKey){
 		
-		String api = "getuserdevices";
+		String api = "getbucketdevices";
 		targetURL = targetURL + api;
 		String urlParameters;
 		try {
@@ -86,6 +94,25 @@ public class APICall {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+	
+	public static String getBuckets(String targetURL, String sessionKey){
+		
+		String api = "getbuckets";
+		targetURL = targetURL + api;
+		String urlParameters;
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, "UTF-8");
+			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
+			return response;
+			
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 
