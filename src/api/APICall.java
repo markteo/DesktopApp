@@ -1,4 +1,4 @@
-package APICalls;
+package api;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -18,7 +19,7 @@ public class APICall {
 	
 	public static final String enc = "UTF-8";
 
-	public static String loginBucket(String targetURL) {
+	public String loginBucket(String targetURL) {
 		String api = "login";
 		targetURL = targetURL + api;
 		String urlParameters;
@@ -34,13 +35,13 @@ public class APICall {
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		}
+		} 
 
 		return null;
 
 	}
 
-	public static String getInventoryList(String targetURL, String sessionKey) {
+	public String getInventoryList(String targetURL, String sessionKey) {
 
 		String api = "getinventorylist";
 		targetURL = targetURL + api;
@@ -58,7 +59,7 @@ public class APICall {
 		return null;
 	}
 	
-	public static String updateInventoryList(String targetURL, JSONObject inventoryDetails, String sessionKey){
+	public String updateInventoryList(String targetURL, JSONObject inventoryDetails, String sessionKey){
 		
 		String api = "updateinventory";
 		targetURL = targetURL + api;
@@ -82,7 +83,7 @@ public class APICall {
 		return null;
 	}
 	
-	public static String getBucketDevices(String targetURL, String sessionKey){
+	public String getBucketDevices(String targetURL, String sessionKey){
 		
 		String api = "getbucketdevices";
 		targetURL = targetURL + api;
@@ -99,7 +100,7 @@ public class APICall {
 		return null;
 	}
 	
-	public static String getBuckets(String targetURL, String sessionKey){
+	public String getBuckets(String targetURL, String sessionKey){
 		
 		String api = "getbuckets";
 		targetURL = targetURL + api;
@@ -117,7 +118,7 @@ public class APICall {
 		return null;
 	}
 	
-	public static String getNodeLicense(String targetURL, String sessionKey, int bucketID){
+	public String getNodeLicense(String targetURL, String sessionKey, int bucketID){
 		
 		String api = "getnodelicenses";
 		targetURL = targetURL + api;
@@ -137,7 +138,7 @@ public class APICall {
 		return null;
 	}
 
-	public static String addNodeLicense(String targetURL, String sessionKey, int bucketID, String features){
+	public String addNodeLicense(String targetURL, String sessionKey, int bucketID, String features){
 		String api = "addnodelicense";
 		targetURL = targetURL + api;
 		
@@ -166,7 +167,7 @@ public class APICall {
 		
 	}
 	
-	public static String updateNodeLicense(String targetURL, String sessionKey, String licenseNumber, String features){
+	public String updateNodeLicense(String targetURL, String sessionKey, String licenseNumber, String features){
 		String api = "updatenodelicense";
 		targetURL = targetURL + api;
 		
@@ -194,7 +195,7 @@ public class APICall {
 		return null;
 	}
 	
-	public static String getAssignableFeatures(String targetURL, String sessionKey, int bucketID){
+	public String getAssignableFeatures(String targetURL, String sessionKey, int bucketID){
 		String api = "getassignablenodefeatures";
 		targetURL = targetURL + api;
 		String urlParameters;
@@ -215,7 +216,7 @@ public class APICall {
 	}
 	
 	
-	public static String generateAccessKey(String targetURL, String sessionKey, int userID){
+	public String generateAccessKey(String targetURL, String sessionKey, int userID){
 		
 		String api = "generateaccesskey";
 		targetURL = targetURL + api;
@@ -238,14 +239,12 @@ public class APICall {
 			e.printStackTrace();
 		}
 		
-		
-		
 		return null;
 	}
 	
 	
 	
-	public static String executePost(String targetURL, String urlParameters) {
+	public String executePost(String targetURL, String urlParameters) {
 		URL url;
 		HttpURLConnection connection = null;
 		try {
@@ -283,7 +282,11 @@ public class APICall {
 			rd.close();
 			return response.toString();
 
-		} catch (Exception e) {
+		}catch (SocketException se){
+			se.printStackTrace();
+			System.out.println("Server is down.");
+			return null;
+		}catch (Exception e) {
 
 			e.printStackTrace();
 			return null;

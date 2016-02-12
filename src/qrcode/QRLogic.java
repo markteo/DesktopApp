@@ -19,7 +19,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.ByteMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
@@ -36,7 +35,7 @@ public class QRLogic {
 			Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 			QRCodeWriter qrCodeWriter = new QRCodeWriter();
-			ByteMatrix byteMatrix = qrCodeWriter.encode(dataText,BarcodeFormat.QR_CODE, size, size, hintMap);
+			BitMatrix byteMatrix = qrCodeWriter.encode(dataText,BarcodeFormat.QR_CODE, size, size, hintMap);
 			int Width = byteMatrix.getWidth();
 			BufferedImage image = new BufferedImage(Width, Width,
 					BufferedImage.TYPE_INT_RGB);
@@ -47,13 +46,13 @@ public class QRLogic {
 			graphics.fillRect(0, 0, Width, Width);
 			graphics.setColor(Color.BLACK);
 
-//			for (int i = 0; i < Width; i++) {
-//				for (int j = 0; j < Width; j++) {
-//					if (byteMatrix.get(i, j)) {
-//						graphics.fillRect(i, j, 1, 1);
-//					}
-//				}
-//			}
+			for (int i = 0; i < Width; i++) {
+				for (int j = 0; j < Width; j++) {
+					if (byteMatrix.get(i, j)) {
+						graphics.fillRect(i, j, 1, 1);
+					}
+				}
+			}
 			
 			Graphics g = image.getGraphics();
 			g.setFont(g.getFont().deriveFont(15f));
