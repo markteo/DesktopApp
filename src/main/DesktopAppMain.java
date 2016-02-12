@@ -25,11 +25,15 @@ public class DesktopAppMain {
 		String response = apicall.loginBucket(targetURL);
 		try {
 			JSONObject responseJSON = new JSONObject(response);
-			sessionKey = responseJSON.get("session-key").toString();
 			
-			response = apicall.getBucketDevices(targetURL, sessionKey);
-			response = apicall.getInventoryList(targetURL, sessionKey);
-			response = apicall.getBuckets(targetURL, sessionKey);
+			if(checkResult(response)){
+				sessionKey = responseJSON.get("session-key").toString();
+				response = apicall.getInventoryList(targetURL, sessionKey);
+				response = apicall.getBuckets(targetURL, sessionKey);
+				
+				
+			}
+			
 			
 			JSONObject bucketResponse = new JSONObject(response);
 			JSONArray bucketList = bucketResponse.getJSONArray("buckets");
@@ -61,5 +65,22 @@ public class DesktopAppMain {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public static boolean checkResult (String response){
+		boolean result = false;
+		
+		JSONObject responseObject;
+		try {
+			responseObject = new JSONObject(response);
+			if(responseObject.get("result").equals("ok")){
+				result = true;
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 }
