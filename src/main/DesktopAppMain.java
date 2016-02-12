@@ -22,6 +22,7 @@ public class DesktopAppMain {
 		String targetURL = apiURL + bucket;
 		APICall apicall = new APICall();
 		//Login to bucket
+		
 		String response = apicall.loginBucket(targetURL);
 		try {
 			JSONObject responseJSON = new JSONObject(response);
