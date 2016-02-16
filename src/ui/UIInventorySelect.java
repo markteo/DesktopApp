@@ -49,7 +49,7 @@ public class UIInventorySelect {
 		pnlInstruction.add(lblInstruction);
 
 		JPanel pnlInventoryList = p.createPanel(Layouts.flow);
-		JLabel lblInventoryList = new ui.components.Label().createLabel("Inventory List:");
+		JLabel lblInventoryList = l.createLabel("Inventory List:");
 		JList listInventory = new JList(model);
 		listInventory.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollInventory = new JScrollPane(listInventory);
@@ -70,7 +70,7 @@ public class UIInventorySelect {
 			}
 		});
 
-		JButton btnSelectElements = b.createButton("Select Item");
+		JButton btnSelectElements = b.createButton("Next");
 		btnSelectElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
