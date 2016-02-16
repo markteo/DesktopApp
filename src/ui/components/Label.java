@@ -12,3 +12,4 @@ public class Label {
 		return label;
 	}
 }
+
