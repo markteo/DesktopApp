@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -19,15 +20,24 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import APICalls.APICall;
-import customColor.CustomColor;
-import uiComponents.Button;
-import uiComponents.Layouts;
-import uiComponents.Panel;
+import main.DesktopAppMain;
 
-public class UI_login {
+import org.jdesktop.xswingx.PromptSupport;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ui.components.Button;
+import ui.components.Layouts;
+import ui.components.Panel;
+import api.APICall;
+import customColor.CustomColor;
+
+public class UILogin {
 	
-	public static void runLogin(String apiUrl){
+	public static APICall api = new APICall();
+	
+	public static void runLogin(String apiURL){
 		JFrame loginFrame = new JFrame("Login");
 		loginFrame.setLayout(new BorderLayout());
 		loginFrame.setPreferredSize(new Dimension(400, 400));
@@ -35,7 +45,7 @@ public class UI_login {
 		loginFrame.setVisible(true);
 		loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		File pathToImage = new File("image/KaiSquare_logoFA.png");
+		File pathToImage = new File("image/KaiSquare_logoFA.jpg");
 		Image myPicture = null;
 		try {
 			myPicture = ImageIO.read(pathToImage);
@@ -53,8 +63,12 @@ public class UI_login {
 		JLabel lblPassword = new JLabel("Password:");
 		lblUser.setForeground(CustomColor.Grey.returnColor());
 		lblPassword.setForeground(CustomColor.Grey.returnColor());
-		JTextField tfUser = new JTextField("Enter username here..");
-		JPasswordField pfPassword = new JPasswordField("password");
+		JTextField tfUser = new JTextField();
+		PromptSupport.setPrompt("Username", tfUser);
+		JPasswordField pfPassword = new JPasswordField();
+		PromptSupport.setPrompt("Password", pfPassword);
+		
+		
 		
 		JPanel buttonPanel = p.createPanel(Layouts.flow);
 		buttonPanel.setBorder(new EmptyBorder(0, 0, 25, 0));
@@ -68,7 +82,29 @@ public class UI_login {
 		btnLogin.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(apiUrl);
+				String username = tfUser.getText();
+				String password = String.valueOf(pfPassword.getPassword());
+				String response = api.loginBucket(apiURL, username, password);	
+				try {
+					
+					if(DesktopAppMain.checkResult(response)){
+						JSONObject responseJSON = new JSONObject(response);
+						DesktopAppMain.sessionKey = responseJSON.get("session-key").toString();
+						response = api.getUserFeatures(apiURL, DesktopAppMain.sessionKey);
+						if(checkFeatures(response)){
+							//start new frame
+						}else{
+							System.exit(0);
+						}
+					}
+					
+					
+
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
 			}
 		});
 		
@@ -86,6 +122,41 @@ public class UI_login {
 		loginFrame.add(loginPanel,BorderLayout.CENTER);
 		loginFrame.add(buttonPanel,BorderLayout.SOUTH);
 		loginFrame.pack();
+		
 	}
 
+	
+	public static boolean checkFeatures(String response){
+		boolean result = false;
+		HashMap<String, String> featureList = new HashMap<String, String>();
+		JSONObject responseObject;
+		try {
+			responseObject = new JSONObject(response);
+			if(responseObject.get("result").equals("ok")){
+				JSONArray features = responseObject.getJSONArray("features");
+				
+				for(int i = 0; i < features.length(); i ++){
+					JSONObject feature = features.getJSONObject(i);
+					
+					String featureName = feature.getString("name");
+					
+					if(featureName.equals("bucket-management") || featureName.equals("inventory-management") || 
+							featureName.equals("access-key-management")){
+						System.out.println("Feature: " + feature.getString("name"));
+						featureList.put("featureName", feature.getString("name"));
+						
+
+					}
+				}
+				
+				if(featureList.size() == 3){
+					return true;
+				}
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
 }

@@ -1,29 +1,38 @@
 package main;
-import java.util.HashMap;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ui.UILogin;
 import api.APICall;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 public class DesktopAppMain {
 	private static String apiURL = "";
 	private static final String bucket = "/api/superadmin/";
-	private static String sessionKey;
+	public static String sessionKey;
 
 	public static void main(String args[]) {
+		//ask user for url
+		//start login frame
+		//if login successful check userFeatures
+		//if has features, load workflow(wizard)
+			//load inventory items
+			//select bucket
+			//select license
+			//generate accesskey
+			//get QR code
+		
 
 		String apiURL = Helper.readString("Enter api url > ");
 		
 		String targetURL = apiURL + bucket;
+		UILogin.runLogin(targetURL);
+
 		APICall apicall = new APICall();
 		//Login to bucket
+		String response = null;
+//		String response = apicall.loginBucket(targetURL);
 		
-		String response = apicall.loginBucket(targetURL);
 		try {
 			JSONObject responseJSON = new JSONObject(response);
 			
@@ -32,9 +41,7 @@ public class DesktopAppMain {
 				response = apicall.getInventoryList(targetURL, sessionKey);
 				response = apicall.getBuckets(targetURL, sessionKey);
 				
-				
 			}
-			
 			
 			JSONObject bucketResponse = new JSONObject(response);
 			JSONArray bucketList = bucketResponse.getJSONArray("buckets");

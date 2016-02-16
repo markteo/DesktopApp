@@ -19,14 +19,12 @@ public class APICall {
 	
 	public static final String enc = "UTF-8";
 
-	public String loginBucket(String targetURL) {
+	public String loginBucket(String targetURL, String username, String password) {
 		String api = "login";
 		targetURL = targetURL + api;
 		String urlParameters;
 		try {
-
-			String username = Helper.readString("Enter username > ");
-			String password = Helper.readString("Enter password > ");
+			
 			urlParameters = "user-name=" + URLEncoder.encode(username, enc)
 					+ "&password=" + URLEncoder.encode(password, enc);
 
@@ -39,6 +37,22 @@ public class APICall {
 
 		return null;
 
+	}
+	public String getUserFeatures(String targetURL, String sessionKey){
+		String api = "getuserfeatures";
+		targetURL = targetURL + api;
+		String urlParameters;
+		try {
+			urlParameters = "session-key="
+					+ URLEncoder.encode(sessionKey, enc);
+			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
+			return response;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 
 	public String getInventoryList(String targetURL, String sessionKey) {
