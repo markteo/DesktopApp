@@ -145,11 +145,9 @@ public class UILogin {
 							featureName.equals("access-key-management")){
 						System.out.println("Feature: " + feature.getString("name"));
 						featureList.put("featureName", feature.getString("name"));
-						
-
 					}
 				}
-				
+
 				if(featureList.size() == 3){
 					return true;
 				}
@@ -158,6 +156,7 @@ public class UILogin {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return result;
 	}
 }
