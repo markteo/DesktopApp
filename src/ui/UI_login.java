@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -17,6 +19,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import APICalls.APICall;
 import customColor.CustomColor;
 import uiComponents.Button;
 import uiComponents.Layouts;
@@ -24,12 +27,13 @@ import uiComponents.Panel;
 
 public class UI_login {
 	
-	public void runLogin(){
+	public static void runLogin(String apiUrl){
 		JFrame loginFrame = new JFrame("Login");
 		loginFrame.setLayout(new BorderLayout());
 		loginFrame.setPreferredSize(new Dimension(400, 400));
 		loginFrame.setResizable(false);
 		loginFrame.setVisible(true);
+		loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		File pathToImage = new File("image/KaiSquare_logoFA.png");
 		Image myPicture = null;
@@ -60,6 +64,20 @@ public class UI_login {
 		btnExit.setPreferredSize(new Dimension(150,50));
 		Component[] arrayBtn = {btnLogin,btnExit};
 		p.addComponentsToPanel(buttonPanel,arrayBtn);
+		
+		btnLogin.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(apiUrl);
+			}
+		});
+		
+		btnExit.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				System.exit(0);
+			}
+		});
 		
 		Component[] arrayComponents = {lblUser,tfUser,lblPassword,pfPassword};
 		picLabel.setBounds(50, 50, 50, 50);

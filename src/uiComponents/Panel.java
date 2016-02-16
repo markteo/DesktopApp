@@ -61,6 +61,7 @@ public class Panel {
 		}
 	}
 	
+	//setting layout for panel
 	private void borderLayout(JPanel p) {
 		p.setLayout(new BorderLayout());
 	}
