@@ -20,6 +20,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import main.Data;
 import main.DesktopAppMain;
 
 import org.jdesktop.xswingx.PromptSupport;
@@ -90,8 +91,8 @@ public class UILogin {
 					
 					if(DesktopAppMain.checkResult(response)){
 						JSONObject responseJSON = new JSONObject(response);
-						DesktopAppMain.sessionKey = responseJSON.get("session-key").toString();
-						response = api.getUserFeatures(apiURL, DesktopAppMain.sessionKey);
+						Data.sessionKey = responseJSON.get("session-key").toString();
+						response = api.getUserFeatures(apiURL, Data.sessionKey);
 						if(checkFeatures(response)){
 							//start new frame
 						}else{
@@ -144,7 +145,7 @@ public class UILogin {
 					if(featureName.equals("bucket-management") || featureName.equals("inventory-management") || 
 							featureName.equals("access-key-management")){
 						System.out.println("Feature: " + feature.getString("name"));
-						featureList.put("featureName", feature.getString("name"));
+						featureList.put(featureName, feature.getString("name"));
 						
 
 					}
