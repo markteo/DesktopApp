@@ -19,9 +19,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import APICalls.APICall;
-import customColor.CustomColor;
 import uiComponents.Button;
+import uiComponents.Label;
 import uiComponents.Layouts;
 import uiComponents.Panel;
 
@@ -49,10 +48,8 @@ public class UI_login {
 		Panel p = new Panel();
 		JPanel loginPanel = p.createPanel(Layouts.grid,3,3);
 		loginPanel.setBorder(new EmptyBorder(25,25,0,25));
-		JLabel lblUser = new JLabel("Username:");
-		JLabel lblPassword = new JLabel("Password:");
-		lblUser.setForeground(CustomColor.Grey.returnColor());
-		lblPassword.setForeground(CustomColor.Grey.returnColor());
+		JLabel lblUser = new Label().createLabel("Username:");
+		JLabel lblPassword = new Label().createLabel("Password:");
 		JTextField tfUser = new JTextField("Enter username here..");
 		JPasswordField pfPassword = new JPasswordField("password");
 		
