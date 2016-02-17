@@ -148,9 +148,10 @@ public class UILogin {
 						featureList.put(featureName, feature.getString("name"));
 						
 
+
 					}
 				}
-				
+
 				if(featureList.size() == 3){
 					return true;
 				}
@@ -159,6 +160,7 @@ public class UILogin {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return result;
 	}
 }

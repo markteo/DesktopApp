@@ -1,3 +1,4 @@
+
 package qrcode;
 
 import java.awt.BorderLayout;
@@ -8,6 +9,10 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
+
+import org.jdesktop.xswingx.PromptSupport;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -22,10 +27,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
-
-import org.jdesktop.xswingx.PromptSupport;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class JavaQR {
 	public static void main(String args[]) {
