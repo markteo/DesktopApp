@@ -29,6 +29,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import file.HttpDownloadUtility;
+
 public class APICall {
 	
 	public static final String enc = "UTF-8";
@@ -243,6 +245,27 @@ public class APICall {
 		
 	}
 	
+	public String getCSVSample(String targetURL, String sessionKey, String fileLocation) throws IOException{
+		String api = "content/csvSample";
+		targetURL = targetURL + api;
+		String urlParameters;
+		
+		
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, enc);
+			System.out.println(targetURL);
+			String response = HttpDownloadUtility.downloadFile(targetURL, fileLocation, sessionKey);
+			System.out.println(response);
+			return response;
+			
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		return null;
+		
+		
+	}
 	
 	public String generateAccessKey(String targetURL, String sessionKey, int userID){
 		
