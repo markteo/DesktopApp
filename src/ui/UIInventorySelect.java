@@ -87,13 +87,9 @@ public class UIInventorySelect {
 			public void actionPerformed(ActionEvent e) {
 				// add inventory code here
 				// open add frame and close current frame.
-				try {
-					api.getCSVSample(Data.targetURL, "", Data.sessionKey);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				model.addElement("Element Test");
+				inventoryFrame.setVisible(false);
+				UIFileDownloadHTTP dl = new UIFileDownloadHTTP();
+				dl.setVisible(true);
 			}
 		});
 
