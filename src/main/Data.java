@@ -6,4 +6,7 @@ public class Data {
 	public static String sessionKey;
 	public static boolean accessRights = false;
 	
+	public static String registrationNumber;
+	
+	
 }
