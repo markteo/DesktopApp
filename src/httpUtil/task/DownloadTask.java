@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import httpUtil.HttpDownloadUtil;
-import testUI.UIFileDownloadHTTP;
+import ui.UIFileDownloadHTTP;
 
 public class DownloadTask extends SwingWorker<Void, Void> {
 
@@ -18,7 +18,7 @@ public class DownloadTask extends SwingWorker<Void, Void> {
 	private String saveDirectory;
 	private UIFileDownloadHTTP gui;
 
-	public DownloadTask(UIFileDownloadHTTP gui, String downloadURL, String saveDirectory) {
+	public DownloadTask(ui.UIFileDownloadHTTP gui, String downloadURL, String saveDirectory) {
 		// TODO Auto-generated constructor stub
 		this.gui = gui;
 		this.downloadURL = downloadURL;
