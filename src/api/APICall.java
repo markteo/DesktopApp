@@ -267,6 +267,12 @@ public class APICall {
 		
 	}
 	
+	public String uploadInventory(String targetURL, String sessionKey){
+		String api = 
+		
+		
+		return null;
+	}
 	public String generateAccessKey(String targetURL, String sessionKey, int userID){
 		
 		String api = "generateaccesskey";
