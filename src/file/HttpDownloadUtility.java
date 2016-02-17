@@ -23,7 +23,7 @@ public class HttpDownloadUtility {
 	 */
 	public static String downloadFile(String fileURL, String saveDir, String sessionKey)
 			throws IOException {
-		URL url = new URL("content/csvSample?session-key=" + sessionKey);
+		URL url = new URL(fileURL + "?session-key=" + sessionKey);
 		HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
 		httpConn.setRequestMethod("GET");
 		int responseCode = httpConn.getResponseCode();
