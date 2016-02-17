@@ -247,15 +247,15 @@ public class APICall {
 	
 	public String getCSVSample(String targetURL, String sessionKey, String fileLocation) throws IOException{
 		String api = "content/csvSample";
-		targetURL = targetURL + api;
-		String urlParameters;
+		String[] splitURL = targetURL.split("\\/api");
+		targetURL = splitURL[0] + splitURL[1] + api;
+		
 		
 		
 		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc);
+			
 			System.out.println(targetURL);
-			String response = HttpDownloadUtility.downloadFile(targetURL, fileLocation, sessionKey);
+			String response = HttpDownloadUtility.downloadFile(targetURL, "./", sessionKey);
 			System.out.println(response);
 			return response;
 			
@@ -268,7 +268,7 @@ public class APICall {
 	}
 	
 	public String uploadInventory(String targetURL, String sessionKey){
-		String api = 
+		String api = "/uplaodinventory";
 		
 		
 		return null;
