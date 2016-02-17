@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -41,16 +42,14 @@ public class UIInventorySelect {
 
 		DefaultListModel<String> model = new DefaultListModel<String>();
 		// fetch list from server
-		model.addElement("ID  " + " | " + "      Registation Number       |     MAC Address");
+		
 		JSONArray inventoryList = new APIProcess().inventoryList(Data.targetURL, Data.sessionKey);
 
 		try {
 			System.out.println(inventoryList.length());
 			for (int i = 0; i < inventoryList.length(); i++){
-				
 				JSONObject inventoryItem = inventoryList.getJSONObject(i);
-				model.addElement(inventoryItem.get("id") + "  |    " + inventoryItem.get("registrationNumber") + "      |    " + inventoryItem.get("macAddress"));
-				
+				model.addElement(inventoryItem.get("id") + " , " + inventoryItem.get("registrationNumber") + " , " + inventoryItem.get("macAddress"));
 			}
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
@@ -63,14 +62,14 @@ public class UIInventorySelect {
 		inventoryFrame.setVisible(true);
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
-		JLabel lblInstruction = l.createLabel("The Inventory List show the currently registered Nodes");
+		JLabel lblInstruction = l.createLabel("The Inventory List show the currently unactivated  Nodes");
 		pnlInstruction.setBackground(CustomColor.LightBlue.returnColor());
 		lblInstruction.setForeground(Color.white);
 		lblInstruction.setFont(new Font("San Serif", Font.PLAIN, 18));
 		pnlInstruction.add(lblInstruction);
 
 		JPanel pnlInventoryList = p.createPanel(Layouts.flow);
-		JLabel lblInventoryList = l.createLabel("Inventory List:");
+		JLabel lblInventoryList = l.createLabel("Inventory List : \n  (ID, Registration Number, MAC Address)");
 		JList listInventory = new JList(model);
 		listInventory.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollInventory = new JScrollPane(listInventory);
@@ -88,6 +87,12 @@ public class UIInventorySelect {
 			public void actionPerformed(ActionEvent e) {
 				// add inventory code here
 				// open add frame and close current frame.
+				try {
+					api.getCSVSample(Data.targetURL, "", Data.sessionKey);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				model.addElement("Element Test");
 			}
 		});
@@ -98,6 +103,10 @@ public class UIInventorySelect {
 			public void actionPerformed(ActionEvent e) {
 				// do something with selected inventory
 				System.out.println(listInventory.getModel().getElementAt(listInventory.getSelectedIndex()));
+				String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex()).toString();
+				String[] itemData = itemSelected.split("\\,");
+				Data.registrationNumber = itemData[1].trim();
+				System.out.println(Data.registrationNumber);
 			}
 		});
 
