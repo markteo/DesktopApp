@@ -93,11 +93,17 @@ public class UILogin {
 						JSONObject responseJSON = new JSONObject(response);
 						Data.sessionKey = responseJSON.get("session-key").toString();
 						response = api.getUserFeatures(apiURL, Data.sessionKey);
+						Data.targetURL = apiURL;
 						if(checkFeatures(response)){
-							//start new frame
+							UIInventorySelect inventory = new UIInventorySelect();
+							loginFrame.setVisible(false);
+							inventory.runInventorySelect();
+							
 						}else{
 							System.exit(0);
 						}
+					}else{
+						System.exit(0);
 					}
 					
 					
@@ -147,8 +153,6 @@ public class UILogin {
 						System.out.println("Feature: " + feature.getString("name"));
 						featureList.put(featureName, feature.getString("name"));
 						
-
-
 					}
 				}
 
