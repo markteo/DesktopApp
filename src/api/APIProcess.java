@@ -62,6 +62,8 @@ public class APIProcess {
 				}
 			}
 			
+			return nodeLicenseList;
+			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -71,6 +73,42 @@ public class APIProcess {
 		return null;
 	}
 	
+	public JSONArray inventoryList(String targetURL, String sessionKey){
+		JSONArray inventoryList = new JSONArray();
+		
+		String response = api.getInventoryList(targetURL, sessionKey);
+		
+		try {
+			
+			JSONObject inventoryResponse = new JSONObject(response);
+			
+			JSONArray inventory = inventoryResponse.getJSONArray("inventory-list");
+			
+			for(int x = 0; x < inventory.length(); x ++){
+				
+				JSONObject item = inventory.getJSONObject(x);
+				
+				boolean itemStatus = item.getBoolean("activated");
+				
+				if(itemStatus == false){
+					JSONObject itemAdd = new JSONObject();
+					System.out.println("Registration Number: " + item.getString("registrationNumber"));
+					itemAdd.put("id", item.get("inventoryId"));
+					itemAdd.put("registrationNumber", item.get("registrationNumber"));
+					itemAdd.put("macAddress", item.get("macAddress"));
+					
+					inventoryList.put(itemAdd);
+				}
+			}
+			
+			return inventoryList;
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	
 	
