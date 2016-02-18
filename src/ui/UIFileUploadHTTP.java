@@ -14,10 +14,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APICall;
 
 public class UIFileUploadHTTP {
 
@@ -55,6 +57,9 @@ public class UIFileUploadHTTP {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// insert api for upload
+				String fileURL = tfCSVFilePath.getText();
+				APICall api = new APICall();
+				api.uploadInventory(Data.targetURL, fileURL, Data.sessionKey);
 			}
 		});
 
