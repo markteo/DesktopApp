@@ -114,6 +114,10 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			progressBar.setValue(0);
 			APICall api = new APICall();
 			String response = api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
+			if(response.equals("OK")){
+				this.setVisible(false);
+				UIFileUploadHTTP.runUpload();
+			}
 
 		}catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
