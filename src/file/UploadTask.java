@@ -16,6 +16,7 @@ import javax.swing.SwingWorker;
 public class UploadTask extends SwingWorker<Void, Integer> {
     private String uploadURL;
     private File uploadFile;
+    private String urlParameters;
  
     public UploadTask(String uploadURL, File uploadFile) {
         this.uploadURL = uploadURL;
@@ -29,7 +30,7 @@ public class UploadTask extends SwingWorker<Void, Integer> {
     protected Void doInBackground() throws Exception {
         try {
             MultipartUploadUtility util = new MultipartUploadUtility(uploadURL,
-                    "UTF-8");
+                    "UTF-8", urlParameters);
             util.addFilePart("uploadFile", uploadFile);
  
             FileInputStream inputStream = new FileInputStream(uploadFile);

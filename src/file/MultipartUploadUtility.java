@@ -33,7 +33,7 @@ public class MultipartUploadUtility {
      * @param charset
      * @throws IOException
      */
-    public MultipartUploadUtility(String requestURL, String charset)
+    public MultipartUploadUtility(String requestURL, String charset, String urlParameters)
             throws IOException {
  
         // creates a unique boundary based on time stamp
@@ -41,10 +41,20 @@ public class MultipartUploadUtility {
  
         URL url = new URL(requestURL);
         httpConn = (HttpURLConnection) url.openConnection();
+        
+        httpConn.setRequestMethod("POST");
+        httpConn.setRequestProperty("Content-Type",
+				"application/x-www-form-urlencoded");
+
+        httpConn.setRequestProperty("Content-Length",
+				"" + Integer.toString(urlParameters.getBytes().length));
+        httpConn.setRequestProperty("Content-Language", "en-US");
+
+        
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(true);
         httpConn.setRequestProperty("Content-Type",
-                "multipart/form-data; boundary=" + boundary);
+                "multipart/form-data; application/x-www-form-urlencoded; boundary=" + boundary);
         outputStream = httpConn.getOutputStream();
         writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
                 true);
