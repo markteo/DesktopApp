@@ -24,7 +24,7 @@ public class DesktopAppMain {
 		
 
 		String apiURL = Helper.readString("Enter api url > ");
-		
+		Data.URL = apiURL;
 		String targetURL = apiURL + bucket;
 		UILogin.runLogin(targetURL);
 
