@@ -93,17 +93,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
          
         constraints.gridx = 1;
         add(tfFileSize, constraints);
-         
-        constraints.gridx = 0;
-        constraints.gridy = 5;
-        constraints.gridwidth = 1;
-        constraints.anchor = GridBagConstraints.WEST;
-        add(labelProgress, constraints);
- 
-        constraints.gridx = 1;
-        constraints.weightx = 1.0;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        add(progressBar, constraints);
         
         pack();
         setLocationRelativeTo(null);    // center on screen
@@ -126,6 +115,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			APICall api = new APICall();
 			String response = api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
 		
+
 		}catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Error executing upload task: " + ex.getMessage(), "Error",
