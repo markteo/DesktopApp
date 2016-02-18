@@ -247,7 +247,7 @@ public class APICall {
 	}
 	
 	public String uploadInventory(String targetURL, String sessionKey){
-		String api = "/uplaodinventory";
+		String api = "/uploadinventory";
 		
 		
 		return null;
