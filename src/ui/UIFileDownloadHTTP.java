@@ -18,8 +18,11 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 import main.Data;
+import ui.components.Button;
+import ui.components.FilePicker;
+import ui.components.Label;
+import ui.components.Panel;
 import api.APICall;
-import ui.components.*;
 
 public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener {
 
@@ -110,7 +113,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		try{
 			progressBar.setValue(0);
 			APICall api = new APICall();
-			api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
+			String response = api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
 			
 		}catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
