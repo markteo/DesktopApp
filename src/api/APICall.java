@@ -248,11 +248,22 @@ public class APICall {
 		return response;
 	}
 	
-	public String uploadInventory(String targetURL, String sessionKey){
-		String api = "/uploadinventory";
+	public String uploadInventory(String targetURL, String fileURL, String sessionKey){
+		String api = "uploadinventory";
 		targetURL = targetURL + api;
-		File file = new File("./inventory_template.csv");
-		UploadTask uploadTask = new UploadTask(targetURL, file);
+		File file = new File(fileURL);
+		String urlParameters;
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, enc);
+			UploadTask uploadTask = new UploadTask(targetURL, file, urlParameters);
+			uploadTask.uploadFile();
+			System.out.println("Upload Completed");
+			
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		
 		
 		return null;
 	}
