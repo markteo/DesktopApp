@@ -1,6 +1,6 @@
 package api;
 
-import httpUtil.task.HttpDownloadUtility;
+import httpUtil.HttpDownloadUtility;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
