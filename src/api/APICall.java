@@ -1,7 +1,7 @@
 package api;
 
-import file.UploadTask;
 import httpUtil.HttpDownloadUtility;
+import httpUtil.UploadTask;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
