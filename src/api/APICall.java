@@ -1,5 +1,7 @@
 package api;
 
+import httpUtil.task.HttpDownloadUtility;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,8 +17,6 @@ import main.Helper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import file.HttpDownloadUtility;
 
 public class APICall {
 	
@@ -232,26 +232,19 @@ public class APICall {
 		
 	}
 	
-	public String getCSVSample(String targetURL, String sessionKey, String fileLocation) throws IOException{
+	public String getCSVSample(String targetURL, String sessionKey, String fileLocation, ui.UIFileDownloadHTTP ui) throws IOException{
 		String api = "content/csvSample";
 		String[] splitURL = targetURL.split("\\/api");
 		targetURL = splitURL[0] + splitURL[1] + api;
 		
+		System.out.println(targetURL);
+		HttpDownloadUtility http = new HttpDownloadUtility();
+		String response = http.downloadFile(targetURL, fileLocation, sessionKey, ui);
+		http.addPropertyChangeListener(ui);
+		http.execute();
+		System.out.println(response);
 		
-		
-		try{
-			
-			System.out.println(targetURL);
-			String response = HttpDownloadUtility.downloadFile(targetURL, "./", sessionKey);
-			System.out.println(response);
-			return response;
-			
-		}catch(UnsupportedEncodingException e){
-			e.printStackTrace();
-		}
-		return null;
-		
-		
+		return response;
 	}
 	
 	public String uploadInventory(String targetURL, String sessionKey){
