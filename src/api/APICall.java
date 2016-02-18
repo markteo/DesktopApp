@@ -233,9 +233,8 @@ public class APICall {
 	}
 	
 	public String getCSVSample(String targetURL, String sessionKey, String fileLocation, ui.UIFileDownloadHTTP ui) throws IOException{
-		String api = "content/csvSample";
-		String[] splitURL = targetURL.split("\\/api");
-		targetURL = splitURL[0] + splitURL[1] + api;
+		String api = "/public/files/samples/inventory_template.csv";
+		targetURL = targetURL + api;
 		
 		System.out.println(targetURL);
 		HttpDownloadUtility http = new HttpDownloadUtility();
