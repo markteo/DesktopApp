@@ -121,7 +121,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		try{
 			progressBar.setValue(0);
 			APICall api = new APICall();
-			api.getCSVSample(Data.targetURL, Data.sessionKey, saveDir, this);
+			api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
 		
 		}catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
