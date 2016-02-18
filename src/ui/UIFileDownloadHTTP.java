@@ -17,7 +17,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
-import httpUtil.task.DownloadTask;
+import main.Data;
+import api.APICall;
 import ui.components.*;
 
 public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener {
@@ -26,8 +27,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	Button b = new Button();
 	Panel p = new Panel();
 
-	private JLabel labelURL = new JLabel("Download URL:");
-	private JTextField tfURL = new JTextField(30);
 	private ui.components.FilePicker filePicker = new FilePicker("Pick a directory:	","Browse..");
 	private JButton download = new JButton("Download");
 
@@ -41,7 +40,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	private JProgressBar progressBar = new JProgressBar(0, 100);
 
 	public UIFileDownloadHTTP() {
-		super("Swing File Download from HTTP Server");
+		super("Download CSV File");
 		// TODO Auto-generated constructor stub
 		setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -64,14 +63,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		progressBar.setPreferredSize(new Dimension(200,30));
 		progressBar.setStringPainted(true);
 		
-		constraints.gridx=0;
-		constraints.gridy=0;
-		add(labelURL,constraints);
-		
-		constraints.gridx=1;
-		constraints.fill=GridBagConstraints.HORIZONTAL;
-		constraints.weightx=1.0;
-		add(tfURL,constraints);
 		
 		constraints.gridx=0;
 		constraints.gridy = 1;
@@ -118,14 +109,9 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	}
 
 	private void buttonDownloadActionPerformed(ActionEvent event) {
-		String downloadURL = tfURL.getText();
 		String saveDir = filePicker.getSelectedFilePath();
 
-		if (downloadURL.equals("")) {
-			JOptionPane.showMessageDialog(this, "Please enter download URL", "Error", JOptionPane.ERROR_MESSAGE);
-			tfURL.requestFocus();
-			return;
-		}
+		
 		
 		if(saveDir.equals("")){
 			JOptionPane.showMessageDialog(this, "Please a choose destination folder", "Error",JOptionPane.ERROR_MESSAGE);	
@@ -134,9 +120,9 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		
 		try{
 			progressBar.setValue(0);
-			DownloadTask task = new DownloadTask(this,downloadURL,saveDir);
-			task.addPropertyChangeListener(this);
-			task.execute();
+			APICall api = new APICall();
+			api.getCSVSample(Data.targetURL, Data.sessionKey, saveDir, this);
+		
 		}catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Error executing upload task: " + ex.getMessage(), "Error",
@@ -158,5 +144,8 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		tfFileName.setText(fileName);
 		tfFileSize.setText(String.valueOf(size));
 	}
-
+	
+	public void setProgressBar( int value){
+		progressBar.setValue(value);
+	}
 }
