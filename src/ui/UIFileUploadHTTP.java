@@ -59,7 +59,13 @@ public class UIFileUploadHTTP {
 				// insert api for upload
 				String fileURL = tfCSVFilePath.getText();
 				APICall api = new APICall();
-				api.uploadInventory(Data.targetURL, fileURL, Data.sessionKey);
+				String response = api.uploadInventory(Data.targetURL, fileURL, Data.sessionKey);
+				
+				if(response.equals("OK")){
+					UIBucketSelect bucketUI = new UIBucketSelect();
+					uploadInventoryFrame.setVisible(false);
+					bucketUI.runBucketSelect();
+				}
 			}
 		});
 

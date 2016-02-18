@@ -257,8 +257,9 @@ public class APICall {
 			urlParameters = "session-key=" 
 					+ URLEncoder.encode(sessionKey, enc);
 			UploadTask uploadTask = new UploadTask(targetURL, file, urlParameters);
-			uploadTask.uploadFile();
+			String response = uploadTask.uploadFile();
 			System.out.println("Upload Completed");
+			return response;
 			
 		}catch(UnsupportedEncodingException e){
 			e.printStackTrace();

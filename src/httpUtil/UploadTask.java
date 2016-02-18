@@ -25,7 +25,7 @@ public class UploadTask extends SwingWorker<Void, Integer> {
     }
  
     public String uploadFile(){
-    	System.out.println(uploadURL);
+    	
     	 try {
              MultipartUploadUtility util = new MultipartUploadUtility(uploadURL,
                      "UTF-8", urlParameters);
@@ -47,15 +47,16 @@ public class UploadTask extends SwingWorker<Void, Integer> {
   
              inputStream.close();
              util.finish();
+             return "OK";
          } catch (IOException ex) {
              JOptionPane.showMessageDialog(null, "Error uploading file: " + ex.getMessage(),
                      "Error", JOptionPane.ERROR_MESSAGE);           
              ex.printStackTrace();
              setProgress(0);
              cancel(true);
+             return "ERROR";
          }
   
-         return null;
     }
     /**
      * Executed in background thread
