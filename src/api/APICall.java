@@ -1,9 +1,11 @@
 package api;
 
+import file.UploadTask;
 import httpUtil.HttpDownloadUtility;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -248,7 +250,9 @@ public class APICall {
 	
 	public String uploadInventory(String targetURL, String sessionKey){
 		String api = "/uploadinventory";
-		
+		targetURL = targetURL + api;
+		File file = new File("./inventory_template.csv");
+		UploadTask uploadTask = new UploadTask(targetURL, file);
 		
 		return null;
 	}
