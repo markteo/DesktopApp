@@ -35,14 +35,14 @@ public class MultipartUploadUtility {
      */
     public MultipartUploadUtility(String requestURL, String charset, String urlParameters)
             throws IOException {
- 
+    	System.out.println(requestURL);
         // creates a unique boundary based on time stamp
-        boundary = "===" + System.currentTimeMillis() + "===";
+        boundary = "----" + System.currentTimeMillis();
  
         URL url = new URL(requestURL);
         httpConn = (HttpURLConnection) url.openConnection();
         
-        httpConn.setRequestMethod("GET");
+        httpConn.setRequestMethod("POST");
         
 
         httpConn.setRequestProperty("Content-Length",
