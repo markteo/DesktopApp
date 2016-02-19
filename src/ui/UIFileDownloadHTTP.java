@@ -32,7 +32,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 
 	private ui.components.FilePicker filePicker = new FilePicker("Pick a directory:	","Browse..");
 	private JButton download = new JButton("Download");
-
+	private JButton next = new JButton("Skip");
 	private JLabel labelFileName = new JLabel("File Name:");
 	private JTextField tfFileName = new JTextField(20);
 
@@ -60,6 +60,14 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			}
 		});
 		
+		next.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				skipDownload(e);
+			}
+		});
+		
 		tfFileName.setEditable(false);
 		tfFileSize.setEditable(false);
 		
@@ -74,9 +82,13 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
         constraints.fill = GridBagConstraints.NONE;
         add(filePicker, constraints);
  
+        constraints.gridx = 0;
         constraints.gridy = 2;
-        constraints.anchor = GridBagConstraints.CENTER;
         add(download, constraints);
+        
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        add(next, constraints);
          
         constraints.gridx = 0;
         constraints.gridy = 3;
@@ -103,8 +115,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	private void buttonDownloadActionPerformed(ActionEvent event) {
 		String saveDir = filePicker.getSelectedFilePath();
 
-		
-		
 		if(saveDir.equals("")){
 			JOptionPane.showMessageDialog(this, "Please a choose destination folder", "Error",JOptionPane.ERROR_MESSAGE);	
 			return;
@@ -124,6 +134,11 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
                     "Error executing upload task: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         }  
+	}
+	
+	private void skipDownload(ActionEvent event){
+		this.setVisible(false);
+		UIFileUploadHTTP.runUpload();
 	}
 
 	@Override
