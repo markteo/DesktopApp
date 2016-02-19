@@ -61,11 +61,11 @@ public class UIFileUploadHTTP {
 				APICall api = new APICall();
 				String response = api.uploadInventory(Data.targetURL, fileURL, Data.sessionKey);
 				
-				if(response.equals("OK")){
+				//if(response.equals("OK")){
 					UIBucketSelect bucketUI = new UIBucketSelect();
 					uploadInventoryFrame.setVisible(false);
 					bucketUI.runBucketSelect();
-				}
+				//}
 			}
 		});
 
