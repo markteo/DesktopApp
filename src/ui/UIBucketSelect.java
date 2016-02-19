@@ -17,11 +17,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import customColor.CustomColor;
+import main.Data;
+
+import org.json.JSONArray;
+
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APIProcess;
+import customColor.CustomColor;
 
 public class UIBucketSelect {
 	
@@ -31,7 +36,9 @@ public class UIBucketSelect {
 		Label l = new Label();
 
 		DefaultListModel<String> model = new DefaultListModel<String>();
-
+		
+		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
+		
 		// start of ui
 		JFrame bucketFrame = new JFrame("Bucket");
 		bucketFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
