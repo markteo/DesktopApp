@@ -79,7 +79,8 @@ public class UIFileUploadHTTP {
 							
 							UIBucketSelect bucketUI = new UIBucketSelect();
 							uploadInventoryFrame.setVisible(false);
-							bucketUI.runBucketSelect();
+							UIInventorySelect inventoryUI = new UIInventorySelect();
+							inventoryUI.runInventorySelect();
 							
 						}else{
 							 final JPanel panel = new JPanel();
