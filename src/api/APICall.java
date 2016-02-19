@@ -1,7 +1,7 @@
 package api;
 
 import httpUtil.HttpDownloadUtility;
-import httpUtil.UploadTask;
+import httpUtil.Upload;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -253,11 +253,14 @@ public class APICall {
 		targetURL = targetURL + api;
 		File file = new File(fileURL);
 		String urlParameters;
+		System.out.println(sessionKey);
 		try{
 			urlParameters = "session-key=" 
 					+ URLEncoder.encode(sessionKey, enc);
-			UploadTask uploadTask = new UploadTask(targetURL, file, urlParameters);
-			String response = uploadTask.uploadFile();
+//			UploadTask uploadTask = new UploadTask(targetURL, file, urlParameters);
+//			String response = uploadTask.uploadFile();
+			Upload upload = new Upload();
+			String response = upload.runUpload(targetURL, fileURL, urlParameters);
 			System.out.println("Upload Completed");
 			return response;
 			
