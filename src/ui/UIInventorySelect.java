@@ -40,21 +40,10 @@ public class UIInventorySelect {
 		Button b = new Button();
 		Label l = new Label();
 
-		DefaultListModel<String> model = new DefaultListModel<String>();
+		DefaultListModel<String> model;
 		// fetch list from server
+		model = getInventoryData(new DefaultListModel<String>());
 		
-		JSONArray inventoryList = new APIProcess().inventoryList(Data.targetURL, Data.sessionKey);
-
-		try {
-			System.out.println(inventoryList.length());
-			for (int i = 0; i < inventoryList.length(); i++){
-				JSONObject inventoryItem = inventoryList.getJSONObject(i);
-				model.addElement(inventoryItem.get("id") + " , " + inventoryItem.get("registrationNumber") + " , " + inventoryItem.get("macAddress"));
-			}
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		// start of ui
 		JFrame inventoryFrame = new JFrame("Inventory");
 		inventoryFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -85,8 +74,7 @@ public class UIInventorySelect {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// add inventory code here
-				// open add frame and close current frame.
+
 				inventoryFrame.setVisible(false);
 				UIFileDownloadHTTP dl = new UIFileDownloadHTTP();
 				dl.setVisible(true);
@@ -102,7 +90,9 @@ public class UIInventorySelect {
 				String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex()).toString();
 				String[] itemData = itemSelected.split("\\,");
 				Data.registrationNumber = itemData[1].trim();
-				System.out.println(Data.registrationNumber);
+				
+				inventoryFrame.setVisible(false);
+				UIBucketSelect.runBucketSelect();
 			}
 		});
 
@@ -114,5 +104,20 @@ public class UIInventorySelect {
 		inventoryFrame.add(pnlButtons, BorderLayout.SOUTH);
 		inventoryFrame.pack();
 	}
+	
+	public DefaultListModel<String> getInventoryData(DefaultListModel<String> model){
+		JSONArray inventoryList = new APIProcess().inventoryList(Data.targetURL, Data.sessionKey);
 
+		try {
+			System.out.println(inventoryList.length());
+			for (int i = 0; i < inventoryList.length(); i++){
+				JSONObject inventoryItem = inventoryList.getJSONObject(i);
+				model.addElement(inventoryItem.get("id") + " , " + inventoryItem.get("registrationNumber") + " , " + inventoryItem.get("macAddress"));
+			}
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return model;
+	}
 }
