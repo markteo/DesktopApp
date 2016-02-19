@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectInputStream.GetField;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -20,6 +21,8 @@ import javax.swing.ListSelectionModel;
 import main.Data;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import ui.components.Button;
 import ui.components.Label;
@@ -28,7 +31,7 @@ import ui.components.Panel;
 import api.APIProcess;
 import customColor.CustomColor;
 
-public class UIBucketSelect {
+public class UIBucketSelect extends Thread{
 	
 	public static void runBucketSelect(){
 		Panel p = new Panel();
@@ -36,8 +39,19 @@ public class UIBucketSelect {
 		Label l = new Label();
 
 		DefaultListModel<String> model = new DefaultListModel<String>();
+		model = getBucketData(model);
+//		synchronized(model){
+//            try{
+//                System.out.println("Waiting for b to complete...");
+//                model.wait();
+//            }catch(InterruptedException e){
+//                e.printStackTrace();
+//            }
+// 
+//           
+//        }
+		model.addElement("ID, BucketName");
 		
-		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
 		
 		// start of ui
 		JFrame bucketFrame = new JFrame("Bucket");
@@ -54,6 +68,7 @@ public class UIBucketSelect {
 
 		JPanel pnlBucketList = p.createPanel(Layouts.flow);
 		JLabel lblBucketList = l.createLabel("Bucket List : \n  (ID, Registration Number, MAC Address)");
+		
 		JList listBucket = new JList(model);
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
@@ -62,7 +77,7 @@ public class UIBucketSelect {
 		p.addComponentsToPanel(pnlBucketList, BucketListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
-		JButton btnAddElements = b.createButton("Add Item");
+		JButton btnAddElements = b.createButton("Back");
 
 		// Button events
 		btnAddElements.addActionListener(new ActionListener() {
@@ -91,6 +106,31 @@ public class UIBucketSelect {
 		bucketFrame.add(pnlBucketList, BorderLayout.CENTER);
 		bucketFrame.add(pnlButtons, BorderLayout.SOUTH);
 		bucketFrame.pack();
+	}
+	
+	@Override
+	public void run(){
+        synchronized(this){
+            
+            notify();
+        }
+    }
+	
+	private static DefaultListModel<String> getBucketData(DefaultListModel<String> model){
+		
+		
+		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
+		try {
+			for (int i = 0; i < bucketList.length(); i++){
+				JSONObject bucket = bucketList.getJSONObject(i);
+				System.out.println(bucket.get("id").toString() + bucket.get("bucketName").toString());
+				model.addElement(bucket.get("id") + " , " + bucket.get("bucketName"));
+			}
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return model;
 	}
 
 }

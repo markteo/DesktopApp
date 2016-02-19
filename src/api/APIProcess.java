@@ -26,7 +26,6 @@ public class APIProcess {
 				JSONObject bucket = new JSONObject();
 				bucket.put("bucketID", bucketID);
 				bucket.put("bucketName", bucketName);
-				
 				bucketList.put(bucket);
 			}
 			

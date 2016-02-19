@@ -87,10 +87,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
         add(download, constraints);
         
         constraints.gridx = 0;
-        constraints.gridy = 1;
-        add(next, constraints);
-         
-        constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.gridwidth = 1;
         constraints.anchor = GridBagConstraints.WEST;
