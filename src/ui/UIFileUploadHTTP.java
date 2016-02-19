@@ -10,11 +10,17 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import main.Data;
+
+import org.jdesktop.xswingx.PromptSupport;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
@@ -35,9 +41,10 @@ public class UIFileUploadHTTP {
 
 		JPanel pnlUploadForm = p.createPanel(Layouts.flow);
 		JLabel lblCSVFile = l.createLabel("Upload CSV File:");
-		JTextField tfCSVFilePath = new JTextField("After choosing your file, the file path will appeared here");
+		JTextField tfCSVFilePath = new JTextField();
+		PromptSupport.setPrompt("Choose a file", tfCSVFilePath);
 		tfCSVFilePath.setEnabled(false);
-		JButton btnAddCSV = b.createButton("Choose File");
+		JButton btnAddCSV = b.createButton(" Choose File ");
 		btnAddCSV.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -58,14 +65,32 @@ public class UIFileUploadHTTP {
 			public void actionPerformed(ActionEvent e) {
 				// insert api for upload
 				String fileURL = tfCSVFilePath.getText();
-				APICall api = new APICall();
-				String response = api.uploadInventory(Data.targetURL, fileURL, Data.sessionKey);
 				
-				//if(response.equals("OK")){
-					UIBucketSelect bucketUI = new UIBucketSelect();
-					uploadInventoryFrame.setVisible(false);
-					bucketUI.runBucketSelect();
-				//}
+				if(fileURL.isEmpty()){
+					final JPanel panel = new JPanel();
+					 JOptionPane.showMessageDialog(panel, "No file selected", "Error", JOptionPane.ERROR_MESSAGE);
+					 return;
+				}else{
+					APICall api = new APICall();
+					String response = api.uploadInventory(Data.targetURL, fileURL, Data.sessionKey);
+					try {
+						JSONObject responseObject = new JSONObject(response);
+						if(responseObject.get("result").equals("ok")){
+							
+							UIBucketSelect bucketUI = new UIBucketSelect();
+							uploadInventoryFrame.setVisible(false);
+							bucketUI.runBucketSelect();
+							
+						}else{
+							 final JPanel panel = new JPanel();
+							 JOptionPane.showMessageDialog(panel, "Please check file", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+						
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
 
