@@ -31,15 +31,23 @@ import ui.components.Panel;
 import api.APIProcess;
 import customColor.CustomColor;
 
-public class UIBucketSelect extends Thread{
-	
+public class UIBucketSelect implements Runnable{
+	Thread buckets;
+	public static DefaultListModel<String> model = new DefaultListModel<String>();
+	public UIBucketSelect(){
+		buckets = new Thread(this);
+		runBucketSelect();
+		
+	}
 	public static void runBucketSelect(){
 		Panel p = new Panel();
 		Button b = new Button();
 		Label l = new Label();
-
-		DefaultListModel<String> model = new DefaultListModel<String>();
-		model = getBucketData(model);
+		JFrame bucketFrame = new JFrame("Bucket");
+		
+		JList listBucket = new JList(model);
+		
+		System.out.println("Hello");
 //		synchronized(model){
 //            try{
 //                System.out.println("Waiting for b to complete...");
@@ -54,7 +62,6 @@ public class UIBucketSelect extends Thread{
 		
 		
 		// start of ui
-		JFrame bucketFrame = new JFrame("Bucket");
 		bucketFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		bucketFrame.setLayout(new BorderLayout());
 		bucketFrame.setVisible(true);
@@ -69,7 +76,7 @@ public class UIBucketSelect extends Thread{
 		JPanel pnlBucketList = p.createPanel(Layouts.flow);
 		JLabel lblBucketList = l.createLabel("Bucket List : \n  (ID, Registration Number, MAC Address)");
 		
-		JList listBucket = new JList(model);
+		
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
 		scrollBucket.setPreferredSize(new Dimension(300, 150));
@@ -108,29 +115,33 @@ public class UIBucketSelect extends Thread{
 		bucketFrame.pack();
 	}
 	
-	@Override
-	public void run(){
-        synchronized(this){
-            
-            notify();
-        }
-    }
-	
-	private static DefaultListModel<String> getBucketData(DefaultListModel<String> model){
+	private static void getBucketData(){
 		
 		
 		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
+		System.out.println("Got entire bucket List");
 		try {
 			for (int i = 0; i < bucketList.length(); i++){
 				JSONObject bucket = bucketList.getJSONObject(i);
 				System.out.println(bucket.get("id").toString() + bucket.get("bucketName").toString());
 				model.addElement(bucket.get("id") + " , " + bucket.get("bucketName"));
 			}
+			
+			
+			
+			
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return model;
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		getBucketData();
+		System.out.println(Thread.currentThread().getName());
+		Thread.yield();
 	}
 
 }

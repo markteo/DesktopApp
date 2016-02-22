@@ -92,7 +92,7 @@ public class UIInventorySelect {
 				Data.registrationNumber = itemData[1].trim();
 				
 				inventoryFrame.setVisible(false);
-				UIBucketSelect.runBucketSelect();
+				UIBucketSelect uiBucket = new UIBucketSelect();
 			}
 		});
 

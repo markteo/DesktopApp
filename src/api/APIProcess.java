@@ -11,8 +11,9 @@ public class APIProcess {
 	public JSONArray bucketList (String targetURL, String sessionKey){
 		
 		JSONArray bucketList = new JSONArray();
-		
+		System.out.println("Getting buckets");
 		String response = api.getBuckets(targetURL, sessionKey);
+		System.out.println("Retrieve buckets");
 		
 		try {
 			JSONObject jsonResponse = new JSONObject(response);
@@ -27,15 +28,17 @@ public class APIProcess {
 				bucket.put("bucketID", bucketID);
 				bucket.put("bucketName", bucketName);
 				bucketList.put(bucket);
+				System.out.println("Added buckets to array");
 			}
 			
 			return bucketList;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 		
-		return null;
+		//return null;
 	}
 	
 	public JSONArray nodeLicenseList(String targetURL, String sessionKey, int bucketID){
