@@ -95,9 +95,9 @@ public class UILogin {
 						response = api.getUserFeatures(apiURL, Data.sessionKey);
 						Data.targetURL = apiURL;
 						if(checkFeatures(response)){
-							UIInventorySelect inventory = new UIInventorySelect();
+							Data.uiInventorySelect = new UIInventorySelect();
 							loginFrame.setVisible(false);
-							inventory.runInventorySelect();
+							Data.uiInventorySelect.runInventorySelect();
 							
 						}else{
 							System.exit(0);
