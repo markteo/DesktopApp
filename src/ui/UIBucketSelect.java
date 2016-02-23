@@ -34,8 +34,10 @@ import customColor.CustomColor;
 public class UIBucketSelect implements Runnable{
 	Thread buckets;
 	public static DefaultListModel<String> model = new DefaultListModel<String>();
+	
 	public UIBucketSelect(){
 		buckets = new Thread(this);
+		buckets.start();
 		runBucketSelect();
 		
 	}
@@ -58,7 +60,6 @@ public class UIBucketSelect implements Runnable{
 // 
 //           
 //        }
-		model.addElement("ID, BucketName");
 		
 		
 		// start of ui
@@ -120,14 +121,19 @@ public class UIBucketSelect implements Runnable{
 		
 		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
 		System.out.println("Got entire bucket List");
+		System.out.println(bucketList);
 		try {
+			System.out.println("Starting model data");
+			model.addElement("ID, BucketName");
+
 			for (int i = 0; i < bucketList.length(); i++){
 				JSONObject bucket = bucketList.getJSONObject(i);
-				System.out.println(bucket.get("id").toString() + bucket.get("bucketName").toString());
-				model.addElement(bucket.get("id") + " , " + bucket.get("bucketName"));
+				//System.out.println(bucket.get("bucketID").toString() + bucket.get("bucketName").toString());
+				model.addElement(bucket.get("bucketID") + " , " + bucket.get("bucketName"));
 			}
-			
-			
+
+			System.out.println(" model data finish");
+
 			
 			
 		} catch (JSONException e1) {
@@ -139,8 +145,14 @@ public class UIBucketSelect implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		System.out.println();
 		getBucketData();
-		System.out.println(Thread.currentThread().getName());
+//		try {
+//		    Thread.sleep(30000);
+//		    System.out.println("thread sleep ended");
+//		} catch(InterruptedException ex) {
+//		    Thread.currentThread().interrupt();
+//		}
 		Thread.yield();
 	}
 
