@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ObjectInputStream.GetField;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -18,18 +17,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import main.Data;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import api.APIProcess;
+import customColor.CustomColor;
+import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
-import api.APIProcess;
-import customColor.CustomColor;
 
 public class UIBucketSelect implements Runnable{
 	Thread buckets;
@@ -84,16 +82,16 @@ public class UIBucketSelect implements Runnable{
 		p.addComponentsToPanel(pnlBucketList, BucketListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
-		JButton btnAddElements = b.createButton("Back");
+		JButton btnBack = b.createButton("Back");
 
 		// Button events
-		btnAddElements.addActionListener(new ActionListener() {
-
+		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// add Bucket code here
 				// open add frame and close current frame.
-				bucketFrame.setVisible(false);
+				UIInventorySelect inventorySelect = new UIInventorySelect();
+				inventorySelect.runInventorySelect();
 			}
 		});
 
@@ -106,7 +104,7 @@ public class UIBucketSelect implements Runnable{
 			}
 		});
 
-		pnlButtons.add(btnAddElements);
+		pnlButtons.add(btnBack);
 		pnlButtons.add(btnSelectElements);
 
 		bucketFrame.add(pnlInstruction, BorderLayout.NORTH);
