@@ -27,10 +27,11 @@ public class DesktopAppMain {
 		Data.URL = apiURL;
 		String targetURL = apiURL + bucket;
 		UILogin.runLogin(targetURL);
-
-		APICall apicall = new APICall();
+		
+		
+		
 		//Login to bucket
-		String response = null;
+		
 //		String response = apicall.loginBucket(targetURL);
 		
 //		try {
