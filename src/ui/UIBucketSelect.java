@@ -32,18 +32,18 @@ import ui.components.Panel;
 public class UIBucketSelect implements Runnable{
 	Thread buckets;
 	public static DefaultListModel<String> model = new DefaultListModel<String>();
-	
+	private JFrame bucketFrame;
 	public UIBucketSelect(){
 		buckets = new Thread(this);
 		buckets.start();
 		runBucketSelect();
 		
 	}
-	public static void runBucketSelect(){
+	public void runBucketSelect(){
 		Panel p = new Panel();
 		Button b = new Button();
 		Label l = new Label();
-		JFrame bucketFrame = new JFrame("Bucket");
+		bucketFrame = new JFrame("Bucket");
 		
 		JList listBucket = new JList(model);
 		
@@ -91,9 +91,9 @@ public class UIBucketSelect implements Runnable{
 			public void actionPerformed(ActionEvent e) {
 				// add Bucket code here
 				// open add frame and close current frame.
-				UIInventorySelect inventorySelect = new UIInventorySelect();
-				inventorySelect.runInventorySelect();
-			}
+				bucketFrame.setVisible(false);
+				Data.uiInventorySelect.setFrameVisible();
+			}	
 		});
 
 		JButton btnSelectElements = b.createButton("Next");
@@ -101,6 +101,15 @@ public class UIBucketSelect implements Runnable{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// do something with selected Bucket
+				System.out.println(listBucket.getModel().getElementAt(listBucket.getSelectedIndex()));
+				String itemSelected = listBucket.getModel().getElementAt(listBucket.getSelectedIndex())
+						.toString();
+				String[] itemData = itemSelected.split("\\,");
+				Data.bucketID = Integer.parseInt(itemData[0].trim());
+
+				bucketFrame.setVisible(false);
+				UILicenseSelect uiLicense = new UILicenseSelect();
+				uiLicense.runLicenseSelect();
 				
 			}
 		});
@@ -126,7 +135,6 @@ public class UIBucketSelect implements Runnable{
 
 			for (int i = 0; i < bucketList.length(); i++){
 				JSONObject bucket = bucketList.getJSONObject(i);
-				//System.out.println(bucket.get("bucketID").toString() + bucket.get("bucketName").toString());
 				model.addElement(bucket.get("bucketID") + " , " + bucket.get("bucketName"));
 			}
 
@@ -152,6 +160,10 @@ public class UIBucketSelect implements Runnable{
 //		    Thread.currentThread().interrupt();
 //		}
 		Thread.yield();
+	}
+	
+	public void setFrameVisible(){
+		bucketFrame.setVisible(true);
 	}
 
 }
