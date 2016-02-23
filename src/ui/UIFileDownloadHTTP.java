@@ -32,7 +32,8 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 
 	private ui.components.FilePicker filePicker = new FilePicker("Pick a directory:	","Browse..");
 	private JButton download = new JButton("Download");
-	private JButton next = new JButton("Skip");
+	private JButton btnSkip = new JButton("I already have the template.");
+
 	private JLabel labelFileName = new JLabel("File Name:");
 	private JTextField tfFileName = new JTextField(20);
 
@@ -60,14 +61,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			}
 		});
 		
-		next.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				skipDownload(e);
-			}
-		});
-		
 		tfFileName.setEditable(false);
 		tfFileSize.setEditable(false);
 		
@@ -82,10 +75,10 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
         constraints.fill = GridBagConstraints.NONE;
         add(filePicker, constraints);
  
-        constraints.gridx = 0;
         constraints.gridy = 2;
+        constraints.anchor = GridBagConstraints.CENTER;
         add(download, constraints);
-        
+         
         constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.gridwidth = 1;
@@ -109,8 +102,8 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	}
 
 	private void buttonDownloadActionPerformed(ActionEvent event) {
-		String saveDir = filePicker.getSelectedFilePath();
-
+		String saveDir = filePicker.getSelectedFilePath();	
+		
 		if(saveDir.equals("")){
 			JOptionPane.showMessageDialog(this, "Please a choose destination folder", "Error",JOptionPane.ERROR_MESSAGE);	
 			return;
@@ -120,10 +113,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			progressBar.setValue(0);
 			APICall api = new APICall();
 			String response = api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
-			if(response.equals("OK")){
-				this.setVisible(false);
-				UIFileUploadHTTP.runUpload();
-			}
 
 		}catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
@@ -132,9 +121,8 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
         }  
 	}
 	
-	private void skipDownload(ActionEvent event){
-		this.setVisible(false);
-		UIFileUploadHTTP.runUpload();
+	private void buttonSkipActionPerformed(ActionEvent event) {
+		
 	}
 
 	@Override

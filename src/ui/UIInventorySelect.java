@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -18,19 +17,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import main.Data;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import api.APICall;
+import api.APIProcess;
+import customColor.CustomColor;
+import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
-import api.APICall;
-import api.APIProcess;
-import customColor.CustomColor;
 
 public class UIInventorySelect {
 	public static APICall api = new APICall();
@@ -43,7 +41,7 @@ public class UIInventorySelect {
 		DefaultListModel<String> model;
 		// fetch list from server
 		model = getInventoryData(new DefaultListModel<String>());
-		
+
 		// start of ui
 		JFrame inventoryFrame = new JFrame("Inventory");
 		inventoryFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -67,6 +65,14 @@ public class UIInventorySelect {
 		p.addComponentsToPanel(pnlInventoryList, inventoryListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
+		JButton btnSkipDownload = b.createButton("I have the template");
+		btnSkipDownload.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				UIFileUploadHTTP uploadFrame = new UIFileUploadHTTP();
+				uploadFrame.runUpload();
+			}
+		});
 		JButton btnAddElements = b.createButton("Add Item");
 
 		// Button events
@@ -87,10 +93,11 @@ public class UIInventorySelect {
 			public void actionPerformed(ActionEvent e) {
 				// do something with selected inventory
 				System.out.println(listInventory.getModel().getElementAt(listInventory.getSelectedIndex()));
-				String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex()).toString();
+				String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex())
+						.toString();
 				String[] itemData = itemSelected.split("\\,");
 				Data.registrationNumber = itemData[1].trim();
-				
+
 				inventoryFrame.setVisible(false);
 				UIBucketSelect uiBucket = new UIBucketSelect();
 			}
@@ -104,15 +111,16 @@ public class UIInventorySelect {
 		inventoryFrame.add(pnlButtons, BorderLayout.SOUTH);
 		inventoryFrame.pack();
 	}
-	
-	public DefaultListModel<String> getInventoryData(DefaultListModel<String> model){
+
+	public DefaultListModel<String> getInventoryData(DefaultListModel<String> model) {
 		JSONArray inventoryList = new APIProcess().inventoryList(Data.targetURL, Data.sessionKey);
 
 		try {
 			System.out.println(inventoryList.length());
-			for (int i = 0; i < inventoryList.length(); i++){
+			for (int i = 0; i < inventoryList.length(); i++) {
 				JSONObject inventoryItem = inventoryList.getJSONObject(i);
-				model.addElement(inventoryItem.get("id") + " , " + inventoryItem.get("registrationNumber") + " , " + inventoryItem.get("macAddress"));
+				model.addElement(inventoryItem.get("id") + " , " + inventoryItem.get("registrationNumber") + " , "
+						+ inventoryItem.get("macAddress"));
 			}
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
