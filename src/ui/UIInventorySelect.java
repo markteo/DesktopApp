@@ -32,7 +32,7 @@ import ui.components.Panel;
 
 public class UIInventorySelect {
 	public static APICall api = new APICall();
-
+	private JFrame inventoryFrame;
 	public void runInventorySelect() {
 		Panel p = new Panel();
 		Button b = new Button();
@@ -43,7 +43,7 @@ public class UIInventorySelect {
 		model = getInventoryData(new DefaultListModel<String>());
 
 		// start of ui
-		JFrame inventoryFrame = new JFrame("Inventory");
+		inventoryFrame = new JFrame("Inventory");
 		inventoryFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		inventoryFrame.setLayout(new BorderLayout());
 		inventoryFrame.setVisible(true);
@@ -97,9 +97,14 @@ public class UIInventorySelect {
 						.toString();
 				String[] itemData = itemSelected.split("\\,");
 				Data.registrationNumber = itemData[1].trim();
-
 				inventoryFrame.setVisible(false);
-				UIBucketSelect uiBucket = new UIBucketSelect();
+
+				if(Data.uiBucketSelect != null){
+					Data.uiBucketSelect.setFrameVisible();
+				}else{
+					Data.uiBucketSelect = new UIBucketSelect();
+				}
+				
 			}
 		});
 
@@ -127,5 +132,9 @@ public class UIInventorySelect {
 			e1.printStackTrace();
 		}
 		return model;
+	}
+	
+	public void setFrameVisible(){
+		inventoryFrame.setVisible(true);
 	}
 }
