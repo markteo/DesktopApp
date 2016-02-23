@@ -120,7 +120,7 @@ public class APICall {
 	}
 	
 	public String getBuckets(String targetURL, String sessionKey){
-		
+		System.out.println("Getting buckets:");
 		String api = "getbuckets";
 		targetURL = targetURL + api;
 		String urlParameters;
