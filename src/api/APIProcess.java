@@ -11,17 +11,11 @@ public class APIProcess {
 	public JSONArray bucketList (String targetURL, String sessionKey){
 		
 		JSONArray bucketList = new JSONArray();
-		System.out.println("Getting buckets");
 		String response = api.getBuckets(targetURL, sessionKey);
-		System.out.println(response);
-		System.out.println("Retrieve buckets");
 		
 		try {
-			System.out.println("Starting data response");
 			JSONObject jsonResponse = new JSONObject(response);
-			System.out.println(jsonResponse.getString("result"));
 			JSONArray jsonArray = jsonResponse.getJSONArray("buckets");
-			System.out.println(jsonArray);
 			
 			for(int i = 0; i < jsonArray.length(); i ++){
 				JSONObject bucket = new JSONObject();
@@ -35,12 +29,10 @@ public class APIProcess {
 					JSONObject userJSON = bucketArray.getJSONObject(x);
 					int bucketID = userJSON.getInt("bucketId");
 					bucket.put("bucketID", bucketID);
-					System.out.println("Added bucketID " + bucketID);
 				}
 				
 				bucket.put("bucketName", bucketName);
 				bucketList.put(bucket);
-				System.out.println("Added buckets to array");
 			}
 			
 			return bucketList;
