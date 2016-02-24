@@ -62,14 +62,14 @@ public class UILicenseSelect {
 		LicenseFrame.setVisible(true);
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
-		JLabel lblInstruction = l.createLabel("The License List show the currently available license");
+		JLabel lblInstruction = l.createLabel("The License List shows the currently unused licenses");
 		pnlInstruction.setBackground(CustomColor.LightBlue.returnColor());
 		lblInstruction.setForeground(Color.white);
 		lblInstruction.setFont(new Font("San Serif", Font.PLAIN, 18));
 		pnlInstruction.add(lblInstruction);
 
 		JPanel pnlLicenseList = p.createPanel(Layouts.flow);
-		JLabel lblLicenseList = l.createLabel("License List : \n  (col1,col2,col3)");
+		JLabel lblLicenseList = l.createLabel("License List :");
 		JList listLicense = new JList(model);
 		listLicense.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollLicense = new JScrollPane(listLicense);
@@ -85,7 +85,7 @@ public class UILicenseSelect {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// add License code here using new swing UI
-				
+				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
 			}
 		});
 
