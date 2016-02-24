@@ -33,6 +33,7 @@ import ui.components.Panel;
 public class UIInventorySelect {
 	public static APICall api = new APICall();
 	private JFrame inventoryFrame;
+	private JList listInventory;
 	public void runInventorySelect() {
 		Panel p = new Panel();
 		Button b = new Button();
@@ -57,7 +58,7 @@ public class UIInventorySelect {
 
 		JPanel pnlInventoryList = p.createPanel(Layouts.flow);
 		JLabel lblInventoryList = l.createLabel("Inventory List : \n  (ID, Registration Number, MAC Address)");
-		JList listInventory = new JList(model);
+		listInventory = new JList(model);
 		listInventory.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollInventory = new JScrollPane(listInventory);
 		scrollInventory.setPreferredSize(new Dimension(300, 150));
@@ -136,5 +137,10 @@ public class UIInventorySelect {
 	
 	public void setFrameVisible(){
 		inventoryFrame.setVisible(true);
+	}
+	
+	public void updateInventoryList(){
+		DefaultListModel<String> inventoryList = getInventoryData(new DefaultListModel<String>());
+		listInventory.setModel(inventoryList);
 	}
 }
