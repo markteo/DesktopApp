@@ -76,12 +76,9 @@ public class UIFileUploadHTTP {
 					try {
 						JSONObject responseObject = new JSONObject(response);
 						if(responseObject.get("result").equals("ok")){
-							
-							UIBucketSelect bucketUI = new UIBucketSelect();
 							uploadInventoryFrame.setVisible(false);
-							UIInventorySelect inventoryUI = new UIInventorySelect();
-							inventoryUI.runInventorySelect();
-							
+							Data.uiInventorySelect.setFrameVisible();
+							Data.uiInventorySelect.updateInventoryList();
 						}else{
 							 final JPanel panel = new JPanel();
 							 JOptionPane.showMessageDialog(panel, "Please check file", "Error", JOptionPane.ERROR_MESSAGE);

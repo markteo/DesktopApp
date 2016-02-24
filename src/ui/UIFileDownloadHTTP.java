@@ -58,6 +58,9 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				buttonDownloadActionPerformed(event);
+				UIFileUploadHTTP uploadUI = new UIFileUploadHTTP();
+				setVisible(false);
+				uploadUI.runUpload();
 			}
 		});
 		
@@ -113,7 +116,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			progressBar.setValue(0);
 			APICall api = new APICall();
 			String response = api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
-
+			System.out.println(response);
 		}catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Error executing upload task: " + ex.getMessage(), "Error",
@@ -144,3 +147,4 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		progressBar.setValue(value);
 	}
 }
+
