@@ -47,7 +47,7 @@ public class UIBucketSelect implements Runnable{
 		
 		JList listBucket = new JList(model);
 		
-		System.out.println("Hello");
+		System.out.println("Awaiting bucketList");
 //		synchronized(model){
 //            try{
 //                System.out.println("Waiting for b to complete...");
