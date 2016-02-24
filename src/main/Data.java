@@ -11,6 +11,7 @@ public class Data {
 	public static String URL;
 	public static String registrationNumber;
 	public static int bucketID;
+	public static String licenseNumber;
 	public static UIInventorySelect uiInventorySelect;
 	public static UIBucketSelect uiBucketSelect;
 	
