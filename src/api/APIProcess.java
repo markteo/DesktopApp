@@ -63,8 +63,9 @@ public class APIProcess {
 				String licenseStatus = licenseJSON.getString("status");
 				
 				if(licenseStatus.equals("UNUSED")){
-					System.out.println("LicenseNumber: " + licenseJSON.getString("licenseNumber"));
-					
+					JSONObject license = new JSONObject();
+					license.put("licenseNumber", licenseJSON.getString("licenseNumber"));
+					nodeLicenseList.put(license);
 				}
 			}
 			
