@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -84,7 +85,7 @@ public class UIBucketSelect implements Runnable{
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
 		JButton btnBack = b.createButton("Back");
-
+		
 		// Button events
 		btnBack.addActionListener(new ActionListener() {
 			@Override
@@ -101,21 +102,30 @@ public class UIBucketSelect implements Runnable{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// do something with selected Bucket
-				System.out.println(listBucket.getModel().getElementAt(listBucket.getSelectedIndex()));
-				String itemSelected = listBucket.getModel().getElementAt(listBucket.getSelectedIndex())
-						.toString();
-				String[] itemData = itemSelected.split("\\,");
-				Data.bucketID = Integer.parseInt(itemData[0].trim());
-
-				bucketFrame.setVisible(false);
-				UILicenseSelect uiLicense = new UILicenseSelect();
-				uiLicense.runLicenseSelect();
+					String itemSelected = listBucket.getModel().getElementAt(listBucket.getSelectedIndex())
+							.toString();
+					String[] itemData = itemSelected.split("\\,");
+					Data.bucketID = Integer.parseInt(itemData[0].trim());
+					bucketFrame.setVisible(false);
+					Data.uiLicenseSelect = new UILicenseSelect();
+					Data.uiLicenseSelect.runLicenseSelect();
 				
+			}
+		});
+		
+		JButton btnRefresh = b.createButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getBucketData();
+				listBucket.setModel(model);
 			}
 		});
 
 		pnlButtons.add(btnBack);
 		pnlButtons.add(btnSelectElements);
+		pnlButtons.add(btnRefresh);
 
 		bucketFrame.add(pnlInstruction, BorderLayout.NORTH);
 		bucketFrame.add(pnlBucketList, BorderLayout.CENTER);
@@ -129,6 +139,7 @@ public class UIBucketSelect implements Runnable{
 		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
 		System.out.println("Got entire bucket List");
 		System.out.println(bucketList);
+		model = new DefaultListModel<String>();
 		try {
 			System.out.println("Starting model data");
 			model.addElement("ID, BucketName");
