@@ -8,7 +8,7 @@ import api.APICall;
 
 public class DesktopAppMain {
 	private static String apiURL = "";
-	private static final String bucket = "/api/superadmin/";
+	private static final String bucket = "/api/marktest/";
 	public static String sessionKey;
 
 	public static void main(String args[]) {
