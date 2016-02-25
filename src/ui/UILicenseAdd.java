@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.FeatureDescriptor;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -23,12 +25,20 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import main.Data;
 import ui.components.Button;
 import ui.components.CheckBoxList;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APICall;
+import api.APIProcess;
 
 public class UILicenseAdd {
 	
@@ -43,8 +53,10 @@ public class UILicenseAdd {
 	private JPanel pnlBtns;
 	private DefaultListModel<String> mdlFeature;
 	private JScrollPane scrollFeature;
-	
+	private APIProcess api = new APIProcess();
 	public void runLicenseAdd(){
+		getFeaturesData();
+		
 		init();
 	}
 	
@@ -75,17 +87,11 @@ public class UILicenseAdd {
 	private void initSettingPanel() {
 		JPanel pnlSettingLayout = p.createPanel(Layouts.grid, 2, 2);
 		pnlSettingLayout.setBorder(new EmptyBorder(10,10,10,10));
-		JLabel lblCustomerID = l.createLabel("Customer ID:");
 		JLabel lblCloudStorage = l.createLabel("Cloud Storage:");
 		JLabel lblPeriod = l.createLabel("Validity Period:");
 		JLabel lblConcurrentVCA = l.createLabel("Maximum concurrent VCA:");
 
-		JComboBox ddCustomerId = new JComboBox();
-		String[] arrayCustomerId = {};
-		for (int i = 0; i < arrayCustomerId.length; i++) {
-			ddCustomerId.addItem(arrayCustomerId[i]);
-		}
-
+		
 		SpinnerModel smStorage = new SpinnerNumberModel(1, 1, 1, 1);
 		SpinnerModel smPeriod = new SpinnerNumberModel(1, 1, 24, 1);
 		SpinnerModel smVca = new SpinnerNumberModel(1, 1, 4, 1);
@@ -94,7 +100,7 @@ public class UILicenseAdd {
 		JSpinner spinnerPeriod = new JSpinner(smPeriod);
 		JSpinner spinnerVca = new JSpinner(smVca);
 
-		Component[] listSettingComponent = { lblCustomerID, ddCustomerId, lblCloudStorage, spinnerStorage, lblPeriod,
+		Component[] listSettingComponent = { lblCloudStorage, spinnerStorage, lblPeriod,
 				spinnerPeriod, lblConcurrentVCA, spinnerVca };
 		
 		for(Component c:listSettingComponent){
@@ -114,43 +120,48 @@ public class UILicenseAdd {
 		JLabel lblFeatureCategory = l.createLabel("Feature Categories:");
 		// Feature Category
 		CheckBoxList cblFeaturesCategory = new CheckBoxList();
-		JCheckBox element1 = new JCheckBox("Element 1");
-		JCheckBox element2 = new JCheckBox("Element 2");
-
-		element1.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				String[] arrayName = { "Test 1", "Test 2", "Test 3", "Test 4" };
-				if (element1.isSelected()) {
-					for (String n : arrayName)
-						mdlFeature.addElement(n);
-				} else {
-					for (String n : arrayName)
-						mdlFeature.removeElement(n);
+		ArrayList<JCheckBox> arrayCheckBox = new ArrayList<JCheckBox>();
+		mdlFeature = new DefaultListModel<>();
+		for(String key : Data.featureList.keySet()){
+			JSONArray featureArray = Data.featureList.get(key);
+			JCheckBox element = new JCheckBox(key);
+			element.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// TODO Auto-generated method stub
+					if(element.isSelected()){
+						mdlFeature.removeAllElements();
+						for(int i = 0; i < featureArray.length(); i ++){
+							try {
+								mdlFeature.addElement(featureArray.getJSONObject(i).getString("name"));
+							} catch (JSONException e1) {
+								e1.printStackTrace();
+							}
+						}
+					}else{
+						
+					}
 				}
-			}
-		});
-		element2.addItemListener(new ItemListener() {
+			});
+			arrayCheckBox.add(element);
+		}
+		
 
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (element2.isSelected()) {
-					mdlFeature.addElement("Inner Element 2");
-				} else {
-					mdlFeature.removeElement("Inner Element 2");
-				}
-			}
-		});
-
-		JCheckBox[] arrayCheckBox = new JCheckBox[] { element1, element2 };
-		cblFeaturesCategory.setListData(arrayCheckBox);
+		cblFeaturesCategory.setListData(arrayCheckBox.toArray());
 		JScrollPane scrollFeaturesCategory = new JScrollPane(cblFeaturesCategory);
 		Component[] arrayFeatureCategory = { lblFeatureCategory, scrollFeaturesCategory };
 
 		// Feature
 		JLabel lblFeature = l.createLabel("Features:");
-		mdlFeature = new DefaultListModel<>();
+		
 		JList listFeature = new JList(mdlFeature);
+		listFeature.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+								
+			}
+		});
 		listFeature.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		scrollFeature = new JScrollPane(listFeature);
 		Component[] arrayFeature = { lblFeature, scrollFeature };
@@ -199,6 +210,11 @@ public class UILicenseAdd {
 		pnlButtonLayout.add(btnSubmit);
 		pnlButtonLayout.add(btnCancel);
 		pnlBtns.add(pnlButtonLayout);
+	}
+	
+	public void getFeaturesData(){
+		api.featuresList(Data.targetURL, Data.sessionKey, Data.bucketID);
+		
 	}
 
 }
