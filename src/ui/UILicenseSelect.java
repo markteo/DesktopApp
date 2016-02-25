@@ -34,6 +34,8 @@ import customColor.CustomColor;
 
 public class UILicenseSelect {
 	public static APICall api = new APICall();
+	private JFrame licenseFrame;
+	private JList listLicense;
 	public void runLicenseSelect() {
 		Panel p = new Panel();
 		Button b = new Button();
@@ -56,10 +58,10 @@ public class UILicenseSelect {
 //			e1.printStackTrace();
 //		}
 		// start of ui
-		JFrame LicenseFrame = new JFrame("License");
-		LicenseFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		LicenseFrame.setLayout(new BorderLayout());
-		LicenseFrame.setVisible(true);
+		licenseFrame = new JFrame("License");
+		licenseFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		licenseFrame.setLayout(new BorderLayout());
+		licenseFrame.setVisible(true);
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
 		JLabel lblInstruction = l.createLabel("The License List shows the currently unused licenses");
@@ -70,7 +72,7 @@ public class UILicenseSelect {
 
 		JPanel pnlLicenseList = p.createPanel(Layouts.flow);
 		JLabel lblLicenseList = l.createLabel("License List :");
-		JList listLicense = new JList(model);
+		listLicense = new JList(model);
 		listLicense.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollLicense = new JScrollPane(listLicense);
 		scrollLicense.setPreferredSize(new Dimension(300, 150));
@@ -85,7 +87,9 @@ public class UILicenseSelect {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// add License code here using new swing UI
+				licenseFrame.setVisible(false);
 				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
+				uiLicenseAdd.runLicenseAdd();
 			}
 		});
 
@@ -103,10 +107,10 @@ public class UILicenseSelect {
 		pnlButtons.add(btnAddElements);
 		pnlButtons.add(btnSelectElements);
 
-		LicenseFrame.add(pnlInstruction, BorderLayout.NORTH);
-		LicenseFrame.add(pnlLicenseList, BorderLayout.CENTER);
-		LicenseFrame.add(pnlButtons, BorderLayout.SOUTH);
-		LicenseFrame.pack();
+		licenseFrame.add(pnlInstruction, BorderLayout.NORTH);
+		licenseFrame.add(pnlLicenseList, BorderLayout.CENTER);
+		licenseFrame.add(pnlButtons, BorderLayout.SOUTH);
+		licenseFrame.pack();
 	}
 	private static DefaultListModel<String> getLicenseData(DefaultListModel<String> model){
 		
@@ -123,5 +127,12 @@ public class UILicenseSelect {
 		}
 		return model;
 	}
-
+	public void setFrameVisible(){
+		licenseFrame.setVisible(true);
+	}
+	
+	public void updateInventoryList(){
+		DefaultListModel<String> licenseList = getLicenseData(new DefaultListModel<String>());
+		listLicense.setModel(licenseList);
+	}
 }
