@@ -1,5 +1,10 @@
 package api;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import main.Data;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,6 +122,34 @@ public class APIProcess {
 		return null;
 	}
 	
-	
+	public void featuresList(String targetURL, String sessionKey, int bucketID){
+		Data.featureList = new HashMap<String, JSONArray>();
+		
+		String response = api.getAssignableFeatures(targetURL, sessionKey, bucketID);
+		
+		try{
+			JSONObject featureResponse = new JSONObject(response);
+			JSONArray features = featureResponse.getJSONArray("features");
+			ArrayList<String> types = new ArrayList<String>();
+			for(int x = 0; x < features.length(); x ++){
+				JSONObject feature = features.getJSONObject(x);
+				String type = feature.getString("type");
+				if(Data.featureList.containsKey(type)){
+					JSONArray featureArray = Data.featureList.get(type);
+					featureArray.put(feature);
+				}else{
+					JSONArray featureArray = new JSONArray();
+					featureArray.put(feature);
+					Data.featureList.put(type, featureArray);
+				}
+			}
+			System.out.println(types.size());
+			
+		}catch(JSONException e){
+			e.printStackTrace();
+		}
+		
+		
+	}
 	
 }
