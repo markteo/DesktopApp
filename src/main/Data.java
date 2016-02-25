@@ -1,8 +1,12 @@
 package main;
 
+import java.util.HashMap;
+
+import org.json.JSONArray;
+
 import ui.UIBucketSelect;
 import ui.UIInventorySelect;
-import ui.UILicenseAdd;
+import ui.UILicenseSelect;
 
 public class Data {
 	public static String bucket;
@@ -15,6 +19,6 @@ public class Data {
 	public static String licenseNumber;
 	public static UIInventorySelect uiInventorySelect;
 	public static UIBucketSelect uiBucketSelect;
-	
-	
+	public static UILicenseSelect uiLicenseSelect;
+	public static HashMap<String, JSONArray> featureList;
 }
