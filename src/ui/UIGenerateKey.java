@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +43,7 @@ public class UIGenerateKey {
 		l.addPadding(lblAccessKey, 10);
 		tfKey = new JTextField();
 		tfKey.setEditable(false);
+		tfKey.setPreferredSize(new Dimension(300,50));
 		btnGenerate = b.createButton("Generate");
 		b.addPadding(btnGenerate, 10);
 		btnGenerate.addActionListener(new ActionListener() {
