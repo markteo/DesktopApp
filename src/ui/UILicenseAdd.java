@@ -8,13 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.FeatureDescriptor;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -28,16 +27,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import main.Data;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import main.Data;
 import ui.components.Button;
 import ui.components.CheckBoxList;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
-import api.APICall;
 import api.APIProcess;
 
 public class UILicenseAdd {
@@ -52,6 +51,10 @@ public class UILicenseAdd {
 	private JPanel pnlApiService;
 	private JPanel pnlBtns;
 	private DefaultListModel<String> mdlFeature;
+	private DefaultListModel<String> mdlSvcUsed;
+	private JList listSvcUsed;
+
+
 	private JScrollPane scrollFeature;
 	private APIProcess api = new APIProcess();
 	public void runLicenseAdd(){
@@ -73,7 +76,7 @@ public class UILicenseAdd {
 
 		initSettingPanel();
 		initFeaturePanel();
-		initApiServicePanel();
+		//initApiServicePanel();
 		initBtnPanel();
 
 		licenseAdd.add(pnlSetting, BorderLayout.NORTH);
@@ -118,10 +121,13 @@ public class UILicenseAdd {
 		JPanel pnlFeatureLayout = p.createPanel(Layouts.grid, 2, 2);
 		pnlFeatureLayout.setBorder(new EmptyBorder(10,10,10,10));
 		JLabel lblFeatureCategory = l.createLabel("Feature Categories:");
+		JPanel pnlApiSvcLayout = p.createPanel(Layouts.grid,1,1);
+		JLabel lblServiceUsed = l.createLabel("Service APIs Used");
 		// Feature Category
 		CheckBoxList cblFeaturesCategory = new CheckBoxList();
 		ArrayList<JCheckBox> arrayCheckBox = new ArrayList<JCheckBox>();
 		mdlFeature = new DefaultListModel<>();
+		
 		for(String key : Data.featureList.keySet()){
 			JSONArray featureArray = Data.featureList.get(key);
 			JCheckBox element = new JCheckBox(key);
@@ -131,13 +137,26 @@ public class UILicenseAdd {
 					// TODO Auto-generated method stub
 					if(element.isSelected()){
 						mdlFeature.removeAllElements();
+						HashMap<String, String> servicesList =  new HashMap<String, String>();
+						mdlSvcUsed = new DefaultListModel<>();
+
 						for(int i = 0; i < featureArray.length(); i ++){
 							try {
 								mdlFeature.addElement(featureArray.getJSONObject(i).getString("name"));
+								JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
+								for(int x = 0; x < servicesArray.length(); x ++){
+									servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
+								}
+								
 							} catch (JSONException e1) {
 								e1.printStackTrace();
 							}
 						}
+						
+						for(String serviceKey : servicesList.keySet()){
+							mdlSvcUsed.addElement(servicesList.get(serviceKey));
+						}
+						listSvcUsed.setModel(mdlSvcUsed);
 					}else{
 						
 					}
@@ -159,30 +178,39 @@ public class UILicenseAdd {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-								
+							
 			}
 		});
 		listFeature.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		listSvcUsed = new JList();
+		JScrollPane scrollSvcUsed = new JScrollPane(listSvcUsed);
+		scrollSvcUsed.setPreferredSize(new Dimension(300,300));
+		
 		scrollFeature = new JScrollPane(listFeature);
 		Component[] arrayFeature = { lblFeature, scrollFeature };
+		Component[] arraySvcUsedComp = {lblServiceUsed,scrollSvcUsed};
 
 		p.addComponentsToPanel(pnlFeatureLayout, arrayFeatureCategory);
 		p.addComponentsToPanel(pnlFeatureLayout, arrayFeature);
+		p.addComponentsToPanel(pnlApiSvcLayout, arraySvcUsedComp);
+
 
 		pnlFeature.add(pnlFeatureLayout);
-	}
-
-	private void initApiServicePanel(){
-		JPanel pnlApiSvcLayout = p.createPanel(Layouts.grid,1,1);
-		JLabel lblServiceUsed = l.createLabel("Service APIs Used");
-		DefaultListModel<String> mdlSvcUsed = new DefaultListModel<>();
-		JList listSvcUsed = new JList(mdlSvcUsed);
-		JScrollPane scrollSvcUsed = new JScrollPane(listSvcUsed);
-		scrollSvcUsed.setPreferredSize(new Dimension(300,300));
-		Component[] arraySvcUsedComp = {lblServiceUsed,scrollSvcUsed};
-		p.addComponentsToPanel(pnlApiSvcLayout, arraySvcUsedComp);
 		pnlApiService.add(pnlApiSvcLayout);
 	}
+
+//	private void initApiServicePanel(){
+//		JPanel pnlApiSvcLayout = p.createPanel(Layouts.grid,1,1);
+//		JLabel lblServiceUsed = l.createLabel("Service APIs Used");
+//		DefaultListModel<String> mdlSvcUsed = new DefaultListModel<>();
+//		JList listSvcUsed = new JList(mdlSvcUsed);
+//		JScrollPane scrollSvcUsed = new JScrollPane(listSvcUsed);
+//		scrollSvcUsed.setPreferredSize(new Dimension(300,300));
+//		Component[] arraySvcUsedComp = {lblServiceUsed,scrollSvcUsed};
+//		p.addComponentsToPanel(pnlApiSvcLayout, arraySvcUsedComp);
+//		pnlApiService.add(pnlApiSvcLayout);
+//	}
 	
 	private void initBtnPanel(){
 		JPanel pnlButtonLayout = p.createPanel(Layouts.flow);
@@ -203,7 +231,8 @@ public class UILicenseAdd {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("Cancel");
+				licenseAdd.setVisible(false);
+				Data.uiLicenseSelect.setFrameVisible();
 			}
 		});
 		
