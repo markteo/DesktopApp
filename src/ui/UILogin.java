@@ -20,19 +20,18 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import main.Data;
-import main.DesktopAppMain;
-
 import org.jdesktop.xswingx.PromptSupport;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import api.APICall;
+import customColor.CustomColor;
+import main.Data;
+import main.DesktopAppMain;
 import ui.components.Button;
 import ui.components.Layouts;
 import ui.components.Panel;
-import api.APICall;
-import customColor.CustomColor;
 
 
 public class UILogin {
@@ -74,8 +73,9 @@ public class UILogin {
 		
 		JPanel buttonPanel = p.createPanel(Layouts.flow);
 		buttonPanel.setBorder(new EmptyBorder(0, 0, 25, 0));
-		JButton btnLogin = Button.createButton("Login");
-		JButton btnExit = Button.createButton("Exit");
+		Button b = new Button();
+		JButton btnLogin = b.createButton("Login");
+		JButton btnExit = b.createButton("Exit");
 		btnLogin.setPreferredSize(new Dimension(150,50));
 		btnExit.setPreferredSize(new Dimension(150,50));
 		Component[] arrayBtn = {btnLogin,btnExit};

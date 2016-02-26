@@ -1,5 +1,7 @@
 package ui.components;
 
+import java.awt.Color;
+
 import javax.swing.JButton;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -10,7 +12,7 @@ import customColor.CustomColor;
 
 public class Button {
 
-	public static JButton createButton(String btnName) {
+	public JButton createButton(String btnName) {
 		JButton button = new JButton(btnName);
 		button.setForeground(CustomColor.Grey.returnColor());
 		button.setBackground(CustomColor.GreyishBlue.returnColor());
@@ -20,5 +22,9 @@ public class Button {
 		button.setBorder(compound);
 		
 		return button;
+	}
+	
+	public void addPadding(JButton btn,int padding){
+		btn.setBorder(new EmptyBorder(padding,padding,padding,padding));
 	}
 }
