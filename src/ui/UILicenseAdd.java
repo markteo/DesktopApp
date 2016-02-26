@@ -24,19 +24,19 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import main.Data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import ui.components.Button;
 import ui.components.CheckBoxList;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APICall;
 import api.APIProcess;
 
 public class UILicenseAdd {
@@ -53,10 +53,13 @@ public class UILicenseAdd {
 	private DefaultListModel<String> mdlFeature;
 	private DefaultListModel<String> mdlSvcUsed;
 	private JList listSvcUsed;
-
-
+	
+	private CheckBoxList cblFeaturesCategory;
 	private JScrollPane scrollFeature;
 	private APIProcess api = new APIProcess();
+	private APICall apiCall = new APICall();
+	private HashMap<String, JSONArray> featuresList = new HashMap<String, JSONArray>();
+	private String currentSelected;
 	public void runLicenseAdd(){
 		getFeaturesData();
 		
@@ -124,7 +127,7 @@ public class UILicenseAdd {
 		JPanel pnlApiSvcLayout = p.createPanel(Layouts.grid,1,1);
 		JLabel lblServiceUsed = l.createLabel("Service APIs Used");
 		// Feature Category
-		CheckBoxList cblFeaturesCategory = new CheckBoxList();
+		cblFeaturesCategory = new CheckBoxList();
 		ArrayList<JCheckBox> arrayCheckBox = new ArrayList<JCheckBox>();
 		mdlFeature = new DefaultListModel<>();
 		
@@ -138,7 +141,7 @@ public class UILicenseAdd {
 					if(element.isSelected()){
 						mdlFeature.removeAllElements();
 						HashMap<String, String> servicesList =  new HashMap<String, String>();
-						mdlSvcUsed = new DefaultListModel<>();
+						mdlSvcUsed = new DefaultListModel<String>();
 
 						for(int i = 0; i < featureArray.length(); i ++){
 							try {
@@ -157,8 +160,21 @@ public class UILicenseAdd {
 							mdlSvcUsed.addElement(servicesList.get(serviceKey));
 						}
 						listSvcUsed.setModel(mdlSvcUsed);
-					}else{
 						
+						currentSelected = element.getText();
+						featuresList.put(currentSelected, featureArray);
+						System.out.println(featuresList.toString());
+					}else{
+						currentSelected = element.getText();
+						featuresList.remove(currentSelected);
+						int[] selected = listSvcUsed.getSelectedIndices();
+						JSONArray featureJSONArray = new JSONArray();
+						
+					    // Get all the selected items using the indices
+					    for (int i = 0; i < selected.length; i++) {
+					      listSvcUsed.getModel().getElementAt(selected[i]);
+					    }
+					
 					}
 				}
 			});
@@ -174,13 +190,7 @@ public class UILicenseAdd {
 		JLabel lblFeature = l.createLabel("Features:");
 		
 		JList listFeature = new JList(mdlFeature);
-		listFeature.addListSelectionListener(new ListSelectionListener() {
-			
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-							
-			}
-		});
+		
 		listFeature.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
 		listSvcUsed = new JList();
@@ -221,8 +231,19 @@ public class UILicenseAdd {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("Submitted");
+				JSONObject features = new JSONObject();				
+				//listSelected.
+				JSONArray featureArray = new JSONArray();
+				for(String key : featuresList.keySet()){
+					featureArray.put(featuresList.get(key));
+				}
+				try {
+					features.put("features", featureArray);
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				apiCall.addNodeLicense(Data.targetURL, Data.sessionKey, Data.bucketID, features.toString());
 			}
 		});
 		
