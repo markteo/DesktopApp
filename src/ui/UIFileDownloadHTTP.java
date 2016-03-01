@@ -17,12 +17,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import api.APICall;
 import main.Data;
 import ui.components.Button;
 import ui.components.FilePicker;
 import ui.components.Label;
 import ui.components.Panel;
-import api.APICall;
 
 public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener {
 
@@ -78,9 +78,15 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
         constraints.fill = GridBagConstraints.NONE;
         add(filePicker, constraints);
  
-        constraints.gridy = 2;
-        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.anchor = GridBagConstraints.EAST;
         add(download, constraints);
+        
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.anchor = GridBagConstraints.EAST;
+        add(btnSkip, constraints);
          
         constraints.gridx = 0;
         constraints.gridy = 3;
@@ -124,7 +130,8 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	}
 	
 	private void buttonSkipActionPerformed(ActionEvent event) {
-		
+		UIFileUploadHTTP upload = new UIFileUploadHTTP();
+		upload.runUpload();
 	}
 
 	@Override
