@@ -51,7 +51,8 @@ public class UILicenseAdd {
 	private JPanel pnlApiService;
 	private JPanel pnlBtns;
 	private DefaultListModel<String> mdlSvcUsed;
-	private JList listSvcUsed = new JList();
+	private DefaultListModel<String> mdlFeature;
+	private JList listSvcUsed;
 	
 	private CheckBoxList cblFeaturesCategory;
 	private CheckBoxList currentFeature;
@@ -127,12 +128,12 @@ public class UILicenseAdd {
 		JPanel pnlApiSvcLayout = p.createPanel(Layouts.grid,1,1);
 		JLabel lblServiceUsed = l.createLabel("Service APIs Used");
 		JLabel lblFeature = l.createLabel("Features:");
-		scrollFeature = new JScrollPane(currentFeature);
-		Component[] arrayFeature = { lblFeature, scrollFeature };
+		
 
 		// Feature Category
 		cblFeaturesCategory = new CheckBoxList();
 		ArrayList<JCheckBox> arrayCheckBox = new ArrayList<JCheckBox>();
+		mdlFeature = new DefaultListModel<String>();
 		currentFeature = new CheckBoxList();
 		for(String key : Data.featureList.keySet()){
 			JSONArray featureArray = Data.featureList.get(key);
@@ -158,12 +159,13 @@ public class UILicenseAdd {
 				public void itemStateChanged(ItemEvent e) {
 					// TODO Auto-generated method stub
 					if(element.isSelected()){
-						scrollFeature.removeAll();
+						mdlFeature.removeAllElements();
 						HashMap<String, String> servicesList =  new HashMap<String, String>();
 						mdlSvcUsed = new DefaultListModel<String>();
 
 						for(int i = 0; i < featureArray.length(); i ++){
 							try {
+								mdlFeature.addElement(featureArray.getJSONObject(i).getString("name"));
 								JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
 								for(int x = 0; x < servicesArray.length(); x ++){
 									servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
@@ -176,11 +178,6 @@ public class UILicenseAdd {
 						for(String serviceKey : servicesList.keySet()){
 							mdlSvcUsed.addElement(servicesList.get(serviceKey));
 						}
-						
-						
-						System.out.println(checkFeatures.size());
-						scrollFeature.add(checkFeatures.get(key));
-						arrayFeature[1] = scrollFeature;
 						
 						listSvcUsed.setModel(mdlSvcUsed);
 						
@@ -208,7 +205,12 @@ public class UILicenseAdd {
 		Component[] arrayFeatureCategory = { lblFeatureCategory, scrollFeaturesCategory };
 
 		// Feature
+		JList listFeature = new JList(mdlFeature);
+		listFeature.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
+		listSvcUsed = new JList();
+		scrollFeature = new JScrollPane(listFeature);
+		Component[] arrayFeature = { lblFeature, scrollFeature };
 		
 		JScrollPane scrollSvcUsed = new JScrollPane(listSvcUsed);
 		scrollSvcUsed.setPreferredSize(new Dimension(300,300));
