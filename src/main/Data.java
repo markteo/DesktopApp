@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.json.JSONArray;
 
 import ui.UIBucketSelect;
+import ui.UIGenerateKey;
 import ui.UIInventorySelect;
 import ui.UILicenseSelect;
 
@@ -21,4 +22,5 @@ public class Data {
 	public static UIBucketSelect uiBucketSelect;
 	public static UILicenseSelect uiLicenseSelect;
 	public static HashMap<String, JSONArray> featureList;
+	public static UIGenerateKey uiGenerateKey;
 }
