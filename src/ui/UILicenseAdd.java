@@ -24,6 +24,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import main.Data;
 
@@ -59,8 +61,9 @@ public class UILicenseAdd {
 	private JScrollPane scrollFeature;
 	private APIProcess api = new APIProcess();
 	private APICall apiCall = new APICall();
-	private HashMap<String, JSONArray> featuresList = new HashMap<String, JSONArray>();
+	private HashMap<String, String> featuresList = new HashMap<String, String>();
 	private HashMap<String, CheckBoxList> checkFeatures = new HashMap<String, CheckBoxList>();
+	
 	private String currentSelected;
 	public void runLicenseAdd(){
 		getFeaturesData();
@@ -166,6 +169,7 @@ public class UILicenseAdd {
 						for(int i = 0; i < featureArray.length(); i ++){
 							try {
 								mdlFeature.addElement(featureArray.getJSONObject(i).getString("name"));
+								featuresList.put(featureArray.getJSONObject(i).getString("name"), "");
 								JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
 								for(int x = 0; x < servicesArray.length(); x ++){
 									servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
@@ -180,18 +184,16 @@ public class UILicenseAdd {
 						}
 						
 						listSvcUsed.setModel(mdlSvcUsed);
-						
-						currentSelected = element.getText();
-						featuresList.put(currentSelected, featureArray);
-						System.out.println(featuresList.toString());
 					}else{
 						currentSelected = element.getText();
-						featuresList.remove(currentSelected);
-						JSONArray featureJSONArray = new JSONArray();
-						
-					    // Get all the selected items using the indices
-					    
-					
+						for(int i = 0; i < featureArray.length(); i ++){
+							try {
+								featuresList.remove(featureArray.getJSONObject(i).getString("name"));
+							} catch (JSONException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}					    
 					}
 				}
 			});
@@ -207,8 +209,22 @@ public class UILicenseAdd {
 		// Feature
 		JList listFeature = new JList(mdlFeature);
 		listFeature.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
+		listFeature.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				
+				int[] selected = listFeature.getSelectedIndices();
+				for (int i = 0; i < selected.length; i++) {
+				     String name =  listFeature.getModel().getElementAt(selected[i]).toString();
+				     featuresList.put(name, "");
+				}
+				
+				
+			}
+		});
 		listSvcUsed = new JList();
+		
 		scrollFeature = new JScrollPane(listFeature);
 		Component[] arrayFeature = { lblFeature, scrollFeature };
 		
@@ -252,19 +268,11 @@ public class UILicenseAdd {
 				String[] features = new String[]{};
 				//listSelected.
 				for(String key : featuresList.keySet()){
-					JSONArray feature = featuresList.get(key);
-					for(int i = 0; i < feature.length(); i ++){
-						try {
-							featureL.add(feature.getJSONObject(i).getString("name"));
-						} catch (JSONException e1) {
-							e1.printStackTrace();
-						}
-					}
+					
+					featureL.add(key);
+					
 				}
-				int[] selected = listSvcUsed.getSelectedIndices();
-				for (int i = 0; i < selected.length; i++) {
-				      listSvcUsed.getModel().getElementAt(selected[i]);
-				}
+				
 				
 				features = featureL.toArray(features);
 //				try {
