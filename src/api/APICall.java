@@ -157,15 +157,11 @@ public class APICall {
 		return null;
 	}
 
-	public String addNodeLicense(String targetURL, String sessionKey, int bucketID, String[] features){
+	public String addNodeLicense(String targetURL, String sessionKey, int bucketID, String[] features, String duration, String storage, String maxVCA){
 		String api = "addnodelicense";
 		targetURL = targetURL + api;
 		
 		String urlParameters;
-		
-		String durationMonths = Helper.readString("Enter duration (months) > ");
-		String cloudStorage = Helper.readString("Enter cloud storage space (GB) > ");
-		String maxVCA = Helper.readString("Enter max VCA count > ");
 		
 		String feature = "[";
 		
@@ -183,8 +179,8 @@ public class APICall {
 			urlParameters = "session-key=" 
 					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
 					+ URLEncoder.encode(Integer.toString(bucketID), enc) + "&duration-months="
-					+ URLEncoder.encode(durationMonths, enc) + "&cloud-storage-gb="
-					+ URLEncoder.encode(cloudStorage, enc) + "&max-vca-count="
+					+ URLEncoder.encode(duration, enc) + "&cloud-storage-gb="
+					+ URLEncoder.encode(storage, enc) + "&max-vca-count="
 					+ URLEncoder.encode(maxVCA, enc) + "&features="
 					+ URLEncoder.encode(feature, enc);
 			String response = executePost(targetURL, urlParameters);
