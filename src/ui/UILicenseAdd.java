@@ -65,6 +65,9 @@ public class UILicenseAdd {
 	private HashMap<String, CheckBoxList> checkFeatures = new HashMap<String, CheckBoxList>();
 	
 	private String currentSelected;
+	private JSpinner spinnerStorage;
+	private JSpinner spinnerPeriod;
+	private JSpinner spinnerVca;
 	public void runLicenseAdd(){
 		getFeaturesData();
 		init();
@@ -106,9 +109,9 @@ public class UILicenseAdd {
 		SpinnerModel smPeriod = new SpinnerNumberModel(1, 1, 24, 1);
 		SpinnerModel smVca = new SpinnerNumberModel(1, 1, 4, 1);
 
-		JSpinner spinnerStorage = new JSpinner(smStorage);
-		JSpinner spinnerPeriod = new JSpinner(smPeriod);
-		JSpinner spinnerVca = new JSpinner(smVca);
+		spinnerStorage = new JSpinner(smStorage);
+		spinnerPeriod = new JSpinner(smPeriod);
+		spinnerVca = new JSpinner(smVca);
 
 		Component[] listSettingComponent = { lblCloudStorage, spinnerStorage, lblPeriod,
 				spinnerPeriod, lblConcurrentVCA, spinnerVca };
@@ -268,20 +271,25 @@ public class UILicenseAdd {
 				String[] features = new String[]{};
 				//listSelected.
 				for(String key : featuresList.keySet()){
-					
 					featureL.add(key);
-					
+				}
+				features = featureL.toArray(features);
+				String duration = spinnerPeriod.getValue().toString();
+				String storage = spinnerStorage.getValue().toString();
+				String maxVCA = spinnerVca.getValue().toString();
+				String response = apiCall.addNodeLicense(Data.targetURL, Data.sessionKey, Data.bucketID, features, duration, storage, maxVCA);
+				
+				try {
+					JSONObject responseObject = new JSONObject(response);
+					if(responseObject.get("result").equals("ok")){
+						licenseAdd.setVisible(false);
+						Data.uiLicenseSelect.setFrameVisible();
+					}
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 				
-				
-				features = featureL.toArray(features);
-//				try {
-//					features.put("features", featureArray);
-//				} catch (JSONException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-				apiCall.addNodeLicense(Data.targetURL, Data.sessionKey, Data.bucketID, features);
 			}
 		});
 		
