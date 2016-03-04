@@ -49,16 +49,6 @@ public class UIBucketSelect implements Runnable{
 		JList listBucket = new JList(model);
 		
 		System.out.println("Awaiting bucketList");
-//		synchronized(model){
-//            try{
-//                System.out.println("Waiting for b to complete...");
-//                model.wait();
-//            }catch(InterruptedException e){
-//                e.printStackTrace();
-//            }
-// 
-//           
-//        }
 		
 		
 		// start of ui
@@ -164,12 +154,12 @@ public class UIBucketSelect implements Runnable{
 		// TODO Auto-generated method stub
 		System.out.println();
 		getBucketData();
-//		try {
-//		    Thread.sleep(30000);
-//		    System.out.println("thread sleep ended");
-//		} catch(InterruptedException ex) {
-//		    Thread.currentThread().interrupt();
-//		}
+		try {
+		    Thread.sleep(30000);
+		    System.out.println("thread sleep ended");
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}
 		Thread.yield();
 	}
 	
