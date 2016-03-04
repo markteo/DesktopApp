@@ -102,7 +102,7 @@ public class UIBucketSelect implements Runnable{
 			}
 		});
 		
-		JButton btnRefresh = b.createButton("Refresh");
+		JButton btnRefresh = b.createButton("Refresh/Get Bucket List");
 		btnRefresh.addActionListener(new ActionListener() {
 			
 			@Override
