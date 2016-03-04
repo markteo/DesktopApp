@@ -101,8 +101,7 @@ public class UILicenseSelect {
 				String itemSelected = listLicense.getModel().getElementAt(listLicense.getSelectedIndex()).toString();
 				Data.licenseNumber = itemSelected;
 				licenseFrame.setVisible(false);
-				Data.uiGenerateKey = new UIGenerateKey();
-				Data.uiGenerateKey.runGenerateAccessKey();
+				Data.uiAccessKeySelect = new UIAccessKeySelect();
 			}
 		});
 
