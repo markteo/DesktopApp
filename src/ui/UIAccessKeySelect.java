@@ -110,7 +110,6 @@ public class UIAccessKeySelect{
 			public void actionPerformed(ActionEvent e) {
 				Data.uiGenerateKey = new UIGenerateKey();
 				accessKeyFrame.setVisible(false);
-				Data.uiGenerateKey.runGenerateAccessKey();
 			}
 		});
 
