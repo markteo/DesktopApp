@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.json.JSONArray;
 
+import ui.UIAccessKeySelect;
 import ui.UIBucketSelect;
 import ui.UIGenerateKey;
 import ui.UIInventorySelect;
@@ -23,4 +24,6 @@ public class Data {
 	public static UILicenseSelect uiLicenseSelect;
 	public static HashMap<String, JSONArray> featureList;
 	public static UIGenerateKey uiGenerateKey;
+	public static UIAccessKeySelect uiAccessKeySelect;
+	public static String accessKey;
 }
