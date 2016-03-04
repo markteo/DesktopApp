@@ -22,7 +22,6 @@ public class DesktopAppMain {
 			//generate accesskey
 			//get QR code
 		
-
 		String apiURL = Helper.readString("Enter api url > ");
 		Data.URL = apiURL;
 		String targetURL = apiURL + bucket;
