@@ -37,7 +37,6 @@ public class UIBucketSelect implements Runnable{
 	public UIBucketSelect(){
 		buckets = new Thread(this);
 		buckets.start();
-		runBucketSelect();
 		
 	}
 	public void runBucketSelect(){
@@ -155,6 +154,7 @@ public class UIBucketSelect implements Runnable{
 		System.out.println();
 		getBucketData();
 		Thread.yield();
+		runBucketSelect();
 	}
 	
 	public void setFrameVisible(){
