@@ -1,6 +1,8 @@
 package api;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import main.Data;
@@ -12,6 +14,7 @@ import org.json.JSONObject;
 public class APIProcess {
 
 	private APICall api = new APICall();
+	private final SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	
 	public JSONArray bucketList (String targetURL, String sessionKey){
 		
@@ -147,6 +150,47 @@ public class APIProcess {
 			
 		}catch(JSONException e){
 			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	public JSONArray getUnuseAccessKey(String targetURL, String sessionKey){
+		String response = api.getAccessKeyList(targetURL, sessionKey);
+		JSONArray accessKeyList = new JSONArray();
+		
+		try {
+			JSONObject jsonResponse = new JSONObject(response);
+			JSONArray jsonArray = jsonResponse.getJSONArray("key-list");
+			
+			for(int i = 0; i < jsonArray.length(); i ++){
+				JSONObject accessKey = new JSONObject();
+				JSONObject accessJSON = jsonArray.getJSONObject(i);
+				
+				int maxUseCount = accessJSON.getInt("maxUseCount");
+				int currentUseCount = accessJSON.getInt("currentUseCount");
+				String key = accessJSON.getString("key");
+				Date expiry = new Date(accessJSON.getLong("ttl"));
+				
+				accessKey.put("expiryDate", simpleDate.format(expiry));
+				accessKey.put("key", key);
+				
+				if(accessJSON.getBoolean("isValid")){
+					if(maxUseCount == -1){
+						accessKey.put("remainingUses", "Unlimited");
+						accessKeyList.put(accessKey);
+					}else if (currentUseCount < maxUseCount){
+						accessKey.put("remainingUses", Integer.toString(maxUseCount - currentUseCount));
+						accessKeyList.put(accessKey);
+					}
+				}
+			}
+			
+			return accessKeyList;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
 		
 		
