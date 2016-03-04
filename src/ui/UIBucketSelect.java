@@ -154,12 +154,6 @@ public class UIBucketSelect implements Runnable{
 		// TODO Auto-generated method stub
 		System.out.println();
 		getBucketData();
-		try {
-		    Thread.sleep(30000);
-		    System.out.println("thread sleep ended");
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		}
 		Thread.yield();
 	}
 	
