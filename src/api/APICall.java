@@ -279,21 +279,39 @@ public class APICall {
 		
 		return null;
 	}
-	public String generateAccessKey(String targetURL, String sessionKey, int userID){
+	public String generateAccessKey(String targetURL, String sessionKey, int userID, String ttl, String maxUse){
 		
 		String api = "generateaccesskey";
 		targetURL = targetURL + api;
 		String urlParameters;
 		
-		String ttl = Helper.readString("Enter ttl > ");
-		String maxUse = Helper.readString("Enter max use count > ");
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, enc) + "&user-id=" 
+					+ URLEncoder.encode(Integer.toString(userID), enc) + "&ttl="
+					+ URLEncoder.encode(ttl, enc) + "&max-use-count="
+					+ URLEncoder.encode(maxUse, enc);
+			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
+			return response;
+			
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public String getUserList(String targetURL, String sessionKey, int bucketID){
+		
+		String api = "getbucketusersbybucketid";
+		targetURL = targetURL + api;
+		String urlParameters;
 		
 		try{
 			urlParameters = "session-key=" 
 					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
-					+ URLEncoder.encode(Integer.toString(userID), enc) + "&ttl="
-					+ URLEncoder.encode(ttl, enc) + "&max-use-count="
-					+ URLEncoder.encode(maxUse, enc);
+					+ URLEncoder.encode(Integer.toString(bucketID), enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
