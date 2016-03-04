@@ -310,7 +310,7 @@ public class APICall {
 		
 		try{
 			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
+					+ URLEncoder.encode(sessionKey, enc) + "&bucketid=" 
 					+ URLEncoder.encode(Integer.toString(bucketID), enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
