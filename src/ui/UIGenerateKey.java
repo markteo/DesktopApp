@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -16,14 +17,20 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
+import main.Data;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APICall;
 
 public class UIGenerateKey {
-	private String[] arrayUser;
-	private String[] arrayCompanyID;
+	private String[] arrayUser = new String[]{};
 	private String[] arrayTimeUnit;
 
 	private JFrame frameGenerate;
@@ -31,13 +38,11 @@ public class UIGenerateKey {
 	private JPanel pnlAccessKey;
 
 	private JLabel lblAccessKey;
-	private JLabel lblCompanyID;
 	private JLabel lblUserName;
 	private JLabel lblExpiration;
 	private JLabel lblUses;
 
 	private JComboBox<String> listUser;
-	private JComboBox<String> listCompanyID;
 	private JComboBox<String> listTimeUnit;
 
 	private JCheckBox cbUnlimited;
@@ -52,14 +57,30 @@ public class UIGenerateKey {
 
 	private JButton btnGenerate;
 	private JButton btnBack;
+	
+	private JSONArray users;
+	private ArrayList<String> userList = new ArrayList<String>();
+	private APICall api = new APICall();
 
-	public String generateKey() {
+	public String generateKey(int userID, int timeNum, int maxUses) {
 		// Input generate key function here
-		String key = "";
-		tfKey.setText(key);
-		return key;
-	}
+		JSONObject response;
+		try {
+			response = new JSONObject(api.generateAccessKey(Data.targetURL, Data.sessionKey, userID, Integer.toString(timeNum), Integer.toString(maxUses)));
+			String result = response.getString("result");
+			tfKey.setText(response.getString("key"));
+			return result;
 
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "error";
+	}
+	public UIGenerateKey(){
+		getUsers();
+		runGenerateAccessKey();
+	}
 	public void runGenerateAccessKey() {
 		Panel p = new Panel();
 		Label l = new Label();
@@ -68,11 +89,8 @@ public class UIGenerateKey {
 		frameGenerate = new JFrame("Generate Access Key");
 		pnlAccessKey = p.createPanel(Layouts.gridbag);
 		GridBagConstraints gc = new GridBagConstraints();
-
-		// Initialize your arrays here
-		arrayUser = new String[] { "John Doe", "Mark Ignatius", "Clarence Castillo" };
-		arrayCompanyID = new String[] { "1", "2", "3" };
-		arrayTimeUnit = new String[] { "Hour", "Minutes", "Years", "Months", "Decades", "Century" };
+		
+		arrayTimeUnit = new String[] { "Hour", "Minutes", "Days"};
 
 		// initialize combobox here
 		gc.gridx = 2;
@@ -87,8 +105,8 @@ public class UIGenerateKey {
 		pnlAccessKey.add(listTimeUnit, gc);
 
 		// initialize spinner model
-		smExpiration = new SpinnerNumberModel(1, 0, Integer.MAX_VALUE, 1);
-		smUses = new SpinnerNumberModel(1, 0, Integer.MAX_VALUE, 1);
+		smExpiration = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
+		smUses = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
 
 		// intialize spinner
 		gc.gridx = 2;
@@ -116,6 +134,7 @@ public class UIGenerateKey {
 				// TODO Auto-generated method stub
 				if (cbUnlimited.isSelected()) {
 					spinUses.setEnabled(false);
+					
 				} else {
 					spinUses.setEnabled(true);
 				}
@@ -173,7 +192,21 @@ public class UIGenerateKey {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				generateKey();
+				int userID = getUserID(listUser.getSelectedItem().toString());
+				String timeFrame = listTimeUnit.getSelectedItem().toString();
+				int timeNum = Integer.parseInt(spinExpiration.getValue().toString());
+				if(timeFrame.equals("Hour")){
+					timeNum = timeNum * 60;
+				}else if(timeFrame.equals("Days")){
+					timeNum = timeNum * 60 * 24;
+				}
+				int uses = Integer.parseInt(spinUses.getValue().toString());
+				if(cbUnlimited.isSelected()){
+					uses = -1;
+				}
+				generateKey(userID, timeNum, uses);
+				
+				
 			}
 		});
 		pnlAccessKey.add(btnGenerate, gc);
@@ -197,4 +230,40 @@ public class UIGenerateKey {
 		frameGenerate.setVisible(true);
 		frameGenerate.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
+	
+	public void getUsers(){
+		try {
+			JSONObject response = new JSONObject(api.getUserList(Data.targetURL, Data.sessionKey, Data.bucketID));
+			users = response.getJSONArray("bucketUsers");
+			for(int i = 0; i< users.length(); i ++){
+				JSONObject user = users.getJSONObject(i);
+				userList.add(user.getString("name"));
+			}
+			arrayUser = userList.toArray(arrayUser);
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	public int getUserID(String username){
+		int userID = -1;
+		
+		for(int i = 0; i < users.length(); i ++){
+			try {
+				JSONObject user = users.getJSONObject(i);
+				if(username == user.getString("name")){
+					userID = user.getInt("userId");
+					return userID;
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
+		return userID;
+	}
+	
+	
+	
 }
