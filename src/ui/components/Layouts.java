@@ -2,7 +2,7 @@ package ui.components;
 
 
 public enum Layouts{
-	border("border"),box("box"),card("card"),flow("flow"),grid("grid");
+	border("border"),box("box"),card("card"),flow("flow"),grid("grid"),gridbag("gridbag");
 	
 	String layout;
 	Layouts(String layoutType){

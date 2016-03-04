@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 import javax.swing.BoxLayout;
@@ -21,6 +22,8 @@ public class Panel {
 			cardLayout(panel);
 		} else if (layout == Layouts.flow) {
 			flowLayout(panel);
+		} else if(layout == Layouts.gridbag){
+			gridBagLayout(panel);
 		}
 
 		panel.setBackground(CustomColor.NavyBlue.returnColor());
@@ -61,7 +64,6 @@ public class Panel {
 		}
 	}
 	
-	//setting layout for panel
 	private void borderLayout(JPanel p) {
 		p.setLayout(new BorderLayout());
 	}
@@ -80,5 +82,9 @@ public class Panel {
 
 	private void gridLayout(JPanel p, int row, int cols) {
 		p.setLayout(new GridLayout(row, cols));
+	}
+	
+	private void gridBagLayout(JPanel p){
+		p.setLayout(new GridBagLayout());
 	}
 }
