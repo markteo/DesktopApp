@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.json.JSONArray;
 
+import qrcode.JavaQR;
 import ui.UIAccessKeySelect;
 import ui.UIBucketSelect;
 import ui.UIGenerateKey;
@@ -26,4 +27,5 @@ public class Data {
 	public static UIGenerateKey uiGenerateKey;
 	public static UIAccessKeySelect uiAccessKeySelect;
 	public static String accessKey;
+	public static JavaQR qrGenerator;
 }
