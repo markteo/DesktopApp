@@ -64,6 +64,17 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			}
 		});
 		
+		btnSkip.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				UIFileUploadHTTP uploadUI = new UIFileUploadHTTP();
+				uploadUI.runUpload();
+				
+			}
+		});
+		
 		tfFileName.setEditable(false);
 		tfFileSize.setEditable(false);
 		
