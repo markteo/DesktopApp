@@ -1,5 +1,7 @@
 package ui;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -13,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
@@ -36,6 +37,7 @@ public class UIGenerateKey {
 	private JFrame frameGenerate;
 
 	private JPanel pnlAccessKey;
+	private JPanel pnlButtons;
 
 	private JLabel lblAccessKey;
 	private JLabel lblUserName;
@@ -47,7 +49,7 @@ public class UIGenerateKey {
 
 	private JCheckBox cbUnlimited;
 
-	private JTextField tfKey;
+	private JLabel lblKey;
 
 	private JSpinner spinExpiration;
 	private JSpinner spinUses;
@@ -61,6 +63,8 @@ public class UIGenerateKey {
 	private JSONArray users;
 	private ArrayList<String> userList = new ArrayList<String>();
 	private APICall api = new APICall();
+	private JButton btnNext;
+	private JButton btnCancel;
 
 	public String generateKey(int userID, int timeNum, int maxUses) {
 		// Input generate key function here
@@ -68,7 +72,7 @@ public class UIGenerateKey {
 		try {
 			response = new JSONObject(api.generateAccessKey(Data.targetURL, Data.sessionKey, userID, Integer.toString(timeNum), Integer.toString(maxUses)));
 			String result = response.getString("result");
-			tfKey.setText(response.getString("key"));
+			lblKey.setText(response.getString("key"));
 			return result;
 
 		} catch (JSONException e) {
@@ -87,7 +91,9 @@ public class UIGenerateKey {
 		Button b = new Button();
 
 		frameGenerate = new JFrame("Generate Access Key");
+		frameGenerate.setLayout(new BorderLayout());
 		pnlAccessKey = p.createPanel(Layouts.gridbag);
+		pnlButtons = p.createPanel(Layouts.flow);
 		GridBagConstraints gc = new GridBagConstraints();
 		
 		arrayTimeUnit = new String[] { "Hour", "Minutes", "Days"};
@@ -177,17 +183,15 @@ public class UIGenerateKey {
 		// initialize TextField
 		gc.gridx = 2;
 		gc.gridy = 5;
-		tfKey = new JTextField();
-		tfKey.setEditable(false);
-		tfKey.setPreferredSize(new Dimension(150, 25));
-		pnlAccessKey.add(tfKey, gc);
+		lblKey = l.createLabel("");
+		lblKey.setPreferredSize(new Dimension(150, 25));
+		pnlAccessKey.add(lblKey, gc);
 
 		// initialize button
 		gc.gridx = 3;
-		gc.gridy = 8;
+		gc.gridy = 5;
 		gc.gridwidth = 150;
 		btnGenerate = b.createButton("Generate");
-		b.addPadding(btnGenerate, 10);
 		btnGenerate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -211,11 +215,7 @@ public class UIGenerateKey {
 		});
 		pnlAccessKey.add(btnGenerate, gc);
 
-		gc.gridx = 5;
-		gc.gridy = 8;
-		gc.gridwidth = 150;
 		btnBack = b.createButton("Back");
-		b.addPadding(btnBack, 10);
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -224,9 +224,30 @@ public class UIGenerateKey {
 				Data.uiAccessKeySelect.setFrameVisible();
 			}
 		});
-		pnlAccessKey.add(btnBack, gc);
 
-		frameGenerate.add(pnlAccessKey);
+		btnNext = b.createButton("Next");
+		btnNext.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		btnCancel = b.createButton("Exit");
+		btnCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		Component[] buttonList = { btnBack, btnNext, btnCancel };
+		p.addComponentsToPanel(pnlButtons, buttonList);
+
+		frameGenerate.add(pnlAccessKey, BorderLayout.CENTER);
+		frameGenerate.add(pnlButtons, BorderLayout.SOUTH);
 		frameGenerate.pack();
 		frameGenerate.setVisible(true);
 		frameGenerate.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
