@@ -99,7 +99,20 @@ public class UILicenseSelect {
 			public void actionPerformed(ActionEvent e) {
 				// do something with selected License
 				String itemSelected = listLicense.getModel().getElementAt(listLicense.getSelectedIndex()).toString();
-				Data.licenseNumber = itemSelected;
+				String license = "";
+				
+				char[] charArray = itemSelected.toCharArray();
+				
+				for(int i =0; i < charArray.length; i ++ ){
+					if(i%5 == 0 && i != 0){
+					
+						license += " - " + charArray[i];
+						
+					}else{
+						license += charArray[i];
+					}
+				}
+				Data.licenseNumber = license;
 				licenseFrame.setVisible(false);
 				Data.uiAccessKeySelect = new UIAccessKeySelect();
 			}
