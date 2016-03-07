@@ -220,7 +220,8 @@ public class UIGenerateKey {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-
+				frameGenerate.setVisible(false);
+				Data.uiAccessKeySelect.setFrameVisible();
 			}
 		});
 		pnlAccessKey.add(btnBack, gc);
