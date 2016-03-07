@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import qrcode.JavaQR;
 import api.APIProcess;
 import customColor.CustomColor;
 import main.Data;
@@ -30,42 +31,44 @@ import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
 
-public class UIBucketSelect implements Runnable{
-	Thread buckets;
+public class UIAccessKeySelect{
+
+	Thread accessKey;
 	public static DefaultListModel<String> model = new DefaultListModel<String>();
-	private JFrame bucketFrame;
-	public UIBucketSelect(){
-		buckets = new Thread(this);
-		buckets.start();
-		
+	private JFrame accessKeyFrame;
+
+	public UIAccessKeySelect() {
+		runaccessKeySelect();
+
 	}
-	public void runBucketSelect(){
+
+	public void runaccessKeySelect() {
+		getAccessKeyData();
 		Panel p = new Panel();
 		Button b = new Button();
 		Label l = new Label();
-		bucketFrame = new JFrame("Bucket");
-		
+		accessKeyFrame = new JFrame("Bucket");
+
 		JList listBucket = new JList(model);
-		
-		System.out.println("Awaiting bucketList");
-		
-		
+
+
 		// start of ui
-		bucketFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		bucketFrame.setLayout(new BorderLayout());
-		bucketFrame.setVisible(true);
+		accessKeyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		accessKeyFrame.setLayout(new BorderLayout());
+		accessKeyFrame.setVisible(true);
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
-		JLabel lblInstruction = l.createLabel("The Bucket List show the currently unactivated  Nodes");
+		JLabel lblInstruction = l
+				.createLabel("The List shows the all the AccessKeys");
 		pnlInstruction.setBackground(CustomColor.LightBlue.returnColor());
 		lblInstruction.setForeground(Color.white);
 		lblInstruction.setFont(new Font("San Serif", Font.PLAIN, 18));
 		pnlInstruction.add(lblInstruction);
 
 		JPanel pnlBucketList = p.createPanel(Layouts.flow);
-		JLabel lblBucketList = l.createLabel("Bucket List : \n  (ID, Registration Number, MAC Address)");
-		
-		
+		JLabel lblBucketList = l
+				.createLabel("Access Keys List : \n  (Access Key, Remaining Uses, Expiry Date)");
+
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
 		scrollBucket.setPreferredSize(new Dimension(300, 150));
@@ -73,17 +76,18 @@ public class UIBucketSelect implements Runnable{
 		p.addComponentsToPanel(pnlBucketList, BucketListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
-		JButton btnBack = b.createButton("Back");
 		
+		JButton btnBack = b.createButton("Back");
+
 		// Button events
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// add Bucket code here
 				// open add frame and close current frame.
-				bucketFrame.setVisible(false);
-				Data.uiInventorySelect.setFrameVisible();
-			}	
+				accessKeyFrame.setVisible(false);
+				Data.uiLicenseSelect.setFrameVisible();
+			}
 		});
 
 		JButton btnSelectElements = b.createButton("Next");
@@ -91,73 +95,58 @@ public class UIBucketSelect implements Runnable{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// do something with selected Bucket
-					String itemSelected = listBucket.getModel().getElementAt(listBucket.getSelectedIndex())
-							.toString();
-					String[] itemData = itemSelected.split("\\,");
-					Data.bucketID = Integer.parseInt(itemData[0].trim());
-					bucketFrame.setVisible(false);
-					Data.uiLicenseSelect = new UILicenseSelect();
-					Data.uiLicenseSelect.runLicenseSelect();
+				String itemSelected = listBucket.getModel()
+						.getElementAt(listBucket.getSelectedIndex()).toString();
+				String[] itemData = itemSelected.split("\\,");
+				Data.accessKey = itemData[0].trim();
+				accessKeyFrame.setVisible(false);
+				Data.qrGenerator = new JavaQR();
 				
 			}
 		});
-		
-		JButton btnRefresh = b.createButton("Refresh/Get Bucket List");
-		btnRefresh.addActionListener(new ActionListener() {
-			
+
+		JButton btnAdd = b.createButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getBucketData();
-				listBucket.setModel(model);
+				Data.uiGenerateKey = new UIGenerateKey();
+				accessKeyFrame.setVisible(false);
 			}
 		});
 
 		pnlButtons.add(btnBack);
 		pnlButtons.add(btnSelectElements);
-		pnlButtons.add(btnRefresh);
+		pnlButtons.add(btnAdd);
 
-		bucketFrame.add(pnlInstruction, BorderLayout.NORTH);
-		bucketFrame.add(pnlBucketList, BorderLayout.CENTER);
-		bucketFrame.add(pnlButtons, BorderLayout.SOUTH);
-		bucketFrame.pack();
+		accessKeyFrame.add(pnlInstruction, BorderLayout.NORTH);
+		accessKeyFrame.add(pnlBucketList, BorderLayout.CENTER);
+		accessKeyFrame.add(pnlButtons, BorderLayout.SOUTH);
+		accessKeyFrame.pack();
 	}
-	
-	private static void getBucketData(){
-		
-		
-		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
-		System.out.println("Got entire bucket List");
-		System.out.println(bucketList);
+
+	private static void getAccessKeyData() {
+
+		JSONArray accessKeyList = new APIProcess().getUnuseAccessKey(Data.targetURL, Data.sessionKey);
 		model = new DefaultListModel<String>();
 		try {
-			System.out.println("Starting model data");
 
-			for (int i = 0; i < bucketList.length(); i++){
-				JSONObject bucket = bucketList.getJSONObject(i);
-				model.addElement(bucket.get("bucketID") + " , " + bucket.get("bucketName"));
+			for (int i = 0; i < accessKeyList.length(); i++) {
+				JSONObject accessKey = accessKeyList.getJSONObject(i);
+				model.addElement(accessKey.get("key") + " , "
+						+ accessKey.get("remainingUses") + " , " + accessKey.get("expiryDate"));
 			}
 
 			System.out.println(" model data finish");
 
-			
-			
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		System.out.println();
-		getBucketData();
-		Thread.yield();
-		runBucketSelect();
-	}
-	
-	public void setFrameVisible(){
-		bucketFrame.setVisible(true);
+	public void setFrameVisible() {
+		accessKeyFrame.setVisible(true);
 	}
 
 }
