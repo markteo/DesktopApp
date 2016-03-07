@@ -103,10 +103,8 @@ public class JavaQR implements Runnable {
 		rowCenPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
 		JButton genBtn = new JButton("Generate QR");
-		JButton clearBtn = new JButton("Clear Form Field");
 
 		rowCenPanel.add(genBtn);
-		rowCenPanel.add(clearBtn);
 		centerPanel.add(rowCenPanel);
 
 //		Buttons Listener
@@ -159,18 +157,7 @@ public class JavaQR implements Runnable {
 		}
 		});
 		
-		clearBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				regField.setText("");
-				accField.setText("");
-				licField.setText("");
-				
-			}
-		});
-
+		
 		//      Frame Config
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
