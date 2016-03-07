@@ -1,5 +1,7 @@
 package ui.components;
 
+import java.awt.Color;
+
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
@@ -9,6 +11,13 @@ public class Label {
 	public JLabel createLabel(String labelString){
 		JLabel label = new JLabel(labelString);
 		label.setForeground(CustomColor.Grey.returnColor());
+		
+		return label;
+	}
+	
+	public JLabel createResultLabel(String labelString){
+		JLabel label = new JLabel(labelString);
+		label.setForeground(Color.ORANGE);
 		
 		return label;
 	}
