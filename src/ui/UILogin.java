@@ -90,6 +90,7 @@ public class UILogin {
 			public void actionPerformed(ActionEvent e) {
 				String username = tfUser.getText();
 				String password = String.valueOf(pfPassword.getPassword());
+				Data.URL = Data.protocol + tfURL.getText();
 				Data.targetURL = Data.protocol + tfURL.getText() + "/api/" + tfBucket.getText() + "/";
 				
 				String response = api.loginBucket(Data.targetURL, username, password);
@@ -100,7 +101,6 @@ public class UILogin {
 						JSONObject responseJSON = new JSONObject(response);
 						Data.sessionKey = responseJSON.get("session-key").toString();
 						response = api.getUserFeatures(Data.targetURL, Data.sessionKey);
-						Data.targetURL = Data.targetURL;
 						if (checkFeatures(response)) {
 							Data.uiInventorySelect = new UIInventorySelect();
 							loginFrame.setVisible(false);
