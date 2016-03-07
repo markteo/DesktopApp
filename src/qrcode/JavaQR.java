@@ -36,8 +36,7 @@ public class JavaQR implements Runnable {
 	private Thread t;
 	
 	public JavaQR(){
-		t = new Thread();
-		t.start();
+		start();
 	}
 	
 	@Override
@@ -82,13 +81,6 @@ public class JavaQR implements Runnable {
 		licField.setEditable(false);
 		licField.setText(Data.licenseNumber);
 		
-		try {
-			String inputMask = "***** - ***** - *****";
-			licField.setFormatterFactory(new DefaultFormatterFactory(new MaskFormatter(inputMask)));
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-		}
-
 		JLabel downloadLoc = new JLabel("Download Location");
 		JButton dlBtn = new JButton("Choose Download Folder");
 
