@@ -3,15 +3,10 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,83 +25,88 @@ import customColor.CustomColor;
 import main.Data;
 import main.DesktopAppMain;
 import ui.components.Button;
+import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
 
-
 public class UILogin {
-	
+
 	public static APICall api = new APICall();
-	
-	public static void runLogin(String apiURL){
+
+	public static void runLogin(String apiURL) {
+
+		Label l = new Label();
+
 		JFrame loginFrame = new JFrame("Login");
 		loginFrame.setLayout(new BorderLayout());
-		loginFrame.setPreferredSize(new Dimension(400, 400));
-		loginFrame.setResizable(false);
+		loginFrame.setPreferredSize(new Dimension(400, 300));
 		loginFrame.setVisible(true);
 		loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-//		File pathToImage = new File("image/KaiSquare_logoFA.jpg");
-//		Image myPicture = null;
-//		try {
-//			myPicture = ImageIO.read(pathToImage);
-//			myPicture = myPicture.getScaledInstance(250, 150, Image.SCALE_DEFAULT);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		JLabel picLabel = new JLabel(new ImageIcon(myPicture));
-//	
+
+		// File pathToImage = new File("image/KaiSquare_logoFA.jpg");
+		// Image myPicture = null;
+		// try {
+		// myPicture = ImageIO.read(pathToImage);
+		// myPicture = myPicture.getScaledInstance(250, 150,
+		// Image.SCALE_DEFAULT);
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+		//
 		Panel p = new Panel();
-		JPanel loginPanel = p.createPanel(Layouts.grid,3,3);
-		loginPanel.setBorder(new EmptyBorder(25,25,0,25));
+		JPanel loginPanel = p.createPanel(Layouts.grid, 4, 2);
+		loginPanel.setBorder(new EmptyBorder(25, 25, 0, 25));
 		JLabel lblUser = new JLabel("Username:");
 		JLabel lblPassword = new JLabel("Password:");
+		JLabel lblURL = l.createLabel("Server URL");
+		JLabel lblBucket = l.createLabel("Bucket");
 		lblUser.setForeground(CustomColor.Grey.returnColor());
 		lblPassword.setForeground(CustomColor.Grey.returnColor());
+
+		JTextField tfURL = new JTextField();
+		tfURL.setText("http://kaiup.kaisquare.com");
+		JTextField tfBucket = new JTextField();
 		JTextField tfUser = new JTextField();
 		PromptSupport.setPrompt("Username", tfUser);
 		JPasswordField pfPassword = new JPasswordField();
 		PromptSupport.setPrompt("Password", pfPassword);
-		
-		
-		
+
 		JPanel buttonPanel = p.createPanel(Layouts.flow);
 		buttonPanel.setBorder(new EmptyBorder(0, 0, 25, 0));
 		Button b = new Button();
 		JButton btnLogin = b.createButton("Login");
 		JButton btnExit = b.createButton("Exit");
-		btnLogin.setPreferredSize(new Dimension(150,50));
-		btnExit.setPreferredSize(new Dimension(150,50));
-		Component[] arrayBtn = {btnLogin,btnExit};
-		p.addComponentsToPanel(buttonPanel,arrayBtn);
-		
-		btnLogin.addActionListener(new ActionListener(){
+		btnLogin.setPreferredSize(new Dimension(150, 50));
+		btnExit.setPreferredSize(new Dimension(150, 50));
+		Component[] arrayBtn = { btnLogin, btnExit };
+		p.addComponentsToPanel(buttonPanel, arrayBtn);
+
+		btnLogin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String username = tfUser.getText();
 				String password = String.valueOf(pfPassword.getPassword());
-				String response = api.loginBucket(apiURL, username, password);	
+				String response = api.loginBucket(apiURL, username, password);
 				try {
-					
-					if(DesktopAppMain.checkResult(response)){
+
+					if (DesktopAppMain.checkResult(response)) {
 						JSONObject responseJSON = new JSONObject(response);
 						Data.sessionKey = responseJSON.get("session-key").toString();
 						response = api.getUserFeatures(apiURL, Data.sessionKey);
 						Data.targetURL = apiURL;
-						if(checkFeatures(response)){
+						if (checkFeatures(response)) {
 							Data.uiInventorySelect = new UIInventorySelect();
 							loginFrame.setVisible(false);
 							Data.uiInventorySelect.runInventorySelect();
-							
-						}else{
+
+						} else {
 							System.exit(0);
 						}
-					}else{
+					} else {
 						System.exit(0);
 					}
-					
-					
 
 				} catch (JSONException e1) {
 					// TODO Auto-generated catch block
@@ -115,48 +115,47 @@ public class UILogin {
 
 			}
 		});
-		
-		btnExit.addActionListener(new ActionListener(){
+
+		btnExit.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e){
+			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
 		});
-		
-		Component[] arrayComponents = {lblUser,tfUser,lblPassword,pfPassword};
-//		picLabel.setBounds(50, 50, 50, 50);
+
+		Component[] arrayComponents = { lblURL, tfURL, lblBucket, tfBucket, lblUser, tfUser, lblPassword, pfPassword };
+		// picLabel.setBounds(50, 50, 50, 50);
 		p.addComponentsToPanel(loginPanel, arrayComponents);
-//		loginFrame.add(picLabel,BorderLayout.NORTH);
-		loginFrame.add(loginPanel,BorderLayout.CENTER);
-		loginFrame.add(buttonPanel,BorderLayout.SOUTH);
+		// loginFrame.add(picLabel,BorderLayout.NORTH);
+		loginFrame.add(loginPanel, BorderLayout.CENTER);
+		loginFrame.add(buttonPanel, BorderLayout.SOUTH);
 		loginFrame.pack();
-		
+
 	}
 
-	
-	public static boolean checkFeatures(String response){
+	public static boolean checkFeatures(String response) {
 		boolean result = false;
 		HashMap<String, String> featureList = new HashMap<String, String>();
 		JSONObject responseObject;
 		try {
 			responseObject = new JSONObject(response);
-			if(responseObject.get("result").equals("ok")){
+			if (responseObject.get("result").equals("ok")) {
 				JSONArray features = responseObject.getJSONArray("features");
-				
-				for(int i = 0; i < features.length(); i ++){
+
+				for (int i = 0; i < features.length(); i++) {
 					JSONObject feature = features.getJSONObject(i);
-					
+
 					String featureName = feature.getString("name");
-					
-					if(featureName.equals("bucket-management") || featureName.equals("inventory-management") || 
-							featureName.equals("access-key-management")){
+
+					if (featureName.equals("bucket-management") || featureName.equals("inventory-management")
+							|| featureName.equals("access-key-management")) {
 						System.out.println("Feature: " + feature.getString("name"));
 						featureList.put(featureName, feature.getString("name"));
-						
+
 					}
 				}
 
-				if(featureList.size() == 3){
+				if (featureList.size() == 3) {
 					return true;
 				}
 			}
