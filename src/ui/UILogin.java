@@ -46,17 +46,17 @@ public class UILogin {
 		loginFrame.setVisible(true);
 		loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		File pathToImage = new File("image/KaiSquare_logoFA.jpg");
-		Image myPicture = null;
-		try {
-			myPicture = ImageIO.read(pathToImage);
-			myPicture = myPicture.getScaledInstance(250, 150, Image.SCALE_DEFAULT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		JLabel picLabel = new JLabel(new ImageIcon(myPicture));
-	
+//		File pathToImage = new File("image/KaiSquare_logoFA.jpg");
+//		Image myPicture = null;
+//		try {
+//			myPicture = ImageIO.read(pathToImage);
+//			myPicture = myPicture.getScaledInstance(250, 150, Image.SCALE_DEFAULT);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+//	
 		Panel p = new Panel();
 		JPanel loginPanel = p.createPanel(Layouts.grid,3,3);
 		loginPanel.setBorder(new EmptyBorder(25,25,0,25));
@@ -124,9 +124,9 @@ public class UILogin {
 		});
 		
 		Component[] arrayComponents = {lblUser,tfUser,lblPassword,pfPassword};
-		picLabel.setBounds(50, 50, 50, 50);
+//		picLabel.setBounds(50, 50, 50, 50);
 		p.addComponentsToPanel(loginPanel, arrayComponents);
-		loginFrame.add(picLabel,BorderLayout.NORTH);
+//		loginFrame.add(picLabel,BorderLayout.NORTH);
 		loginFrame.add(loginPanel,BorderLayout.CENTER);
 		loginFrame.add(buttonPanel,BorderLayout.SOUTH);
 		loginFrame.pack();
