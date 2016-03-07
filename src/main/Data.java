@@ -17,6 +17,7 @@ public class Data {
 	public static String sessionKey;
 	public static boolean accessRights = false;
 	public static String URL;
+	public static final String protocol = "http://";
 	public static String registrationNumber;
 	public static int bucketID;
 	public static String licenseNumber;
