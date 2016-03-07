@@ -131,7 +131,6 @@ public class UIBucketSelect implements Runnable{
 		model = new DefaultListModel<String>();
 		try {
 			System.out.println("Starting model data");
-			model.addElement("ID, BucketName");
 
 			for (int i = 0; i < bucketList.length(); i++){
 				JSONObject bucket = bucketList.getJSONObject(i);
