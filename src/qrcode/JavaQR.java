@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 
+import main.Data;
+
 import org.jdesktop.xswingx.PromptSupport;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,17 +30,15 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
-public class JavaQR {
-	public static void main(String args[]) {
-		RunnableGUI t = new RunnableGUI();
-		t.start();
-		
-	}
-}
 
-class RunnableGUI implements Runnable {
+public class JavaQR implements Runnable {
 
 	private Thread t;
+	
+	public JavaQR(){
+		t = new Thread();
+		t.start();
+	}
 	
 	@Override
 	public void run() {
@@ -62,6 +62,8 @@ class RunnableGUI implements Runnable {
 		PromptSupport.setPrompt("E.G Z76GU", accField);
 		PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, accField);
 		PromptSupport.setFontStyle(Font.BOLD, accField);
+		accField.setEditable(false);
+		accField.setText(Data.accessKey);
 
 		JLabel regNo = new JLabel("Register Number");
 		JTextField regField = new JTextField(5);
@@ -69,12 +71,16 @@ class RunnableGUI implements Runnable {
 		PromptSupport.setPrompt("E.G THF11200054160106", regField);
 		PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, regField);
 		PromptSupport.setFontStyle(Font.BOLD, regField);
+		regField.setEditable(false);
+		regField.setText(Data.registrationNumber);
 		
 		JLabel licNo = new JLabel("License Number");
 		JFormattedTextField licField = new JFormattedTextField();
 		PromptSupport.setPrompt("E.G 2DAJS - 3J8SS - 9H8HS", licField);
 		PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, licField);
 		PromptSupport.setFontStyle(Font.BOLD, licField);
+		licField.setEditable(false);
+		licField.setText(Data.licenseNumber);
 		
 		try {
 			String inputMask = "***** - ***** - *****";
