@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -100,10 +101,10 @@ public class UILogin {
 							Data.uiInventorySelect.runInventorySelect();
 							
 						}else{
-							System.exit(0);
+							 JOptionPane.showMessageDialog(loginFrame, "User does not have necessary features", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}else{
-						System.exit(0);
+						 JOptionPane.showMessageDialog(loginFrame, "Wrong username/password", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					
 					
