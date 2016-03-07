@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import qrcode.JavaQR;
 import api.APIProcess;
 import customColor.CustomColor;
 import main.Data;
@@ -66,7 +67,7 @@ public class UIAccessKeySelect{
 
 		JPanel pnlBucketList = p.createPanel(Layouts.flow);
 		JLabel lblBucketList = l
-				.createLabel("Access Keys List : \n  (Key, Remaining Uses, Expiry Date)");
+				.createLabel("Access Keys List : \n  (Access Key, Remaining Uses, Expiry Date)");
 
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
@@ -99,6 +100,7 @@ public class UIAccessKeySelect{
 				String[] itemData = itemSelected.split("\\,");
 				Data.accessKey = itemData[0].trim();
 				accessKeyFrame.setVisible(false);
+				Data.qrGenerator = new JavaQR();
 				
 			}
 		});
@@ -128,7 +130,6 @@ public class UIAccessKeySelect{
 		JSONArray accessKeyList = new APIProcess().getUnuseAccessKey(Data.targetURL, Data.sessionKey);
 		model = new DefaultListModel<String>();
 		try {
-			model.addElement("Access Key , Remaining Uses, Expiry Date");
 
 			for (int i = 0; i < accessKeyList.length(); i++) {
 				JSONObject accessKey = accessKeyList.getJSONObject(i);
