@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import qrcode.JavaQR;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
@@ -230,20 +231,15 @@ public class UIGenerateKey {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-
+				Data.accessKey = lblKey.getText();
+				frameGenerate.setVisible(false);
+				Data.qrGenerator = new JavaQR();
 			}
 		});
 
-		btnCancel = b.createButton("Exit");
-		btnCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+		
 
-			}
-		});
-
-		Component[] buttonList = { btnBack, btnNext, btnCancel };
+		Component[] buttonList = { btnBack, btnNext };
 		p.addComponentsToPanel(pnlButtons, buttonList);
 
 		frameGenerate.add(pnlAccessKey, BorderLayout.CENTER);
