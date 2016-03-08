@@ -6,6 +6,9 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -19,15 +22,22 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.border.TitledBorder;
 
-import customColor.CustomColor;
+import main.Data;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APIProcess;
+import customColor.CustomColor;
 
 public class UILicenseDetail {
 
-	private String[] arrayLicense = { "1234-5678-9101", "1234-5678-9102", "1234-5678-9103" };
+	private String[] arrayLicense = new String[]{};
 
 	private JFrame licenseDetail;
 
@@ -41,7 +51,7 @@ public class UILicenseDetail {
 
 	private JButton btnNext;
 	private JButton btnBack;
-	private JButton btnCancel;
+	private JButton btnAdd;
 	
 	private JComboBox<String> cbLicenses;
 	
@@ -49,41 +59,57 @@ public class UILicenseDetail {
 	private JList listReports;
 	private JList listAdminSetting;
 	private JList listNotification;
+	private JList listMonitoring;
+	private JList listRecording;
 	
 	private DefaultListModel<String> mdlVCA;
 	private DefaultListModel<String> mdlReports;
-	private DefaultListModel<String> mdlAdminSetting;
+	private DefaultListModel<String> mdlAdmin;
 	private DefaultListModel<String> mdlNotification;
+	private DefaultListModel<String> mdlMonitoring;
+	private DefaultListModel<String> mdlRecording;
+
+
 	
 	private JLabel lblLicense;
 	private JLabel lblCustomerID;
 	private JLabel lblLicenseKey;
 	private JLabel lblDateCreated;
-	private JLabel lblNodeName;
-	private JLabel lblRegistrationNo;
 	private JLabel lblCloudStorage;
 	private JLabel lblValidity;
 	private JLabel lblMaxConcurrentVCA;
-	private JLabel lblStatus;
-	private JLabel lblActivated;
-	private JLabel lblExpires;
 	private JLabel lblCustomerIDValue;
 	private JLabel lblLicenseKeyValue;
 	private JLabel lblDateCreatedValue;
-	private JLabel lblNodeNameValue;
-	private JLabel lblRegistrationNoValue;
 	private JLabel lblCloudStorageValue;
 	private JLabel lblValidityValue;
 	private JLabel lblMaxConcurrentVCAValue;
-	private JLabel lblStatusValue;
-	private JLabel lblActivatedValue;
-	private JLabel lblExpiresValue;
+	private final SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	
+	String licenseNumber;
+	int cloudStorage;
+	int maxVCA;
+	String dateCreated;
+	int customerID;
+	String validity;
+	String bucketName;
 	
 	TitledBorder detailBorder = BorderFactory.createTitledBorder("Details");
 	
 	Panel p = new Panel();
 	Button b = new Button();
 	Label l = new Label();
+	APIProcess api = new APIProcess();
+
+	private JPanel pnlRecording;
+
+	private JPanel pnlMonitoring;
+	
+	public UILicenseDetail(){
+		getLicenseData();
+		getData(arrayLicense[0]);
+		runLicenseDetails();
+	}
 
 	public void runLicenseDetails() {
 		licenseDetail = new JFrame("License Detail");
@@ -92,11 +118,41 @@ public class UILicenseDetail {
 		
 		pnlButtons = p.createPanel(Layouts.flow);
 		btnNext = b.createButton("Next");
+		btnAdd = b.createButton("Add License");
 		btnBack = b.createButton("Back");
-		btnCancel = b.createButton("Cancel");
-		Component[] buttonList = { btnNext, btnBack, btnCancel };
+		Component[] buttonList = { btnBack, btnAdd,  btnNext };
 		p.addComponentsToPanel(pnlButtons, buttonList);
 
+		btnBack.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				licenseDetail.setVisible(false);
+				Data.uiBucketSelect.setFrameVisible();
+			}
+		});
+		btnNext.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Data.licenseNumber = licenseNumber;
+				licenseDetail.setVisible(false);
+				Data.uiAccessKeySelect = new UIAccessKeySelect();
+			}
+		});
+		
+		btnAdd.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				licenseDetail.setVisible(false);
+				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
+				uiLicenseAdd.runLicenseAdd();
+				
+			}
+		});
+		
 		pnlDetails = p.createPanel(Layouts.gridbag);
 		detailBorder.setTitleColor(CustomColor.LightBlue.returnColor());
 		pnlDetails.setBorder(detailBorder);
@@ -114,32 +170,22 @@ public class UILicenseDetail {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				if (cbLicenses.getSelectedItem().equals("1234-5678-9101")) {
-					lblCustomerIDValue.setText("1");
-					lblLicenseKeyValue.setText("1234-5678-9101");
-					lblDateCreatedValue.setText("26/02/2016 16:55");
-					lblNodeNameValue.setText("N/A");
-					lblRegistrationNoValue.setText("N/A");
-					lblCloudStorage.setText("1GB");
-					lblValidityValue.setText("24 Months");
-					lblMaxConcurrentVCAValue.setText("99");
-					lblStatusValue.setText("Unused");
-					lblActivatedValue.setText("N/A");
-					lblExpiresValue.setText("N/A");
-				}else{
-					lblCustomerIDValue.setText("");
-					lblLicenseKeyValue.setText("");
-					lblDateCreatedValue.setText("");
-					lblNodeNameValue.setText("");
-					lblRegistrationNoValue.setText("");
-					lblCloudStorage.setText("");
-					lblValidityValue.setText("");
-					lblMaxConcurrentVCAValue.setText("");
-					lblStatusValue.setText("");
-					lblActivatedValue.setText("");
-					lblExpiresValue.setText("");
-				}
-
+				getData(cbLicenses.getSelectedItem().toString());
+				lblCustomerIDValue.setText(bucketName);
+				lblLicenseKeyValue.setText(licenseNumber);
+				lblDateCreatedValue.setText(dateCreated);
+				
+				lblCloudStorageValue.setText(Integer.toString(cloudStorage));
+				lblValidityValue.setText(validity);
+				lblMaxConcurrentVCAValue.setText(Integer.toString(maxVCA));
+				
+				listVCA.setModel(mdlVCA);
+				listNotification.setModel(mdlNotification);
+				listAdminSetting.setModel(mdlAdmin);
+				listRecording.setModel(mdlRecording);
+				listReports.setModel(mdlReports);
+				listMonitoring.setModel(mdlMonitoring);
+				
 			}
 		});
 		pnlDetails.add(cbLicenses, gc);
@@ -149,37 +195,50 @@ public class UILicenseDetail {
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
-		String[] arrayVCA = {"Perimeter Profiling","Face Defense","aaaa","Perimeter Profiling","Face Defense","aaaa","Perimeter Profiling","Face Defense","aaaa","Perimeter Profiling","Face Defense","aaaa"};
-		listVCA = new JList(arrayVCA);
+		listMonitoring = new JList(mdlMonitoring);
+		JScrollPane spMonitoring = new JScrollPane(listMonitoring);
+		spMonitoring.setPreferredSize(new Dimension(300, 210));
+		pnlMonitoring = p.createPanel(Layouts.grid,1,1);
+		pnlMonitoring.add(listMonitoring);
+		tabbedPane.addTab("Monitoring", pnlMonitoring);
+		
+		listRecording = new JList(mdlRecording);
+		JScrollPane spRecording = new JScrollPane(listRecording);
+		spRecording.setPreferredSize(new Dimension(300, 210));
+		pnlRecording = p.createPanel(Layouts.grid,1,1);
+		pnlRecording.add(listRecording);
+		tabbedPane.addTab("Recording", pnlRecording);
+		
+		listVCA = new JList(mdlVCA);
 		JScrollPane spVCA = new JScrollPane(listVCA);
 		spVCA.setPreferredSize(new Dimension(300, 210));
 		pnlVca = p.createPanel(Layouts.grid,1,1);
 		pnlVca.add(spVCA);
 		tabbedPane.addTab("Video Analytics", pnlVca);
 		
-		String[] arrayReports = {"Report 1","Report 2","Report 3"};
-		listReports = new JList(arrayReports);
+		listReports = new JList(mdlReports);
 		JScrollPane spReports = new JScrollPane(listReports);
 		spReports.setPreferredSize(new Dimension(300, 210));
 		pnlReports = p.createPanel(Layouts.grid,1,1);
 		pnlReports.add(spReports);
 		tabbedPane.addTab("Reports",pnlReports);
 		
-		String[] arraySetting = {"Backup","Delete","Logging"};
-		listAdminSetting = new JList(arraySetting);
+		listAdminSetting = new JList(mdlAdmin);
 		JScrollPane spSetting = new JScrollPane(listAdminSetting);
 		spSetting.setPreferredSize(new Dimension(300, 210));
 		pnlAdminSetting = p.createPanel(Layouts.grid,1,1);
 		pnlAdminSetting.add(listAdminSetting);
 		tabbedPane.addTab("Admin Setting",pnlAdminSetting);
 		
-		String[] arrayNotification = {"On","Off"};
-		listNotification = new JList(arrayNotification);
+		listNotification = new JList(mdlNotification);
 		JScrollPane spNotification = new JScrollPane(listNotification);
 		spNotification.setPreferredSize(new Dimension(300, 210));
 		pnlNotification = p.createPanel(Layouts.grid,1,1);
 		pnlNotification.add(listNotification);
 		tabbedPane.addTab("Notification Management", pnlNotification);
+		
+		
+		
 		
 		licenseDetail.add(pnlButtons, BorderLayout.SOUTH);
 		licenseDetail.add(tabbedPane, BorderLayout.CENTER);
@@ -192,17 +251,12 @@ public class UILicenseDetail {
 	}
 
 	public void createFieldLabel(GridBagConstraints gc) {
-		lblCustomerID = l.createLabel("Customer ID");
-		lblActivated = l.createLabel("Activated On");
+		lblCustomerID = l.createLabel("Bucket Name");
 		lblCloudStorage = l.createLabel("Cloud Storage");
 		lblDateCreated = l.createLabel("Date Created");
-		lblExpires = l.createLabel("Expires on");
 		lblLicenseKey = l.createLabel("License Key");
-		lblNodeName = l.createLabel("Node Name");
-		lblRegistrationNo = l.createLabel("Registration Number");
-		lblStatus = l.createLabel("Status");
-		lblValidity = l.createLabel("Validity");
-		lblMaxConcurrentVCA = l.createLabel("Max Concurrent. VCA");
+		lblValidity = l.createLabel("Validity (months)");
+		lblMaxConcurrentVCA = l.createLabel("Max VCA");
 
 		gc.gridx = 1;
 		gc.gridy = 5;
@@ -216,14 +270,6 @@ public class UILicenseDetail {
 		gc.gridy = 15;
 		pnlDetails.add(lblDateCreated, gc);
 
-		gc.gridx = 1;
-		gc.gridy = 20;
-		pnlDetails.add(lblNodeName, gc);
-
-		gc.gridx = 1;
-		gc.gridy = 25;
-		pnlDetails.add(lblRegistrationNo, gc);
-
 		gc.gridx = 3;
 		gc.gridy = 5;
 		pnlDetails.add(lblCloudStorage, gc);
@@ -236,33 +282,18 @@ public class UILicenseDetail {
 		gc.gridy = 15;
 		pnlDetails.add(lblMaxConcurrentVCA, gc);
 
-		gc.gridx = 3;
-		gc.gridy = 20;
-		pnlDetails.add(lblStatus, gc);
-
-		gc.gridx = 3;
-		gc.gridy = 25;
-		pnlDetails.add(lblActivated, gc);
-
-		gc.gridx = 3;
-		gc.gridy = 30;
-		pnlDetails.add(lblExpires, gc);
-	}
+		}
 
 	public void createValueLabel(GridBagConstraints gc) {
 		// value label
-		lblCustomerIDValue = l.createResultLabel("");
-		lblLicenseKeyValue = l.createResultLabel("");
-		lblDateCreatedValue = l.createResultLabel("");
-		lblNodeNameValue = l.createResultLabel("test");
-		lblRegistrationNoValue = l.createResultLabel("");
-
-		lblCloudStorageValue = l.createResultLabel("");
-		lblValidityValue = l.createResultLabel("");
-		lblMaxConcurrentVCAValue = l.createResultLabel("");
-		lblStatusValue = l.createResultLabel("");
-		lblActivatedValue = l.createResultLabel("");
-		lblExpiresValue = l.createResultLabel("");
+		lblCustomerIDValue = l.createResultLabel(bucketName);
+		lblLicenseKeyValue = l.createResultLabel(licenseNumber);
+		lblDateCreatedValue = l.createResultLabel(dateCreated);
+		
+		lblCloudStorageValue = l.createResultLabel(Integer.toString(cloudStorage));
+		lblValidityValue = l.createResultLabel(validity);
+		lblMaxConcurrentVCAValue = l.createResultLabel(Integer.toString(maxVCA));
+		
 
 		gc.gridx = 2;
 		gc.gridy = 5;
@@ -276,13 +307,6 @@ public class UILicenseDetail {
 		gc.gridy = 15;
 		pnlDetails.add(lblDateCreatedValue, gc);
 
-		gc.gridx = 2;
-		gc.gridy = 20;
-		pnlDetails.add(lblNodeNameValue, gc);
-
-		gc.gridx = 2;
-		gc.gridy = 25;
-		pnlDetails.add(lblRegistrationNoValue, gc);
 
 		gc.gridx = 4;
 		gc.gridy = 5;
@@ -296,16 +320,86 @@ public class UILicenseDetail {
 		gc.gridy = 15;
 		pnlDetails.add(lblMaxConcurrentVCAValue, gc);
 
-		gc.gridx = 4;
-		gc.gridy = 20;
-		pnlDetails.add(lblStatusValue, gc);
+	}
+	
+	public void getData (String licenseNumber){
+		JSONObject response = api.getNodeLicenseDetails(Data.targetURL, Data.sessionKey, Data.bucketID, licenseNumber);
+		try {
+			cloudStorage = response.getInt("cloudStorage");
+			dateCreated = simpleDate.format(response.getLong("created"));
+			maxVCA = response.getInt("maxVCA");
+			this.licenseNumber = licenseNumber;
+			
+			if(response.getInt("duration") == -1){
+				validity = "Unlimited";
+			}else{
+				validity = Integer.toString(response.getInt("duration"));
+			}		
+			bucketName = response.getString("bucketName");
+			
+			JSONArray features = response.getJSONArray("features");
+			mdlAdmin = new DefaultListModel<String>();
+			mdlMonitoring = new DefaultListModel<String>();
+			mdlNotification = new DefaultListModel<String>();
+			mdlRecording = new DefaultListModel<String>();
+			mdlReports = new DefaultListModel<String>();
+			mdlVCA = new DefaultListModel<String>();
+			
+		
 
-		gc.gridx = 4;
-		gc.gridy = 25;
-		pnlDetails.add(lblActivatedValue, gc);
-
-		gc.gridx = 4;
-		gc.gridy = 30;
-		pnlDetails.add(lblExpiresValue, gc);
+			for(int i = 0; i < features.length(); i++){
+				String feature = features.getString(i);
+				if(feature.equals("live-view")){
+					mdlMonitoring.addElement(feature);
+				}else if(feature.equals("node-playback")){
+					mdlRecording.addElement(feature);
+				}else if(feature.equals("historical-alerts")){
+					mdlNotification.addElement(feature);
+				}else if(feature.split("-")[0].equals("analytics")){
+					mdlVCA.addElement(feature);
+				}else if(feature.split("-")[0].equals("report")){
+					mdlReports.addElement(feature);
+				}else{
+					mdlAdmin.addElement(feature);
+				}
+			}
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+	}
+	private void getLicenseData(){
+		
+		JSONArray licenseList = new APIProcess().nodeLicenseList(Data.targetURL, Data.sessionKey, Data.bucketID);
+		ArrayList<String> licenses = new ArrayList<String>();
+		try {
+			for (int i = 0; i < licenseList.length(); i++) {
+				JSONObject license = licenseList.getJSONObject(i);
+				
+				String licenseNumber = license.getString("licenseNumber");
+				char[] charArray = licenseNumber.toCharArray();
+				String licenseAdd = "";
+				for(int x =0; x < charArray.length; x ++ ){
+					if(x%5 == 0 && x != 0){
+					
+						licenseAdd += " - " + charArray[x];
+						
+					}else{
+						licenseAdd += charArray[x];
+					}
+				}
+				licenses.add(licenseAdd);
+				arrayLicense = licenses.toArray(arrayLicense);
+			}
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	public void setFrameVisible(){
+		licenseDetail.setVisible(true);
 	}
 }
