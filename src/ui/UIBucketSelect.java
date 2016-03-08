@@ -96,8 +96,7 @@ public class UIBucketSelect implements Runnable{
 					String[] itemData = itemSelected.split("\\,");
 					Data.bucketID = Integer.parseInt(itemData[0].trim());
 					bucketFrame.setVisible(false);
-					Data.uiLicenseSelect = new UILicenseSelect();
-					Data.uiLicenseSelect.runLicenseSelect();
+					Data.uiLicenseDetail = new UILicenseDetail();
 				
 			}
 		});
