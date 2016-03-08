@@ -99,25 +99,26 @@ public class UILicenseSelect {
 			public void actionPerformed(ActionEvent e) {
 				// do something with selected License
 				String itemSelected = listLicense.getModel().getElementAt(listLicense.getSelectedIndex()).toString();
-				String license = "";
 				
-				char[] charArray = itemSelected.toCharArray();
-				
-				for(int i =0; i < charArray.length; i ++ ){
-					if(i%5 == 0 && i != 0){
-					
-						license += " - " + charArray[i];
-						
-					}else{
-						license += charArray[i];
-					}
-				}
-				Data.licenseNumber = license;
+				Data.licenseNumber = itemSelected;
 				licenseFrame.setVisible(false);
 				Data.uiAccessKeySelect = new UIAccessKeySelect();
 			}
 		});
-
+		
+		JButton btnViewLicense = b.createButton("View Details");
+		btnViewLicense.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String itemSelected = listLicense.getModel().getElementAt(listLicense.getSelectedIndex()).toString();
+				Data.uiLicenseDetail = new UILicenseDetail();
+				licenseFrame.setVisible(false);
+			}
+		});
+		
+		pnlButtons.add(btnViewLicense);
 		pnlButtons.add(btnAddElements);
 		pnlButtons.add(btnSelectElements);
 
@@ -133,7 +134,20 @@ public class UILicenseSelect {
 		try {
 			for (int i = 0; i < licenseList.length(); i++) {
 				JSONObject license = licenseList.getJSONObject(i);
-				model.addElement(license.getString("licenseNumber"));
+				
+				String licenseNumber = license.getString("licenseNumber");
+				char[] charArray = licenseNumber.toCharArray();
+				String licenseAdd = "";
+				for(int x =0; x < charArray.length; x ++ ){
+					if(x%5 == 0 && x != 0){
+					
+						licenseAdd += " - " + charArray[x];
+						
+					}else{
+						licenseAdd += charArray[x];
+					}
+				}
+				model.addElement(licenseAdd);
 			}
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
