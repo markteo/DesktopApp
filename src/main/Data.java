@@ -9,6 +9,7 @@ import ui.UIAccessKeySelect;
 import ui.UIBucketSelect;
 import ui.UIGenerateKey;
 import ui.UIInventorySelect;
+import ui.UILicenseDetail;
 import ui.UILicenseSelect;
 
 public class Data {
@@ -27,6 +28,7 @@ public class Data {
 	public static HashMap<String, JSONArray> featureList;
 	public static UIGenerateKey uiGenerateKey;
 	public static UIAccessKeySelect uiAccessKeySelect;
+	public static UILicenseDetail uiLicenseDetail;
 	public static String accessKey;
 	public static JavaQR qrGenerator;
 }
