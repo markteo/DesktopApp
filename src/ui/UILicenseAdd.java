@@ -283,7 +283,7 @@ public class UILicenseAdd {
 					JSONObject responseObject = new JSONObject(response);
 					if(responseObject.get("result").equals("ok")){
 						licenseAdd.setVisible(false);
-						Data.uiLicenseSelect.setFrameVisible();
+						Data.uiLicenseDetail.setFrameVisible();
 					}
 				} catch (JSONException e1) {
 					// TODO Auto-generated catch block
@@ -299,7 +299,7 @@ public class UILicenseAdd {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				licenseAdd.setVisible(false);
-				Data.uiLicenseSelect.setFrameVisible();
+				Data.uiLicenseDetail.setFrameVisible();
 			}
 		});
 		
