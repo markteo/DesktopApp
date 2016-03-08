@@ -88,6 +88,54 @@ public class APIProcess {
 		return null;
 	}
 	
+	public JSONObject getNodeLicenseDetails(String targetURL, String sessionKey, int bucketID, String licenseNumber){
+		
+		
+		String response = api.getNodeLicense(targetURL, sessionKey, bucketID);
+		
+		try {
+			JSONObject licenseResponse = new JSONObject(response);
+			
+			JSONArray licenseList = licenseResponse.getJSONArray("node-licenses");
+			
+			for(int x = 0; x < licenseList.length(); x ++){
+				
+				JSONObject licenseJSON = licenseList.getJSONObject(x);
+				
+				String licenseString = licenseJSON.getString("licenseNumber");
+				char[] charArray = licenseString.toCharArray();
+				String licenseAdd = "";
+				for(int i = 0; i < charArray.length; i ++ ){
+					if(i%5 == 0 && i != 0){
+					
+						licenseAdd += " - " + charArray[i];
+						
+					}else{
+						licenseAdd += charArray[i];
+					}
+				}
+				
+				if(licenseAdd.equals(licenseNumber)){
+					JSONObject license = new JSONObject();
+					license.put("cloudStorage", licenseJSON.getInt("cloudStorageGb"));
+					license.put("duration", licenseJSON.getInt("durationMonths"));
+					license.put("maxVCA", licenseJSON.getInt("maxVcaCount"));
+					license.put("features", licenseJSON.get("featureNameList"));
+					license.put("created", licenseJSON.getLong("created"));
+					license.put("bucketName", licenseJSON.getString("bucketName"));
+					return license;
+
+				}
+				
+
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public JSONArray inventoryList(String targetURL, String sessionKey){
 		JSONArray inventoryList = new JSONArray();
 		
