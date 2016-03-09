@@ -340,7 +340,25 @@ public class APICall {
 		}
 		
 		return null;
+	}
+	
+	public String logout(String targetURL, String sessionKey){
+		String api = "logout";
+		targetURL = targetURL + api;
+		String urlParameters;
 		
+		try{
+			urlParameters = "session-key=" 
+					+ URLEncoder.encode(sessionKey, enc);
+			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
+			return response;
+			
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public String executePost(String targetURL, String urlParameters) {
