@@ -11,6 +11,7 @@ import ui.UIGenerateKey;
 import ui.UIInventorySelect;
 import ui.UILicenseDetail;
 import ui.UILicenseSelect;
+import ui.UILogin;
 
 public class Data {
 	public static String bucket;
@@ -31,4 +32,5 @@ public class Data {
 	public static UILicenseDetail uiLicenseDetail;
 	public static String accessKey;
 	public static JavaQR qrGenerator;
+	public static UILogin uiLogin;
 }
