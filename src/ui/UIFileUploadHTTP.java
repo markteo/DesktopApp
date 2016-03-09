@@ -91,8 +91,19 @@ public class UIFileUploadHTTP {
 				}
 			}
 		});
+		
+		JButton btnCancel = b.createButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				uploadInventoryFrame.setVisible(false);
+				Data.uiInventorySelect.setFrameVisible();
+				
+			}
+		});
 
-		Component[] elementPnlForms = { lblCSVFile, tfCSVFilePath, btnAddCSV, btnUpload };
+		Component[] elementPnlForms = { lblCSVFile, tfCSVFilePath, btnAddCSV, btnUpload, btnCancel };
 
 		p.addComponentsToPanel(pnlUploadForm, elementPnlForms);
 
