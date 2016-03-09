@@ -33,6 +33,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	private ui.components.FilePicker filePicker = new FilePicker("Pick a directory:	","Browse..");
 	private JButton download = new JButton("Download");
 	private JButton btnSkip = new JButton("I already have the template.");
+	private JButton btnCancel = new JButton("Cancel");
 
 	private JLabel labelFileName = new JLabel("File Name:");
 	private JTextField tfFileName = new JTextField(20);
@@ -79,6 +80,16 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			}
 		});
 		
+		btnCancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				Data.uiInventorySelect.setFrameVisible();
+				
+			}
+		});
+		
 		tfFileName.setEditable(false);
 		tfFileSize.setEditable(false);
 		
@@ -97,6 +108,11 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
         constraints.gridy = 3;
         constraints.anchor = GridBagConstraints.EAST;
         add(download, constraints);
+        
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        constraints.anchor = GridBagConstraints.EAST;
+        add(btnCancel, constraints);
         
         constraints.gridx = 0;
         constraints.gridy = 4;
