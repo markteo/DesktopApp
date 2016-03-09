@@ -86,7 +86,7 @@ public class UIAccessKeySelect{
 				// add Bucket code here
 				// open add frame and close current frame.
 				accessKeyFrame.setVisible(false);
-				Data.uiLicenseSelect.setFrameVisible();
+				Data.uiLicenseDetail.setFrameVisible();
 			}
 		});
 
@@ -114,10 +114,22 @@ public class UIAccessKeySelect{
 				accessKeyFrame.setVisible(false);
 			}
 		});
+		
+		JButton btnRefresh = b.createButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getAccessKeyData();
+				listBucket.setModel(model);
+				
+			}
+		});
 
 		pnlButtons.add(btnBack);
 		pnlButtons.add(btnSelectElements);
 		pnlButtons.add(btnAdd);
+		pnlButtons.add(btnRefresh);
 
 		accessKeyFrame.add(pnlInstruction, BorderLayout.NORTH);
 		accessKeyFrame.add(pnlBucketList, BorderLayout.CENTER);
