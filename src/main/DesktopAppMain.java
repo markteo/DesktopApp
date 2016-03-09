@@ -11,7 +11,8 @@ public class DesktopAppMain {
 
 	public static void main(String args[]) {
 		
-		UILogin.runLogin();
+		Data.uiLogin = new UILogin();
+		Data.uiLogin.runLogin();
 		
 	}
 	public static boolean checkResult (String response){
