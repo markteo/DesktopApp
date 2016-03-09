@@ -33,12 +33,12 @@ import ui.components.Panel;
 public class UILogin {
 
 	public static APICall api = new APICall();
-
+	private static JFrame loginFrame ;
 	public static void runLogin() {
 
 		Label l = new Label();
 
-		JFrame loginFrame = new JFrame("Login");
+		loginFrame = new JFrame("Login");
 		loginFrame.setLayout(new BorderLayout());
 		loginFrame.setPreferredSize(new Dimension(400, 300));
 		loginFrame.setVisible(true);
@@ -171,5 +171,11 @@ public class UILogin {
 		}
 
 		return result;
+	}
+	public void resetData(){
+		
+	}
+	public void setFrameVisible(){
+		loginFrame.setVisible(true);
 	}
 }
