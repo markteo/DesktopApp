@@ -8,13 +8,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
-
-import main.Data;
-
-import org.jdesktop.xswingx.PromptSupport;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -27,13 +20,21 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.MaskFormatter;
+
+import main.Data;
+
+import org.jdesktop.xswingx.PromptSupport;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ui.UILogin;
+import api.APICall;
 
 
 public class JavaQR implements Runnable {
 
 	private Thread t;
+	private JFrame frame;
 	
 	public JavaQR(){
 		start();
@@ -42,7 +43,7 @@ public class JavaQR implements Runnable {
 	@Override
 	public void run() {
 		//		Initial Config
-		JFrame frame = new JFrame("QR Code Generator");
+		frame = new JFrame("QR Code Generator");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		frame.setLayout(new BorderLayout());
 
@@ -103,8 +104,13 @@ public class JavaQR implements Runnable {
 		rowCenPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
 		JButton genBtn = new JButton("Generate QR");
+		JButton homeBtn = new JButton("Back to Start");
+		JButton logoutBtn = new JButton("Logout");
+		
 
 		rowCenPanel.add(genBtn);
+		rowCenPanel.add(homeBtn);
+		rowCenPanel.add(logoutBtn);
 		centerPanel.add(rowCenPanel);
 
 //		Buttons Listener
@@ -157,6 +163,38 @@ public class JavaQR implements Runnable {
 		}
 		});
 		
+		homeBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				Data.uiInventorySelect.setFrameVisible();
+				frame.setVisible(false);
+				
+			}
+		});
+		
+		logoutBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				APICall api = new APICall();
+				try {
+					JSONObject response = new JSONObject(api.logout(Data.targetURL, Data.sessionKey));
+					if(response.getString("result").equals("ok")){
+						Data.uiLogin = new UILogin();
+						frame.setVisible(false);
+						Data.uiLogin.runLogin();
+						
+					}
+						
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		//      Frame Config
 		try {
@@ -183,6 +221,9 @@ public class JavaQR implements Runnable {
 	public void start() {
 		t = new Thread(this);
 		t.start();
+	}
+	public void setFrameVisible(){
+		frame.setVisible(true);
 	}
 	
 }
