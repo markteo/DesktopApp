@@ -1,21 +1,29 @@
 package ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import api.APICall;
 import main.Data;
@@ -57,15 +65,49 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 
 		download.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent event) {
-				boolean result = buttonDownloadActionPerformed(event);
-				
-				if(result){
-					UIFileUploadHTTP uploadUI = new UIFileUploadHTTP();
-					setVisible(false);
-					uploadUI.runUpload();
-				}
-				
+			public void actionPerformed(ActionEvent evt) {
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {
+						boolean result = buttonDownloadActionPerformed(evt);
+						
+						if(result){
+							UIFileUploadHTTP uploadUI = new UIFileUploadHTTP();
+							setVisible(false);
+							uploadUI.runUpload();
+						}
+						// mimic some long-running process here...
+						return null;
+					}
+				};
+
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) evt
+						.getSource());
+				final JDialog dialog = new JDialog(win, "Dialog",
+						ModalityType.APPLICATION_MODAL);
+
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
+							}
+						}
+					}
+				});
+				mySwingWorker.execute();
+
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Please wait......."), BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setLocationRelativeTo(win);
+				dialog.setVisible(true);
 			}
 		});
 		
@@ -137,12 +179,13 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
         
         pack();
         setLocationRelativeTo(null);    // center on screen
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);    
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
         setVisible(true);
 	}
 
 	private boolean buttonDownloadActionPerformed(ActionEvent event) {
 		String saveDir = filePicker.getSelectedFilePath();	
+		
 		boolean result = false;
 		if(saveDir.equals("")){
 			JOptionPane.showMessageDialog(this, "Please a choose destination folder", "Error",JOptionPane.ERROR_MESSAGE);	
@@ -162,6 +205,8 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		return result;
 
 	}
+	
+	
 	
 	private void buttonSkipActionPerformed(ActionEvent event) {
 		UIFileUploadHTTP upload = new UIFileUploadHTTP();
