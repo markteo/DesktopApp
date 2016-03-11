@@ -5,17 +5,26 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,20 +43,20 @@ public class UIInventorySelect {
 	public static APICall api = new APICall();
 	private JFrame inventoryFrame;
 	private JList listInventory;
+	private DefaultListModel<String> model;
+
 	public void runInventorySelect() {
 		Panel p = new Panel();
 		Button b = new Button();
 		Label l = new Label();
 
-		DefaultListModel<String> model;
 		// fetch list from server
 		model = getInventoryData(new DefaultListModel<String>());
 
 		// start of ui
 		inventoryFrame = new JFrame("Inventory");
-		inventoryFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		inventoryFrame.setLayout(new BorderLayout());
-		inventoryFrame.setVisible(true);
+		
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
 		JLabel lblInstruction = l.createLabel("The Inventory List show the currently unactivated  Nodes");
@@ -66,48 +75,13 @@ public class UIInventorySelect {
 		p.addComponentsToPanel(pnlInventoryList, inventoryListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
-		JButton btnSkipDownload = b.createButton("I have the template");
-		btnSkipDownload.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				UIFileUploadHTTP uploadFrame = new UIFileUploadHTTP();
-				uploadFrame.runUpload();
-			}
-		});
 		JButton btnAddElements = b.createButton("Add Item");
 
 		// Button events
-		btnAddElements.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				inventoryFrame.setVisible(false);
-				UIFileDownloadHTTP dl = new UIFileDownloadHTTP();
-				dl.setVisible(true);
-			}
-		});
+		
 
 		JButton btnSelectElements = b.createButton("Next");
-		btnSelectElements.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// do something with selected inventory
-				System.out.println(listInventory.getModel().getElementAt(listInventory.getSelectedIndex()));
-				String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex())
-						.toString();
-				String[] itemData = itemSelected.split("\\,");
-				Data.registrationNumber = itemData[1].trim();
-				inventoryFrame.setVisible(false);
-
-				if(Data.uiBucketSelect != null){
-					Data.uiBucketSelect.setFrameVisible();
-				}else{
-					Data.uiBucketSelect = new UIBucketSelect();
-				}
-				
-			}
-		});
+		
 
 		pnlButtons.add(btnAddElements);
 		pnlButtons.add(btnSelectElements);
@@ -115,7 +89,76 @@ public class UIInventorySelect {
 		inventoryFrame.add(pnlInstruction, BorderLayout.NORTH);
 		inventoryFrame.add(pnlInventoryList, BorderLayout.CENTER);
 		inventoryFrame.add(pnlButtons, BorderLayout.SOUTH);
-		inventoryFrame.pack();
+		inventoryFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		inventoryFrame.pack();		
+		inventoryFrame.setVisible(true);
+		btnAddElements.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				UIFileDownloadHTTP dl = new UIFileDownloadHTTP();
+				dl.setVisible(true);
+			}
+		});
+		
+		btnSelectElements.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {
+
+						// do something with selected inventory
+						System.out.println(listInventory.getModel().getElementAt(listInventory.getSelectedIndex()));
+						String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex())
+								.toString();
+						String[] itemData = itemSelected.split("\\,");
+						Data.registrationNumber = itemData[1].trim();
+						inventoryFrame.setVisible(false);
+
+						if(Data.uiBucketSelect != null){
+							Data.uiBucketSelect.setFrameVisible();
+						}else{
+							Data.uiBucketSelect = new UIBucketSelect();
+						}
+						return null;
+					}
+				};
+
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
+						.getSource());
+				final JDialog dialog = new JDialog(win, "Dialog",
+						ModalityType.APPLICATION_MODAL);
+
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
+							}
+						}
+					}
+				});
+				mySwingWorker.execute();
+
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Please wait......."), BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setLocationRelativeTo(win);
+				dialog.setBounds(50,50,300,100);
+				dialog.setVisible(true);
+				
+				
+			}
+		});
 	}
 
 	public DefaultListModel<String> getInventoryData(DefaultListModel<String> model) {
