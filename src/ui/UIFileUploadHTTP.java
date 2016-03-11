@@ -77,7 +77,6 @@ public class UIFileUploadHTTP {
 						JSONObject responseObject = new JSONObject(response);
 						if(responseObject.get("result").equals("ok")){
 							uploadInventoryFrame.setVisible(false);
-							Data.uiInventorySelect.setFrameVisible();
 							Data.uiInventorySelect.updateInventoryList();
 						}else{
 							 final JPanel panel = new JPanel();
