@@ -2,6 +2,9 @@ package main;
 
 import java.util.HashMap;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
 import org.json.JSONArray;
 
 import qrcode.JavaQR;
@@ -33,4 +36,6 @@ public class Data {
 	public static String accessKey;
 	public static JavaQR qrGenerator;
 	public static UILogin uiLogin;
+	public static JDialog loadingScreen;
+	public static JFrame loadingFrame;
 }
