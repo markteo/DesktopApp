@@ -23,21 +23,22 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 public class QRLogic {
-	public void generateQR(JSONObject jsonObject, String fileLocation) {
+	
+	
+	public BufferedImage generateQR(JSONObject jsonObject) {
+		BufferedImage image = null;
 		String dataText = jsonObject.toString();
 		Date date = new Date();
 		String newDate = new SimpleDateFormat("yyyy-MM-dd h-m-a").format(date);
-		String filePath = fileLocation + "/qrcode-" + newDate + ".png";
 		int size = 175;
 		String fileType = "png";
-		File myFile = new File(filePath);
 		try {
 			Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 			QRCodeWriter qrCodeWriter = new QRCodeWriter();
 			BitMatrix byteMatrix = qrCodeWriter.encode(dataText,BarcodeFormat.QR_CODE, size, size, hintMap);
 			int Width = byteMatrix.getWidth();
-			BufferedImage image = new BufferedImage(Width, Width,
+			image = new BufferedImage(Width, Width,
 					BufferedImage.TYPE_INT_RGB);
 			image.createGraphics();
 
@@ -64,12 +65,10 @@ public class QRLogic {
 			}
 			g.dispose();
 			
-			ImageIO.write(image, fileType, myFile);
 
 		} catch (WriterException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} 
+		return image;
 	}
 }
