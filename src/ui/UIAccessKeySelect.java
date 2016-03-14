@@ -50,16 +50,14 @@ public class UIAccessKeySelect{
 		accessKeyFrame = new JFrame("Bucket");
 
 		JList listBucket = new JList(model);
-
-
+		
 		// start of ui
-		accessKeyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		accessKeyFrame.setLayout(new BorderLayout());
-		accessKeyFrame.setVisible(true);
+		
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
 		JLabel lblInstruction = l
-				.createLabel("The List shows the all the AccessKeys");
+				.createLabel("Access Keys");
 		pnlInstruction.setBackground(CustomColor.LightBlue.returnColor());
 		lblInstruction.setForeground(Color.white);
 		lblInstruction.setFont(new Font("San Serif", Font.PLAIN, 18));
@@ -78,8 +76,23 @@ public class UIAccessKeySelect{
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
 		
 		JButton btnBack = b.createButton("Back");
+		JButton btnSelectElements = b.createButton("Next");
+		JButton btnAdd = b.createButton("Add");
+		JButton btnRefresh = b.createButton("Refresh");
+	
 
-		// Button events
+		pnlButtons.add(btnBack);
+		pnlButtons.add(btnSelectElements);
+		pnlButtons.add(btnAdd);
+		pnlButtons.add(btnRefresh);
+
+		accessKeyFrame.add(pnlInstruction, BorderLayout.NORTH);
+		accessKeyFrame.add(pnlBucketList, BorderLayout.CENTER);
+		accessKeyFrame.add(pnlButtons, BorderLayout.SOUTH);
+		accessKeyFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		accessKeyFrame.pack();
+		accessKeyFrame.setVisible(true);
+		
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -89,8 +102,24 @@ public class UIAccessKeySelect{
 				Data.uiLicenseDetail.setFrameVisible();
 			}
 		});
+		
+		btnRefresh.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getAccessKeyData();
+				listBucket.setModel(model);
+				
+			}
+		});
+		btnAdd.addActionListener(new ActionListener() {
 
-		JButton btnSelectElements = b.createButton("Next");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Data.uiGenerateKey = new UIGenerateKey();
+				accessKeyFrame.setVisible(false);
+			}
+		});
 		btnSelectElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -104,37 +133,6 @@ public class UIAccessKeySelect{
 				
 			}
 		});
-
-		JButton btnAdd = b.createButton("Add");
-		btnAdd.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Data.uiGenerateKey = new UIGenerateKey();
-				accessKeyFrame.setVisible(false);
-			}
-		});
-		
-		JButton btnRefresh = b.createButton("Refresh");
-		btnRefresh.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				getAccessKeyData();
-				listBucket.setModel(model);
-				
-			}
-		});
-
-		pnlButtons.add(btnBack);
-		pnlButtons.add(btnSelectElements);
-		pnlButtons.add(btnAdd);
-		pnlButtons.add(btnRefresh);
-
-		accessKeyFrame.add(pnlInstruction, BorderLayout.NORTH);
-		accessKeyFrame.add(pnlBucketList, BorderLayout.CENTER);
-		accessKeyFrame.add(pnlButtons, BorderLayout.SOUTH);
-		accessKeyFrame.pack();
 	}
 
 	private static void getAccessKeyData() {

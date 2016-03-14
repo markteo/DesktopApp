@@ -59,9 +59,7 @@ public class UILicenseSelect {
 //		}
 		// start of ui
 		licenseFrame = new JFrame("License");
-		licenseFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		licenseFrame.setLayout(new BorderLayout());
-		licenseFrame.setVisible(true);
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
 		JLabel lblInstruction = l.createLabel("The License List shows the currently unused licenses");
@@ -83,17 +81,34 @@ public class UILicenseSelect {
 		JButton btnAddElements = b.createButton("Add Item");
 
 		// Button events
-		btnAddElements.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// add License code here using new swing UI
-				licenseFrame.setVisible(false);
-				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
-				uiLicenseAdd.runLicenseAdd();
-			}
-		});
+		
 
 		JButton btnSelectElements = b.createButton("Next");
+		
+		
+		JButton btnViewLicense = b.createButton("View Details");
+		
+		
+		pnlButtons.add(btnViewLicense);
+		pnlButtons.add(btnAddElements);
+		pnlButtons.add(btnSelectElements);
+
+		licenseFrame.add(pnlInstruction, BorderLayout.NORTH);
+		licenseFrame.add(pnlLicenseList, BorderLayout.CENTER);
+		licenseFrame.add(pnlButtons, BorderLayout.SOUTH);
+		licenseFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		licenseFrame.pack();
+		licenseFrame.setVisible(true);
+		btnViewLicense.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String itemSelected = listLicense.getModel().getElementAt(listLicense.getSelectedIndex()).toString();
+				Data.uiLicenseDetail = new UILicenseDetail();
+				licenseFrame.setVisible(false);
+			}
+		});
 		btnSelectElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -105,27 +120,15 @@ public class UILicenseSelect {
 				Data.uiAccessKeySelect = new UIAccessKeySelect();
 			}
 		});
-		
-		JButton btnViewLicense = b.createButton("View Details");
-		btnViewLicense.addActionListener(new ActionListener() {
-			
+		btnAddElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				String itemSelected = listLicense.getModel().getElementAt(listLicense.getSelectedIndex()).toString();
-				Data.uiLicenseDetail = new UILicenseDetail();
+				// add License code here using new swing UI
 				licenseFrame.setVisible(false);
+				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
+				uiLicenseAdd.runLicenseAdd();
 			}
 		});
-		
-		pnlButtons.add(btnViewLicense);
-		pnlButtons.add(btnAddElements);
-		pnlButtons.add(btnSelectElements);
-
-		licenseFrame.add(pnlInstruction, BorderLayout.NORTH);
-		licenseFrame.add(pnlLicenseList, BorderLayout.CENTER);
-		licenseFrame.add(pnlButtons, BorderLayout.SOUTH);
-		licenseFrame.pack();
 	}
 	private static DefaultListModel<String> getLicenseData(DefaultListModel<String> model){
 		

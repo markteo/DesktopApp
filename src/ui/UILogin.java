@@ -173,7 +173,7 @@ public class UILogin {
 				progressBar.setIndeterminate(true);
 				JPanel panel = new JPanel(new BorderLayout());
 				panel.add(progressBar, BorderLayout.CENTER);
-				panel.add(new JLabel("Please wait......."),
+				panel.add(new JLabel("Logging in .........."),
 						BorderLayout.PAGE_START);
 				dialog.add(panel);
 				dialog.pack();
@@ -234,14 +234,5 @@ public class UILogin {
 
 	public void setFrameVisible() {
 		loginFrame.setVisible(true);
-	}
-
-	class ShowWaitAction extends AbstractAction {
-		protected static final long SLEEP_TIME = 3 * 1000;
-
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-
-		}
 	}
 }

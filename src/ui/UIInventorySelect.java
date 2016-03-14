@@ -59,7 +59,7 @@ public class UIInventorySelect {
 		
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
-		JLabel lblInstruction = l.createLabel("The Inventory List show the currently unactivated  Nodes");
+		JLabel lblInstruction = l.createLabel("Inventory List");
 		pnlInstruction.setBackground(CustomColor.LightBlue.returnColor());
 		lblInstruction.setForeground(Color.white);
 		lblInstruction.setFont(new Font("San Serif", Font.PLAIN, 18));
@@ -149,7 +149,7 @@ public class UIInventorySelect {
 				progressBar.setIndeterminate(true);
 				JPanel panel = new JPanel(new BorderLayout());
 				panel.add(progressBar, BorderLayout.CENTER);
-				panel.add(new JLabel("Please wait......."), BorderLayout.PAGE_START);
+				panel.add(new JLabel("Getting Buckets......."), BorderLayout.PAGE_START);
 				dialog.add(panel);
 				dialog.pack();
 				dialog.setLocationRelativeTo(win);

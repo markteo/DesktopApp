@@ -2,24 +2,32 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.border.TitledBorder;
 
 import main.Data;
@@ -122,36 +130,6 @@ public class UILicenseDetail {
 		btnBack = b.createButton("Back");
 		Component[] buttonList = { btnBack, btnAdd,  btnNext };
 		p.addComponentsToPanel(pnlButtons, buttonList);
-
-		btnBack.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				licenseDetail.setVisible(false);
-				Data.uiBucketSelect.setFrameVisible();
-			}
-		});
-		btnNext.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Data.licenseNumber = licenseNumber;
-				licenseDetail.setVisible(false);
-				Data.uiAccessKeySelect = new UIAccessKeySelect();
-			}
-		});
-		
-		btnAdd.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				licenseDetail.setVisible(false);
-				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
-				uiLicenseAdd.runLicenseAdd();
-				
-			}
-		});
 		
 		pnlDetails = p.createPanel(Layouts.gridbag);
 		detailBorder.setTitleColor(CustomColor.LightBlue.returnColor());
@@ -166,28 +144,7 @@ public class UILicenseDetail {
 		gc.gridx = 2;
 		gc.gridy = 0;
 		cbLicenses = new JComboBox<>(arrayLicense);
-		cbLicenses.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				getData(cbLicenses.getSelectedItem().toString());
-				lblCustomerIDValue.setText(bucketName);
-				lblLicenseKeyValue.setText(licenseNumber);
-				lblDateCreatedValue.setText(dateCreated);
-				
-				lblCloudStorageValue.setText(Integer.toString(cloudStorage));
-				lblValidityValue.setText(validity);
-				lblMaxConcurrentVCAValue.setText(Integer.toString(maxVCA));
-				
-				listVCA.setModel(mdlVCA);
-				listNotification.setModel(mdlNotification);
-				listAdminSetting.setModel(mdlAdmin);
-				listRecording.setModel(mdlRecording);
-				listReports.setModel(mdlReports);
-				listMonitoring.setModel(mdlMonitoring);
-				
-			}
-		});
+		
 		pnlDetails.add(cbLicenses, gc);
 
 		createFieldLabel(gc);
@@ -237,17 +194,102 @@ public class UILicenseDetail {
 		pnlNotification.add(listNotification);
 		tabbedPane.addTab("Notification Management", pnlNotification);
 		
-		
-		
-		
 		licenseDetail.add(pnlButtons, BorderLayout.SOUTH);
 		licenseDetail.add(tabbedPane, BorderLayout.CENTER);
 		licenseDetail.add(pnlDetails, BorderLayout.NORTH);
+		licenseDetail.setSize(new Dimension(1500, 500));
+		licenseDetail.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		licenseDetail.pack();
-		licenseDetail.setSize(new Dimension(500, 500));
-		licenseDetail.setResizable(false);
 		licenseDetail.setVisible(true);
-		licenseDetail.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		cbLicenses.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				getData(cbLicenses.getSelectedItem().toString());
+				lblCustomerIDValue.setText(bucketName);
+				lblLicenseKeyValue.setText(licenseNumber);
+				lblDateCreatedValue.setText(dateCreated);
+				
+				lblCloudStorageValue.setText(Integer.toString(cloudStorage));
+				lblValidityValue.setText(validity);
+				lblMaxConcurrentVCAValue.setText(Integer.toString(maxVCA));
+				
+				listVCA.setModel(mdlVCA);
+				listNotification.setModel(mdlNotification);
+				listAdminSetting.setModel(mdlAdmin);
+				listRecording.setModel(mdlRecording);
+				listReports.setModel(mdlReports);
+				listMonitoring.setModel(mdlMonitoring);
+				
+			}
+		});
+		
+		btnBack.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				licenseDetail.setVisible(false);
+				Data.uiBucketSelect.setFrameVisible();
+			}
+		});
+		btnNext.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {
+						Data.licenseNumber = licenseNumber;
+						licenseDetail.setVisible(false);
+						Data.uiAccessKeySelect = new UIAccessKeySelect();
+						return null;
+					}
+				};
+		
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
+						.getSource());
+				final JDialog dialog = new JDialog(win, "Dialog",
+						ModalityType.APPLICATION_MODAL);
+		
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+		
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
+							}
+						}
+					}
+				});
+				mySwingWorker.execute();
+		
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Retrieving Access Keys"), BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setLocationRelativeTo(win);
+				dialog.setVisible(true);
+				
+			}
+		});
+		
+		btnAdd.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				licenseDetail.setVisible(false);
+				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
+				uiLicenseAdd.runLicenseAdd();
+				
+			}
+		});
 	}
 
 	public void createFieldLabel(GridBagConstraints gc) {

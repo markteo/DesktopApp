@@ -76,8 +76,7 @@ public class UILicenseAdd {
 	private void init() {
 		licenseAdd = new JFrame("Add License");
 		licenseAdd.setLayout(new BorderLayout());
-		licenseAdd.setResizable(false);
-		licenseAdd.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
 
 		pnlSetting = p.createPanel(Layouts.flow);
 		pnlFeature = p.createPanel(Layouts.flow);
@@ -94,6 +93,8 @@ public class UILicenseAdd {
 		licenseAdd.add(pnlApiService, BorderLayout.EAST);
 		licenseAdd.add(pnlBtns,BorderLayout.SOUTH);
 		licenseAdd.pack();
+		licenseAdd.setResizable(false);
+		licenseAdd.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		licenseAdd.setVisible(true);
 	}
 
