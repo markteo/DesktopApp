@@ -3,33 +3,42 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+
+import main.Data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import qrcode.JavaQR;
-import api.APIProcess;
-import customColor.CustomColor;
-import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APIProcess;
+import customColor.CustomColor;
 
 public class UIAccessKeySelect{
 
@@ -123,13 +132,49 @@ public class UIAccessKeySelect{
 		btnSelectElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// do something with selected Bucket
-				String itemSelected = listBucket.getModel()
-						.getElementAt(listBucket.getSelectedIndex()).toString();
-				String[] itemData = itemSelected.split("\\,");
-				Data.accessKey = itemData[0].trim();
-				accessKeyFrame.setVisible(false);
-				Data.qrGenerator = new JavaQR();
+				
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {
+						String itemSelected = listBucket.getModel()
+								.getElementAt(listBucket.getSelectedIndex()).toString();
+						String[] itemData = itemSelected.split("\\,");
+						Data.accessKey = itemData[0].trim();
+						accessKeyFrame.setVisible(false);
+						Data.qrGenerator = new JavaQR();
+						return null;
+					}
+				};
+		
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
+						.getSource());
+				final JDialog dialog = new JDialog(win, "Dialog",
+						ModalityType.APPLICATION_MODAL);
+		
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+		
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
+							}
+						}
+					}
+				});
+				mySwingWorker.execute();
+		
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Generating QR Code......."), BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setLocationRelativeTo(win);
+				dialog.setBounds(50,50,300,100);
+				dialog.setVisible(true);
+				
 				
 			}
 		});

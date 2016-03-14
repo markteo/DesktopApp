@@ -275,6 +275,7 @@ public class UILicenseDetail {
 				dialog.add(panel);
 				dialog.pack();
 				dialog.setLocationRelativeTo(win);
+				dialog.setBounds(50,50,300,100);
 				dialog.setVisible(true);
 				
 			}
