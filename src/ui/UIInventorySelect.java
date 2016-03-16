@@ -76,10 +76,6 @@ public class UIInventorySelect {
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
 		JButton btnAddElements = b.createButton("Add Item");
-
-		// Button events
-		
-
 		JButton btnSelectElements = b.createButton("Next");
 		
 
@@ -129,7 +125,7 @@ public class UIInventorySelect {
 
 				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
 						.getSource());
-				final JDialog dialog = new JDialog(win, "Dialog",
+				final JDialog dialog = new JDialog(win, "Bucket",
 						ModalityType.APPLICATION_MODAL);
 
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
