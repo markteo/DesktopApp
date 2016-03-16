@@ -193,6 +193,36 @@ public class UIGenerateKey {
 		gc.gridy = 5;
 		gc.gridwidth = 150;
 		btnGenerate = b.createButton("Generate");
+		
+		pnlAccessKey.add(btnGenerate, gc);
+		btnBack = b.createButton("Back");
+		btnNext = b.createButton("Next");
+		Component[] buttonList = { btnBack, btnNext };
+		p.addComponentsToPanel(pnlButtons, buttonList);
+
+		frameGenerate.add(pnlAccessKey, BorderLayout.CENTER);
+		frameGenerate.add(pnlButtons, BorderLayout.SOUTH);
+		frameGenerate.pack();
+		frameGenerate.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameGenerate.setVisible(true);
+		btnNext.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Data.accessKey = lblKey.getText();
+				frameGenerate.setVisible(false);
+				Data.qrGenerator = new JavaQR();
+			}
+		});
+		btnBack.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				frameGenerate.setVisible(false);
+				Data.uiAccessKeySelect.setFrameVisible();
+				Data.uiAccessKeySelect.refreshList();
+			}
+		});
 		btnGenerate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -214,39 +244,6 @@ public class UIGenerateKey {
 				
 			}
 		});
-		pnlAccessKey.add(btnGenerate, gc);
-
-		btnBack = b.createButton("Back");
-		btnBack.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				frameGenerate.setVisible(false);
-				Data.uiAccessKeySelect.setFrameVisible();
-			}
-		});
-
-		btnNext = b.createButton("Next");
-		btnNext.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				Data.accessKey = lblKey.getText();
-				frameGenerate.setVisible(false);
-				Data.qrGenerator = new JavaQR();
-			}
-		});
-
-		
-
-		Component[] buttonList = { btnBack, btnNext };
-		p.addComponentsToPanel(pnlButtons, buttonList);
-
-		frameGenerate.add(pnlAccessKey, BorderLayout.CENTER);
-		frameGenerate.add(pnlButtons, BorderLayout.SOUTH);
-		frameGenerate.pack();
-		frameGenerate.setVisible(true);
-		frameGenerate.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	public void getUsers(){
