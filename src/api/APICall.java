@@ -34,7 +34,6 @@ public class APICall {
 					+ "&password=" + URLEncoder.encode(password, enc);
 
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -51,7 +50,6 @@ public class APICall {
 			urlParameters = "session-key="
 					+ URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -69,7 +67,6 @@ public class APICall {
 			urlParameters = "session-key="
 					+ URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -92,7 +89,6 @@ public class APICall {
 					+ "&model-name=" + URLEncoder.encode(inventoryDetails.getString("modelName"), enc)
 					+ "&mac-address=" + URLEncoder.encode(inventoryDetails.getString("macAddress"), enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -111,7 +107,6 @@ public class APICall {
 			urlParameters = "session-key="
 					+ URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -265,8 +260,6 @@ public class APICall {
 		try{
 			urlParameters = "session-key=" 
 					+ URLEncoder.encode(sessionKey, enc);
-//			UploadTask uploadTask = new UploadTask(targetURL, file, urlParameters);
-//			String response = uploadTask.uploadFile();
 			Upload upload = new Upload();
 			String response = upload.runUpload(targetURL, fileURL, urlParameters);
 			System.out.println("Upload Completed");
@@ -332,7 +325,6 @@ public class APICall {
 			urlParameters = "session-key=" 
 					+ URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 			
 		}catch(UnsupportedEncodingException e){
@@ -351,7 +343,6 @@ public class APICall {
 			urlParameters = "session-key=" 
 					+ URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 			
 		}catch(UnsupportedEncodingException e){
