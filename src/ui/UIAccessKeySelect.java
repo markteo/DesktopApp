@@ -45,7 +45,7 @@ public class UIAccessKeySelect{
 	Thread accessKey;
 	public static DefaultListModel<String> model = new DefaultListModel<String>();
 	private JFrame accessKeyFrame;
-
+	private JList listBucket;
 	public UIAccessKeySelect() {
 		runaccessKeySelect();
 
@@ -58,7 +58,7 @@ public class UIAccessKeySelect{
 		Label l = new Label();
 		accessKeyFrame = new JFrame("Bucket");
 
-		JList listBucket = new JList(model);
+		listBucket = new JList(model);
 		
 		// start of ui
 		accessKeyFrame.setLayout(new BorderLayout());
@@ -105,8 +105,6 @@ public class UIAccessKeySelect{
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// add Bucket code here
-				// open add frame and close current frame.
 				accessKeyFrame.setVisible(false);
 				Data.uiLicenseDetail.setFrameVisible();
 			}
@@ -116,8 +114,7 @@ public class UIAccessKeySelect{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getAccessKeyData();
-				listBucket.setModel(model);
+				refreshList();
 				
 			}
 		});
@@ -175,7 +172,6 @@ public class UIAccessKeySelect{
 				dialog.setBounds(50,50,300,100);
 				dialog.setVisible(true);
 				
-				
 			}
 		});
 	}
@@ -192,7 +188,6 @@ public class UIAccessKeySelect{
 						+ accessKey.get("remainingUses") + " , " + accessKey.get("expiryDate"));
 			}
 
-			System.out.println(" model data finish");
 
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
@@ -202,6 +197,11 @@ public class UIAccessKeySelect{
 
 	public void setFrameVisible() {
 		accessKeyFrame.setVisible(true);
+	}
+	
+	public void refreshList(){
+		getAccessKeyData();
+		listBucket.setModel(model);
 	}
 
 }
