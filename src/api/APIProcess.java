@@ -155,7 +155,6 @@ public class APIProcess {
 				
 				if(itemStatus == false){
 					JSONObject itemAdd = new JSONObject();
-					System.out.println("Registration Number: " + item.getString("registrationNumber"));
 					itemAdd.put("id", item.get("inventoryId"));
 					itemAdd.put("registrationNumber", item.get("registrationNumber"));
 					itemAdd.put("macAddress", item.get("macAddress"));
@@ -194,7 +193,6 @@ public class APIProcess {
 					Data.featureList.put(type, featureArray);
 				}
 			}
-			System.out.println(types.size());
 			
 		}catch(JSONException e){
 			e.printStackTrace();
