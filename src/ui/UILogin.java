@@ -152,7 +152,7 @@ public class UILogin {
 
 				Window win = SwingUtilities
 						.getWindowAncestor((AbstractButton) e.getSource());
-				final JDialog dialog = new JDialog(win, "Dialog",
+				final JDialog dialog = new JDialog(win, "Login",
 						ModalityType.APPLICATION_MODAL);
 
 				mySwingWorker
