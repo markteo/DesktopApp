@@ -169,21 +169,12 @@ public class UIBucketSelect{
 		
 		
 		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
-		System.out.println("Got entire bucket List");
-		System.out.println(bucketList);
 		model = new DefaultListModel<String>();
 		try {
-			System.out.println("Starting model data");
-
 			for (int i = 0; i < bucketList.length(); i++){
 				JSONObject bucket = bucketList.getJSONObject(i);
 				model.addElement(bucket.get("bucketID") + " , " + bucket.get("bucketName"));
-			}
-
-			System.out.println(" model data finish");
-
-			
-			
+			}	
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
