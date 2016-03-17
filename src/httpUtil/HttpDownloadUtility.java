@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import ui.UIFileDownloadHTTP;
+import ui.UIFileUploadHTTP;
 
 /**
  * A utility that downloads a file from a URL.
@@ -19,7 +20,7 @@ import ui.UIFileDownloadHTTP;
  */
 public class HttpDownloadUtility extends SwingWorker<Void, Void>{
 	private static final int BUFFER_SIZE = 4096;
-	private static UIFileDownloadHTTP gui;
+	private static UIFileUploadHTTP gui;
 
 	/**
 	 * Downloads a file from a URL
@@ -27,7 +28,7 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void>{
 	 * @param saveDir path of the directory to save the file
 	 * @throws IOException
 	 */
-	public String downloadFile(String fileURL, String saveDir, String sessionKey, ui.UIFileDownloadHTTP ui)
+	public String downloadFile(String fileURL, String saveDir, String sessionKey, ui.UIFileUploadHTTP ui)
 			{
 		try{
 		gui = ui;
@@ -57,7 +58,6 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void>{
 			}
 			
 			// opens input stream from the HTTP connection
-			gui.setFileInfo(fileName,contentLength);
 
 			InputStream inputStream = httpConn.getInputStream();
 			String saveFilePath = saveDir + File.separator + fileName;
@@ -91,7 +91,7 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void>{
 			return "ERROR";
 			}
 		}catch(IOException e){
-			JOptionPane.showMessageDialog(gui, "Error downloading file: " + e.getMessage(), "Error",
+			JOptionPane.showMessageDialog(gui.uploadInventoryFrame, "Error downloading file: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 			setProgress(0);
