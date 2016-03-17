@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import qrcode.JavaQR;
 import ui.UIAccessKeySelect;
 import ui.UIBucketSelect;
+import ui.UIFileUploadHTTP;
 import ui.UIGenerateKey;
 import ui.UIInventorySelect;
 import ui.UILicenseDetail;
@@ -38,4 +39,5 @@ public class Data {
 	public static UILogin uiLogin;
 	public static JDialog loadingScreen;
 	public static JFrame loadingFrame;
+	public static UIFileUploadHTTP uiFileUpload;
 }
