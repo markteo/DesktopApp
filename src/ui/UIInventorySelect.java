@@ -75,7 +75,7 @@ public class UIInventorySelect {
 		p.addComponentsToPanel(pnlInventoryList, inventoryListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
-		JButton btnAddElements = b.createButton("Add Item");
+		JButton btnAddElements = b.createButton("Add Inventory Item");
 		JButton btnSelectElements = b.createButton("Next");
 		
 
@@ -92,8 +92,8 @@ public class UIInventorySelect {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				UIFileDownloadHTTP dl = new UIFileDownloadHTTP();
-				dl.setVisible(true);
+				Data.uiFileUpload = new UIFileUploadHTTP();
+				Data.uiFileUpload.runUpload();
 			}
 		});
 		
