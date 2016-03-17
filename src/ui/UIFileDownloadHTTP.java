@@ -38,7 +38,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	Button b = new Button();
 	Panel p = new Panel();
 
-	private ui.components.FilePicker filePicker = new FilePicker("Pick a directory:	","Browse..");
+	private ui.components.FilePicker filePicker = new FilePicker("Download Location:	","Browse..");
 	private JButton download = new JButton("Download");
 	private JButton btnSkip = new JButton("I already have the template.");
 	private JButton btnCancel = new JButton("Cancel");
@@ -51,6 +51,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 
 	private JLabel labelProgress = new JLabel("Progress");
 	private JProgressBar progressBar = new JProgressBar(0, 100);
+	private JButton btnBrowse = new JButton("Choose Download Location");
 
 	public UIFileDownloadHTTP() {
 		super("Upload File");
@@ -63,6 +64,56 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		filePicker.setMode(FilePicker.MODE_SAVE);
 		filePicker.getFileChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
+
+		tfFileName.setEditable(false);
+		tfFileSize.setEditable(false);
+		
+		progressBar.setPreferredSize(new Dimension(200,30));
+		progressBar.setStringPainted(true);
+		
+		
+		constraints.gridx=0;
+		constraints.gridy = 1;
+        constraints.weightx = 0.0;
+        constraints.gridwidth = 2;
+        constraints.fill = GridBagConstraints.NONE;
+        add(btnBrowse, constraints);
+ 
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.anchor = GridBagConstraints.EAST;
+        add(download, constraints);
+        
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        constraints.anchor = GridBagConstraints.EAST;
+        add(btnCancel, constraints);
+        
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.anchor = GridBagConstraints.EAST;
+        add(btnSkip, constraints);
+         
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.gridwidth = 1;
+        constraints.anchor = GridBagConstraints.WEST;
+        add(labelFileName, constraints);
+         
+        constraints.gridx = 1;
+        add(tfFileName, constraints);
+         
+        constraints.gridy = 4;
+        constraints.gridx = 0;
+        add(labelFileSize, constraints);
+         
+        constraints.gridx = 1;
+        add(tfFileSize, constraints);
+        
+        pack();
+        setLocationRelativeTo(null);    // center on screen
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
+        setVisible(true);
 		download.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -131,55 +182,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 			}
 		});
 		
-		tfFileName.setEditable(false);
-		tfFileSize.setEditable(false);
-		
-		progressBar.setPreferredSize(new Dimension(200,30));
-		progressBar.setStringPainted(true);
-		
-		
-		constraints.gridx=0;
-		constraints.gridy = 1;
-        constraints.weightx = 0.0;
-        constraints.gridwidth = 2;
-        constraints.fill = GridBagConstraints.NONE;
-        add(filePicker, constraints);
- 
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-        constraints.anchor = GridBagConstraints.EAST;
-        add(download, constraints);
-        
-        constraints.gridx = 0;
-        constraints.gridy = 5;
-        constraints.anchor = GridBagConstraints.EAST;
-        add(btnCancel, constraints);
-        
-        constraints.gridx = 0;
-        constraints.gridy = 4;
-        constraints.anchor = GridBagConstraints.EAST;
-        add(btnSkip, constraints);
-         
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-        constraints.gridwidth = 1;
-        constraints.anchor = GridBagConstraints.WEST;
-        add(labelFileName, constraints);
-         
-        constraints.gridx = 1;
-        add(tfFileName, constraints);
-         
-        constraints.gridy = 4;
-        constraints.gridx = 0;
-        add(labelFileSize, constraints);
-         
-        constraints.gridx = 1;
-        add(tfFileSize, constraints);
-        
-        pack();
-        setLocationRelativeTo(null);    // center on screen
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
-        setVisible(true);
 	}
 
 	private boolean buttonDownloadActionPerformed(ActionEvent event) {
@@ -194,7 +196,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		try{
 			progressBar.setValue(0);
 			APICall api = new APICall();
-			String response = api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
+			//String response = api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
 			result = true;
 		}catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
