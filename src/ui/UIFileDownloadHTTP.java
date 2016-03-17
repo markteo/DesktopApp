@@ -53,7 +53,7 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 	private JProgressBar progressBar = new JProgressBar(0, 100);
 
 	public UIFileDownloadHTTP() {
-		super("Download CSV File");
+		super("Upload File");
 		// TODO Auto-generated constructor stub
 		setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -76,7 +76,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 							setVisible(false);
 							uploadUI.runUpload();
 						}
-						// mimic some long-running process here...
 						return null;
 					}
 				};

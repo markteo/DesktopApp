@@ -237,14 +237,14 @@ public class APICall {
 		
 	}
 	
-	public String getCSVSample(String targetURL, String sessionKey, String fileLocation, ui.UIFileDownloadHTTP ui) throws IOException{
+	public String getCSVSample(String targetURL, String sessionKey, String fileLocation, ui.UIFileUploadHTTP ui) throws IOException{
 		String api = "/public/files/samples/inventory_template.csv";
 		targetURL = targetURL + api;
 		
 		System.out.println(targetURL);
 		HttpDownloadUtility http = new HttpDownloadUtility();
 		String response = http.downloadFile(targetURL, fileLocation, sessionKey, ui);
-		http.addPropertyChangeListener(ui);
+		//http.addPropertyChangeListener(ui);
 		http.execute();
 		System.out.println(response);
 		
