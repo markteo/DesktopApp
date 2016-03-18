@@ -1,4 +1,4 @@
-package uiComponents.jTreeCheckBox;
+package ui.components.jtree;
 
 import java.util.ArrayList;
 import java.util.Stack;

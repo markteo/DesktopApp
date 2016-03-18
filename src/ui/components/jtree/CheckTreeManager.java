@@ -1,4 +1,4 @@
-package uiComponents.jTreeCheckBox;
+package ui.components.jtree;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
