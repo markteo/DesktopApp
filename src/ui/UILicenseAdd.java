@@ -27,12 +27,14 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import main.Data;
+import api.APIProcess;
 import customColor.CustomColor;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
-import uiComponents.jTreeCheckBox.CheckTreeManager;
+import ui.components.jtree.CheckTreeManager;
 
 public class UILicenseAdd {
 	private JFrame frame;
@@ -66,6 +68,7 @@ public class UILicenseAdd {
 	private JButton btnCancel;
 
 	private CheckTreeManager checkTreeManager;
+	private APIProcess api = new APIProcess();
 
 	Panel p = new Panel();
 	Button b = new Button();
@@ -97,7 +100,7 @@ public class UILicenseAdd {
 		JPanel panel = p.createPanel(Layouts.gridbag);
 		GridBagConstraints g = new GridBagConstraints();
 
-		lblCloud = l.createLabel("Cloud Storage:", SwingConstants.LEFT);
+		lblCloud = l.createLabel("Cloud Storage (GB):", SwingConstants.LEFT);
 		g.gridx = 0;
 		g.gridy = 0;
 		g.gridwidth = 2;
@@ -105,7 +108,7 @@ public class UILicenseAdd {
 		g.anchor = g.FIRST_LINE_START;
 		panel.add(lblCloud, g);
 
-		lblValidity = l.createLabel("Validity Period:", SwingConstants.LEFT);
+		lblValidity = l.createLabel("Validity Period (Months):", SwingConstants.LEFT);
 		g.gridx = 0;
 		g.gridy = 1;
 		g.gridwidth = 2;
@@ -130,7 +133,7 @@ public class UILicenseAdd {
 		g.fill = GridBagConstraints.VERTICAL;
 		panel.add(spnCloud, g);
 
-		spnValidity = new JSpinner(new SpinnerNumberModel(1, 1, 24, 1));
+		spnValidity = new JSpinner(new SpinnerNumberModel(24, 1, 24, 1));
 		spnValidity.setPreferredSize(new Dimension(50, 25));
 		g.gridx = 2;
 		g.gridy = 1;
@@ -286,6 +289,11 @@ public class UILicenseAdd {
 
 		return panel;
 	}
+	
+	public void getFeaturesData(){
+		 api.featuresList(Data.targetURL, Data.sessionKey, Data.bucketID);
+	}
+	
 	//
 	// public Panel p = new Panel();
 	// public Button b = new Button();
@@ -563,9 +571,6 @@ public class UILicenseAdd {
 	// pnlBtns.add(pnlButtonLayout);
 	// }
 	//
-	// public void getFeaturesData(){
-	// api.featuresList(Data.targetURL, Data.sessionKey, Data.bucketID);
-	//
-	// }
+	// 
 
 }
