@@ -14,7 +14,6 @@ import ui.UIFileUploadHTTP;
 import ui.UIGenerateKey;
 import ui.UIInventorySelect;
 import ui.UILicenseDetail;
-import ui.UILicenseSelect;
 import ui.UILogin;
 
 public class Data {
@@ -29,7 +28,6 @@ public class Data {
 	public static String licenseNumber;
 	public static UIInventorySelect uiInventorySelect;
 	public static UIBucketSelect uiBucketSelect;
-	public static UILicenseSelect uiLicenseSelect;
 	public static HashMap<String, JSONArray> featureList;
 	public static UIGenerateKey uiGenerateKey;
 	public static UIAccessKeySelect uiAccessKeySelect;
