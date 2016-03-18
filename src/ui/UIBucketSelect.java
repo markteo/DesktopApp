@@ -22,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -41,7 +42,7 @@ import customColor.CustomColor;
 
 public class UIBucketSelect{
 	Thread buckets;
-	public static DefaultListModel<String> model = new DefaultListModel<String>();
+	public JTable listBucket;
 	private JFrame bucketFrame;
 	public UIBucketSelect(){
 		getBucketData();
@@ -52,12 +53,7 @@ public class UIBucketSelect{
 		Panel p = new Panel();
 		Button b = new Button();
 		Label l = new Label();
-		bucketFrame = new JFrame("Bucket");
-		
-		JList listBucket = new JList(model);
-		
-		System.out.println("Awaiting bucketList");
-		
+		bucketFrame = new JFrame("Bucket");		
 		
 		// start of ui
 		bucketFrame.setLayout(new BorderLayout());
@@ -70,19 +66,18 @@ public class UIBucketSelect{
 		pnlInstruction.add(lblInstruction);
 
 		JPanel pnlBucketList = p.createPanel(Layouts.flow);
-		JLabel lblBucketList = l.createLabel("Bucket List : \n  ");
 		
 		
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
 		scrollBucket.setPreferredSize(new Dimension(300, 150));
-		Component[] BucketListComponents = { lblBucketList, scrollBucket };
+		Component[] BucketListComponents = { scrollBucket };
 		p.addComponentsToPanel(pnlBucketList, BucketListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
 		JButton btnBack = b.createButton("Back");
 		JButton btnSelectElements = b.createButton("Next");
-		JButton btnRefresh = b.createButton("Refresh/Get Bucket List");
+		JButton btnRefresh = b.createButton("Refresh Bucket List");
 
 		pnlButtons.add(btnBack);
 		pnlButtons.add(btnSelectElements);
@@ -99,7 +94,6 @@ public class UIBucketSelect{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				getBucketData();
-				listBucket.setModel(model);
 			}
 		});
 		btnSelectElements.addActionListener(new ActionListener() {
@@ -109,13 +103,11 @@ public class UIBucketSelect{
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						String itemSelected = listBucket.getModel().getElementAt(listBucket.getSelectedIndex())
-								.toString();
-						String[] itemData = itemSelected.split("\\,");
-						Data.bucketID = Integer.parseInt(itemData[0].trim());
+						
+						int selected = listBucket.getSelectedRow();					
+						Data.bucketID = (int) listBucket.getModel().getValueAt(selected, 0);
 						bucketFrame.setVisible(false);
 						Data.uiLicenseDetail = new UILicenseDetail();
-						// mimic some long-running process here...
 						return null;
 					}
 				};
@@ -165,16 +157,19 @@ public class UIBucketSelect{
 		});
 	}
 	
-	private static void getBucketData(){
+	private void getBucketData(){
 		
 		
 		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
-		model = new DefaultListModel<String>();
 		try {
+			Object[][] rowData = new Object[bucketList.length()][2];
+			Object columnName[] = new Object[] {"Bucket ID", "Bucket Name"};
 			for (int i = 0; i < bucketList.length(); i++){
 				JSONObject bucket = bucketList.getJSONObject(i);
-				model.addElement(bucket.get("bucketID") + " , " + bucket.get("bucketName"));
+				rowData[i][0] = bucket.get("bucketID");
+				rowData[i][1] = bucket.get("bucketName");
 			}	
+			listBucket = new JTable(rowData, columnName);
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
