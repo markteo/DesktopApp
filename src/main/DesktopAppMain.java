@@ -25,6 +25,7 @@ import javax.swing.SwingWorker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ui.UILicenseDetail;
 import ui.UILogin;
 
 public class DesktopAppMain{

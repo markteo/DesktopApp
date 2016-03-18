@@ -77,11 +77,16 @@ public class UILicenseDetail {
 	Panel p = new Panel();
 	Button b = new Button();
 	Label l = new Label();
+	
+	public UILicenseDetail(){
+		System.out.println("esd");
+		runLicenseDetails();
+		System.out.println("esd");
+	}
 
 	public void runLicenseDetails() {
 		frame = new JFrame("License Details");
-		frame.getContentPane().setBackground(CustomColor.NavyBlue.returnColor());
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		System.out.println("safsdf");
 
 		frame.getContentPane().setLayout(new BorderLayout());
 
@@ -91,9 +96,12 @@ public class UILicenseDetail {
 		frame.getContentPane().add(pnlDetails, BorderLayout.NORTH);
 		frame.getContentPane().add(pnlFeatures, BorderLayout.CENTER);
 		frame.getContentPane().add(pnlButtons, BorderLayout.SOUTH);
-
+		frame.getContentPane().setBackground(CustomColor.NavyBlue.returnColor());
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
+		System.out.println("safsdf");
+
 	}
 
 	public DefaultMutableTreeNode createNode(String name) {
@@ -229,6 +237,7 @@ public class UILicenseDetail {
 
 		btnSubmit = b.createButton("Submit");
 		btnCancel = b.createButton("Cancel");
+		btnAdd = b.createButton("Add");
 
 		btnSubmit.addActionListener(new ActionListener() {
 
@@ -254,6 +263,7 @@ public class UILicenseDetail {
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
 				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
+				uiLicenseAdd.runTestJCheckBox();
 				//uiLicenseAdd.runLicenseAdd();
 				uiLicenseAdd.runTestJCheckBox();
 				
@@ -262,6 +272,7 @@ public class UILicenseDetail {
 
 		panel.add(btnSubmit);
 		panel.add(btnCancel);
+		panel.add(btnAdd);
 
 		return panel;
 	}
