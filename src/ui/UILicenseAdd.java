@@ -7,7 +7,10 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -28,13 +31,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import main.Data;
-import api.APIProcess;
-import customColor.CustomColor;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import ui.components.Button;
+import ui.components.CheckBoxList;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
 import ui.components.jtree.CheckTreeManager;
+import api.APIProcess;
+import customColor.CustomColor;
 
 public class UILicenseAdd {
 	private JFrame frame;
@@ -69,6 +77,8 @@ public class UILicenseAdd {
 
 	private CheckTreeManager checkTreeManager;
 	private APIProcess api = new APIProcess();
+	private HashMap<String, DefaultMutableTreeNode> checkFeatures = new HashMap<String,
+		 DefaultMutableTreeNode>();
 
 	Panel p = new Panel();
 	Button b = new Button();
@@ -178,26 +188,72 @@ public class UILicenseAdd {
 		g.gridwidth = 2;
 		g.insets = new Insets(5, 5, 5, 5);
 		panel.add(lblServiceApi, g);
-
+		getFeaturesData();
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
-
-		DefaultMutableTreeNode child1 = new DefaultMutableTreeNode("child1");
-		DefaultMutableTreeNode child2 = new DefaultMutableTreeNode("child2");
-
-		DefaultMutableTreeNode gchild3 = new DefaultMutableTreeNode("gchild3");
-		DefaultMutableTreeNode gchild4 = new DefaultMutableTreeNode("gchild4");
-		DefaultMutableTreeNode gchild5 = new DefaultMutableTreeNode("gchild5");
-		DefaultMutableTreeNode gchild6 = new DefaultMutableTreeNode("gchild6");
-		DefaultMutableTreeNode gchild7 = new DefaultMutableTreeNode("gchild7");
-
-		child1.add(gchild3);
-		child1.add(gchild5);
-		child2.add(gchild4);
-		child2.add(gchild6);
-		child2.add(gchild7);
-
-		root.add(child1);
-		root.add(child2);
+		
+		
+		for(String key : Data.featureList.keySet()){
+			
+			 JSONArray featureArray = Data.featureList.get(key);
+			 DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
+			 ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
+			
+			 for(int i = 0; i < featureArray.length(); i ++){
+				 try {
+					 DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(featureArray.getJSONObject(i).getString("name"));
+					 element.add(featureElement);
+					 arrayFeatureCheckBox.add(featureElement);
+				 } catch (JSONException e1) {
+				 // TODO Auto-generated catch block
+				 e1.printStackTrace();
+				 }
+			 }
+			 root.add(element);
+			
+			
+//			
+//			 element.addItemListener(new ItemListener() {
+//			 @Override
+//			 public void itemStateChanged(ItemEvent e) {
+//			 // TODO Auto-generated method stub
+//			 if(element.isSelected()){
+//			// mdlFeature.removeAllElements();
+//			 HashMap<String, String> servicesList = new HashMap<String, String>();
+//			// mdlSvcUsed = new DefaultListModel<String>();
+//			
+//			 for(int i = 0; i < featureArray.length(); i ++){
+//			 try {
+//			// mdlFeature.addElement(featureArray.getJSONObject(i).getString("name"));
+//			// featuresList.put(featureArray.getJSONObject(i).getString("name"), "");
+//			 JSONArray servicesArray =
+//			 featureArray.getJSONObject(i).getJSONArray("services");
+//			 for(int x = 0; x < servicesArray.length(); x ++){
+//			 servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")),
+//			 servicesArray.getJSONObject(x).getString("name"));
+//			 }
+//			 } catch (JSONException e1) {
+//			 e1.printStackTrace();
+//			 }
+//			 }
+//			
+//			 for(String serviceKey : servicesList.keySet()){
+//			// mdlSvcUsed.addElement(servicesList.get(serviceKey));
+//			 }
+//			
+//			// listSvcUsed.setModel(mdlSvcUsed);
+//			 }else{
+//			// currentSelected = element.getText();
+//			 for(int i = 0; i < featureArray.length(); i ++){
+//			 try {
+//		//	 featuresList.remove(featureArray.getJSONObject(i).getString("name"));
+//			 } catch (JSONException e1) {
+//			 // TODO Auto-generated catch block
+//			 e1.printStackTrace();
+//			 }
+//			 }}
+//			 }
+//			 });
+			 }
 
 		tree = new JTree(root);
 		checkTreeManager = new CheckTreeManager(tree);
