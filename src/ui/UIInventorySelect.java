@@ -3,10 +3,10 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -18,32 +18,35 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import main.Data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import api.APICall;
-import api.APIProcess;
-import customColor.CustomColor;
-import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APICall;
+import api.APIProcess;
+import customColor.CustomColor;
 
 public class UIInventorySelect {
 	public static APICall api = new APICall();
 	private JFrame inventoryFrame;
-	private JList listInventory;
-	private DefaultListModel<String> model;
+	private JTable listInventory;
+	private DefaultTableModel model;
 
 	public void runInventorySelect() {
 		Panel p = new Panel();
@@ -51,7 +54,8 @@ public class UIInventorySelect {
 		Label l = new Label();
 
 		// fetch list from server
-		model = getInventoryData(new DefaultListModel<String>());
+		listInventory = getInventoryData();
+		listInventory.setSize(300, 400);
 
 		// start of ui
 		inventoryFrame = new JFrame("Inventory");
@@ -66,12 +70,10 @@ public class UIInventorySelect {
 		pnlInstruction.add(lblInstruction);
 
 		JPanel pnlInventoryList = p.createPanel(Layouts.flow);
-		JLabel lblInventoryList = l.createLabel("Inventory List : \n  (ID, Registration Number, MAC Address)");
-		listInventory = new JList(model);
 		listInventory.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollInventory = new JScrollPane(listInventory);
 		scrollInventory.setPreferredSize(new Dimension(300, 150));
-		Component[] inventoryListComponents = { lblInventoryList, scrollInventory };
+		Component[] inventoryListComponents = { scrollInventory };
 		p.addComponentsToPanel(pnlInventoryList, inventoryListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
@@ -107,9 +109,10 @@ public class UIInventorySelect {
 					protected Void doInBackground() throws Exception {
 
 						// do something with selected inventory
-						System.out.println(listInventory.getModel().getElementAt(listInventory.getSelectedIndex()));
-						String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex())
-								.toString();
+//						System.out.println(listInventory.getModel().getElementAt(listInventory.getSelectedIndex()));
+//						String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex())
+//								.toString();
+						String itemSelected = "";
 						String[] itemData = itemSelected.split("\\,");
 						Data.registrationNumber = itemData[1].trim();
 						inventoryFrame.setVisible(false);
@@ -157,21 +160,31 @@ public class UIInventorySelect {
 		});
 	}
 
-	public DefaultListModel<String> getInventoryData(DefaultListModel<String> model) {
+	public JTable getInventoryData() {
 		JSONArray inventoryList = new APIProcess().inventoryList(Data.targetURL, Data.sessionKey);
 
 		try {
-			System.out.println(inventoryList.length());
+			Object rowData[][] = new Object[inventoryList.length()][3];
+			Object columnNames[] = {"ID", "Registration Number", "MAC Address"};
 			for (int i = 0; i < inventoryList.length(); i++) {
+
 				JSONObject inventoryItem = inventoryList.getJSONObject(i);
-				model.addElement(inventoryItem.get("id") + " , " + inventoryItem.get("registrationNumber") + " , "
-						+ inventoryItem.get("macAddress"));
+				rowData[i][0] = inventoryItem.get("id");
+				rowData[i][1] = inventoryItem.get("registrationNumber");
+				rowData[i][2] = inventoryItem.get("macAddress");
+//				model.setValueAt(inventoryItem.get("id"), i, 0);
+//				model.setValueAt(inventoryItem.get("registrationNumber"), i, 1);
+//				model.setValueAt(inventoryItem.get("macAddress"), i, 2);
 			}
+			JTable model = new JTable(rowData, columnNames);
+			return model;
+
+			
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return model;
+		return null;
 	}
 	
 	public void setFrameVisible(){
@@ -179,7 +192,6 @@ public class UIInventorySelect {
 	}
 	
 	public void updateInventoryList(){
-		DefaultListModel<String> inventoryList = getInventoryData(new DefaultListModel<String>());
-		listInventory.setModel(inventoryList);
+		JTable inventoryList = getInventoryData();
 	}
 }
