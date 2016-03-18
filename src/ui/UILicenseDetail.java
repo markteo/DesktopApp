@@ -287,7 +287,8 @@ public class UILicenseDetail {
 			public void actionPerformed(ActionEvent e) {
 				licenseDetail.setVisible(false);
 				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
-				uiLicenseAdd.runLicenseAdd();
+				//uiLicenseAdd.runLicenseAdd();
+				uiLicenseAdd.runTestJCheckBox();
 				
 			}
 		});
