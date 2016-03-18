@@ -109,12 +109,8 @@ public class UIInventorySelect {
 					protected Void doInBackground() throws Exception {
 
 						// do something with selected inventory
-//						System.out.println(listInventory.getModel().getElementAt(listInventory.getSelectedIndex()));
-//						String itemSelected = listInventory.getModel().getElementAt(listInventory.getSelectedIndex())
-//								.toString();
-						String itemSelected = "";
-						String[] itemData = itemSelected.split("\\,");
-						Data.registrationNumber = itemData[1].trim();
+						int selected = listInventory.getSelectedRow();
+						Data.registrationNumber = (String) listInventory.getModel().getValueAt(selected, 1);
 						inventoryFrame.setVisible(false);
 
 						if(Data.uiBucketSelect != null){
@@ -172,9 +168,6 @@ public class UIInventorySelect {
 				rowData[i][0] = inventoryItem.get("id");
 				rowData[i][1] = inventoryItem.get("registrationNumber");
 				rowData[i][2] = inventoryItem.get("macAddress");
-//				model.setValueAt(inventoryItem.get("id"), i, 0);
-//				model.setValueAt(inventoryItem.get("registrationNumber"), i, 1);
-//				model.setValueAt(inventoryItem.get("macAddress"), i, 2);
 			}
 			JTable model = new JTable(rowData, columnNames);
 			return model;
