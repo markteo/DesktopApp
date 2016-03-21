@@ -74,6 +74,7 @@ public class UILicenseAdd {
 
 	private JButton btnSubmit;
 	private JButton btnCancel;
+	private HashMap<String, String> servicesList; 
 
 	private CheckTreeManager checkTreeManager;
 	private APIProcess api = new APIProcess();
@@ -203,14 +204,16 @@ public class UILicenseAdd {
 					 DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(featureArray.getJSONObject(i).getString("name"));
 					 element.add(featureElement);
 					 arrayFeatureCheckBox.add(featureElement);
+					
+					 
 				 } catch (JSONException e1) {
-				 // TODO Auto-generated catch block
-				 e1.printStackTrace();
+					 e1.printStackTrace();
 				 }
 			 }
 			 root.add(element);
 			
-			
+		 }
+
 //			
 //			 element.addItemListener(new ItemListener() {
 //			 @Override
@@ -253,14 +256,79 @@ public class UILicenseAdd {
 //			 }}
 //			 }
 //			 });
-			 }
 
 		tree = new JTree(root);
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+			
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+				TreePath path = tree.getSelectionModel().getSelectionPath();
+				model.removeAllElements();
+				String selected = tree.getSelectionModel().getSelectionPath().getLastPathComponent().toString();
+				servicesList = new HashMap<String, String>();
+				try{
+					if(selected.equalsIgnoreCase("root")){
+						for(String key : Data.featureList.keySet()){
+							JSONArray featureArray = Data.featureList.get(key);
+							
+							 for(int i = 0; i < featureArray.length(); i ++){
+								 JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
+								 
+								 for(int x = 0; x < servicesArray.length(); x ++){
+									 servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
+								 }
+							 }
+						}
+					}else if(path.getPathCount() == 2){
+						for(String key : Data.featureList.keySet()){
+							if(key.equals(selected)){
+								JSONArray featureArray = Data.featureList.get(key);
+								
+								 for(int i = 0; i < featureArray.length(); i ++){
+									 JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
+									 
+									 for(int x = 0; x < servicesArray.length(); x ++){
+										 servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
+									 }
+								 }
+							}else{
+								continue;
+							}
+						}
+					}else{
+						for(String key : Data.featureList.keySet()){
+							if(key.equals(path.getPathComponent(1).toString())){
+								JSONArray featureArray = Data.featureList.get(key);
+								
+								 for(int i = 0; i < featureArray.length(); i ++){
+									 if(featureArray.getJSONObject(i).getString("name").equals(selected)){
+										 JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
+										 
+										 for(int x = 0; x < servicesArray.length(); x ++){
+											 servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
+										 }
+									 }else{
+										 continue;
+									 }
+								 }
+							}else{
+								continue;
+							}
+						}
+					}
+				} catch(JSONException ex){
+					ex.printStackTrace();
+				}
+				for(String serviceKey : servicesList.keySet()){
+					 model.addElement(servicesList.get(serviceKey));
+				}
+				listServiceUsed.setModel(model);
+			}
+		});
 		checkTreeManager = new CheckTreeManager(tree);
 		checkTreeManager.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
 			public void valueChanged(TreeSelectionEvent e) {
-				// TODO Auto-generated method stub
 				TreePath[] path = checkTreeManager.getSelectionModel().getSelectionPaths();
 				ArrayList<Object> alSelected = new ArrayList<>();
 				// remove all the element in the list
@@ -273,9 +341,19 @@ public class UILicenseAdd {
 				// Child2
 				// GrandChildA
 				// GrandChildB
+				HashMap<String, String> servicesList = new HashMap<String, String>();
+				model = new DefaultListModel<String>();
+
 				for (TreePath tp : path) {
 					System.out.println(tp.getLastPathComponent());
 					if (tp.getLastPathComponent().toString().equalsIgnoreCase("root")) {
+						for(String key : Data.featureList.keySet()){
+							
+							 JSONArray featureArray = Data.featureList.get(key);
+							 for(int i = 0; i < featureArray.length(); i ++){
+							 
+							 }
+						}
 						System.out.println("Selected All");
 						// root element
 					} else if (tp.getPathCount() == 2) {
