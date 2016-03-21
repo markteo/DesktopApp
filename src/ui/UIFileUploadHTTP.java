@@ -35,7 +35,7 @@ import customColor.CustomColor;
 
 public class UIFileUploadHTTP {
 
-	private JFrame frame;
+	public JFrame frame;
 
 	private JLabel lblFileName;
 
@@ -46,7 +46,7 @@ public class UIFileUploadHTTP {
 	private JButton btnBack;
 	private JButton btnCancel;
 	private JButton btnBrowse;
-
+	
 	private FileDialog fd;
 
 	Panel p = new Panel();
