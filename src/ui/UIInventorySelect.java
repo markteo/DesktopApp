@@ -26,6 +26,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import main.Data;
@@ -55,12 +57,33 @@ public class UIInventorySelect {
 
 		// fetch list from server
 		listInventory = getInventoryData();
-		listInventory.setSize(300, 400);
+		listInventory.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		for (int column = 0; column < listInventory.getColumnCount(); column++) {
+			TableColumn tableColumn = listInventory.getColumnModel().getColumn(column);
+			int preferredWidth = tableColumn.getMinWidth();
+			int maxWidth = tableColumn.getMaxWidth();
+
+			for (int row = 0; row < listInventory.getRowCount(); row++) {
+				TableCellRenderer cellRenderer = listInventory.getCellRenderer(row, column);
+				Component c = listInventory.prepareRenderer(cellRenderer, row, column);
+				int width = c.getPreferredSize().width + listInventory.getIntercellSpacing().width;
+				preferredWidth = Math.max(preferredWidth, width);
+
+				// We've exceeded the maximum width, no need to check other rows
+
+				if (preferredWidth >= maxWidth) {
+					preferredWidth = maxWidth;
+					break;
+				}
+			}
+
+			tableColumn.setPreferredWidth(preferredWidth);
+		}
 
 		// start of ui
 		inventoryFrame = new JFrame("Inventory");
 		inventoryFrame.setLayout(new BorderLayout());
-		
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
 		JLabel lblInstruction = l.createLabel("Inventory List");
@@ -72,14 +95,14 @@ public class UIInventorySelect {
 		JPanel pnlInventoryList = p.createPanel(Layouts.flow);
 		listInventory.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollInventory = new JScrollPane(listInventory);
-		scrollInventory.setPreferredSize(new Dimension(300, 150));
+		scrollInventory.setPreferredSize(
+				new Dimension(listInventory.getPreferredSize().width + 20, listInventory.getPreferredSize().height));
 		Component[] inventoryListComponents = { scrollInventory };
 		p.addComponentsToPanel(pnlInventoryList, inventoryListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
 		JButton btnAddElements = b.createButton("Add Inventory Item");
 		JButton btnSelectElements = b.createButton("Next");
-		
 
 		pnlButtons.add(btnAddElements);
 		pnlButtons.add(btnSelectElements);
@@ -88,22 +111,20 @@ public class UIInventorySelect {
 		inventoryFrame.add(pnlInventoryList, BorderLayout.CENTER);
 		inventoryFrame.add(pnlButtons, BorderLayout.SOUTH);
 		inventoryFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		inventoryFrame.pack();		
+		inventoryFrame.pack();
 		inventoryFrame.setVisible(true);
 		btnAddElements.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Data.uiFileUpload = new UIFileUploadHTTP();
 				Data.uiFileUpload.runUpload();
 			}
 		});
-		
+
 		btnSelectElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				
+
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
@@ -113,19 +134,17 @@ public class UIInventorySelect {
 						Data.registrationNumber = (String) listInventory.getModel().getValueAt(selected, 1);
 						inventoryFrame.setVisible(false);
 
-						if(Data.uiBucketSelect != null){
+						if (Data.uiBucketSelect != null) {
 							Data.uiBucketSelect.setFrameVisible();
-						}else{
+						} else {
 							Data.uiBucketSelect = new UIBucketSelect();
 						}
 						return null;
 					}
 				};
 
-				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
-						.getSource());
-				final JDialog dialog = new JDialog(win, "Bucket",
-						ModalityType.APPLICATION_MODAL);
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Bucket", ModalityType.APPLICATION_MODAL);
 
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -148,10 +167,9 @@ public class UIInventorySelect {
 				dialog.add(panel);
 				dialog.pack();
 				dialog.setLocationRelativeTo(win);
-				dialog.setBounds(50,50,300,100);
+				dialog.setBounds(50, 50, 300, 100);
 				dialog.setVisible(true);
-				
-				
+
 			}
 		});
 	}
@@ -161,7 +179,7 @@ public class UIInventorySelect {
 
 		try {
 			Object rowData[][] = new Object[inventoryList.length()][3];
-			Object columnNames[] = {"ID", "Registration Number", "MAC Address"};
+			Object columnNames[] = { "ID", "Registration Number", "MAC Address" };
 			for (int i = 0; i < inventoryList.length(); i++) {
 
 				JSONObject inventoryItem = inventoryList.getJSONObject(i);
@@ -172,19 +190,18 @@ public class UIInventorySelect {
 			JTable model = new JTable(rowData, columnNames);
 			return model;
 
-			
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		return null;
 	}
-	
-	public void setFrameVisible(){
+
+	public void setFrameVisible() {
 		inventoryFrame.setVisible(true);
 	}
-	
-	public void updateInventoryList(){
+
+	public void updateInventoryList() {
 		JTable inventoryList = getInventoryData();
 	}
 }
