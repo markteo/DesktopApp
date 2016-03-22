@@ -72,7 +72,14 @@ public class UIFileUploadHTTP {
 		JPanel panel = p.createPanel(Layouts.flow);
 		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-		btnDownload = b.createButton("Download");
+		btnDownload = b.createButton("Download Template");
+		btnDownload.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
 		btnUpload = b.createButton("Upload");
 		btnBack = b.createButton("Back");
 		btnCancel = b.createButton("Cancel");
@@ -108,7 +115,7 @@ public class UIFileUploadHTTP {
 				tfFileName.setText(filename);
 			}
 		});
-		lblFileName = l.createLabel("File to upload:");
+		lblFileName = l.createLabel("File to upload :");
 		l.addPadding(lblFileName, 10);
 		tfFileName = new JTextField();
 		tfFileName.setEditable(false);
