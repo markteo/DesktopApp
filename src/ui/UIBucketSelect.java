@@ -162,8 +162,8 @@ public class UIBucketSelect{
 		
 		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
 		try {
-			Object[][] rowData = new Object[bucketList.length()][2];
 			Object columnName[] = new Object[] {"Bucket ID", "Bucket Name"};
+			Object[][] rowData = new Object[bucketList.length()][columnName.length];
 			for (int i = 0; i < bucketList.length(); i++){
 				JSONObject bucket = bucketList.getJSONObject(i);
 				rowData[i][0] = bucket.get("bucketID");

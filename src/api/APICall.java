@@ -34,6 +34,7 @@ public class APICall {
 					+ "&password=" + URLEncoder.encode(password, enc);
 
 			String response = executePost(targetURL, urlParameters);
+			System.out.println(response);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
