@@ -1,46 +1,61 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.DefaultTreeModel;
 
-import customColor.CustomColor;
+import main.Data;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
 import ui.components.jtree.CheckTreeManager;
+import api.APIProcess;
 import customColor.CustomColor;
 
 public class UILicenseDetail {
 
 	private JFrame frame;
+	private String[] arrayLicense = new String[] {};
 
 	private JPanel pnlButtons;
 	private JPanel pnlDetails;
@@ -67,26 +82,27 @@ public class UILicenseDetail {
 	private JSpinner spnConcurrentVCA;
 
 	private JCheckBox cbPerpetual;
-
+	private DefaultMutableTreeNode root;
 	private JButton btnSubmit;
 	private JButton btnCancel;
 	private JButton btnAdd;
-
+	private APIProcess api = new APIProcess();
 	private CheckTreeManager checkTreeManager;
+	private final SimpleDateFormat simpleDate = new SimpleDateFormat(
+			"dd/MM/yyyy HH:mm:ss");
 
 	Panel p = new Panel();
 	Button b = new Button();
 	Label l = new Label();
-	
-	public UILicenseDetail(){
-		System.out.println("esd");
+
+	public UILicenseDetail() {
+		getFeaturesData();
+		getLicenseData();
 		runLicenseDetails();
-		System.out.println("esd");
 	}
 
 	public void runLicenseDetails() {
 		frame = new JFrame("License Details");
-		System.out.println("safsdf");
 
 		frame.getContentPane().setLayout(new BorderLayout());
 
@@ -96,11 +112,11 @@ public class UILicenseDetail {
 		frame.getContentPane().add(pnlDetails, BorderLayout.NORTH);
 		frame.getContentPane().add(pnlFeatures, BorderLayout.CENTER);
 		frame.getContentPane().add(pnlButtons, BorderLayout.SOUTH);
-		frame.getContentPane().setBackground(CustomColor.NavyBlue.returnColor());
+		frame.getContentPane()
+				.setBackground(CustomColor.NavyBlue.returnColor());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
-		System.out.println("safsdf");
 
 	}
 
@@ -112,21 +128,15 @@ public class UILicenseDetail {
 		JPanel panel = p.createPanel(Layouts.flow);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		// init the columnNames, data
-		String[] columnNames = { "Name", "License", "Services", "Company" };
-		String[][] data = { { "Cheok Jia Chin", "123456", "Perimeter Defense, Face Indexing", "Cheok Company" },
-				{ "Ho Yuan Yi", "123457", "Audience Profiling, People Counting", "HOHOHO Co" },
-				{ "Mark Teo", "1234568", "Audience Profiling", "Teo Pte Ltd" } };
-
-		tblInfo = new JTable();
-		tblInfo.setModel(new UneditableModel(data, columnNames));
 		tblInfo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
 		tblInfo.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 1) {
-					JTable target = (JTable) e.getSource();
-					int row = target.getSelectedRow();
-					System.out.println("Value selected is " + target.getModel().getValueAt(row, 0));
-				}
+
+				int selected = tblInfo.getSelectedRow();
+				DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+				getData((String) tblInfo.getModel().getValueAt(selected, 0));
+				model.setRoot(root);
 			}
 		});
 		spTable = new JScrollPane(tblInfo);
@@ -140,7 +150,8 @@ public class UILicenseDetail {
 		JPanel panel = p.createPanel(Layouts.gridbag);
 
 		GridBagConstraints g = new GridBagConstraints();
-		lblSelectFeature = l.createLabel("Select Features", SwingConstants.LEFT);
+		lblSelectFeature = l
+				.createLabel("Select Features", SwingConstants.LEFT);
 		g.gridx = 0;
 		g.gridy = 0;
 		g.gridwidth = 2;
@@ -153,61 +164,7 @@ public class UILicenseDetail {
 		g.gridwidth = 2;
 		g.insets = new Insets(5, 5, 5, 5);
 		panel.add(lblServiceApi, g);
-
-		DefaultMutableTreeNode root = createNode("root");
-
-		DefaultMutableTreeNode child1 = new DefaultMutableTreeNode("child1");
-		DefaultMutableTreeNode child2 = new DefaultMutableTreeNode("child2");
-
-		child1.add(createNode("gchild3"));
-		child1.add(createNode("gchild4"));
-		child2.add(createNode("gchild5"));
-		child2.add(createNode("gchild6"));
-		child2.add(createNode("gchild7"));
-
-		root.add(child1);
-		root.add(child2);
-
 		tree = new JTree(root);
-		checkTreeManager = new CheckTreeManager(tree);
-		checkTreeManager.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-				// TODO Auto-generated method stub
-				TreePath[] path = checkTreeManager.getSelectionModel().getSelectionPaths();
-				ArrayList<Object> alSelected = new ArrayList<Object>();
-				// remove all the element in the list
-				model.removeAllElements();
-
-				// TreePath can be more than one if not all is selected.
-				// For instance, Child 1 is Partially selected and Child 2 is
-				// Fully Selected
-				// It would show loop and show up as
-				// Child2
-				// GrandChildA
-				// GrandChildB
-				for (TreePath tp : path) {
-					System.out.println(tp.getLastPathComponent());
-					if (tp.getLastPathComponent().toString().equalsIgnoreCase("root")) {
-						System.out.println("Selected All");
-						// root element
-					} else if (tp.getPathCount() == 2) {
-						// Definitely need to map to hashmap to get all API
-						// use tp.getLastPathComponent(); to get the text of the
-						// name
-					} else if (tp.getPathCount() == 3) {
-						// final level, use getParentPath() to get the header of
-						// your
-						// hashmap then fetch the API from there
-						System.out.println("Level 3");
-					}
-				}
-			}
-		});
-				
-		
-		
-
 		spTreeCheckBox = new JScrollPane(tree);
 		spTreeCheckBox.setPreferredSize(new Dimension(300, 300));
 		g.gridx = 0;
@@ -220,6 +177,7 @@ public class UILicenseDetail {
 		model = new DefaultListModel<>();
 		model.addElement("");
 		listServiceUsed = new JList<String>(model);
+
 		spList = new JScrollPane(listServiceUsed);
 		spList.setPreferredSize(new Dimension(300, 300));
 		g.gridx = 4;
@@ -235,38 +193,79 @@ public class UILicenseDetail {
 		JPanel panel = p.createPanel(Layouts.flow);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-		btnSubmit = b.createButton("Submit");
+		btnSubmit = b.createButton("Next");
 		btnCancel = b.createButton("Cancel");
-		btnAdd = b.createButton("Add");
+		btnAdd = b.createButton("Add License");
 
 		btnSubmit.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {
+						int row = tblInfo.getSelectedRow();
+						Data.licenseNumber = (String) tblInfo.getModel()
+								.getValueAt(row, 0);
+						frame.setVisible(false);
+						Data.uiAccessKeySelect = new UIAccessKeySelect();
+						return null;
+					}
+				};
+
+				Window win = SwingUtilities
+						.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Dialog",
+						ModalityType.APPLICATION_MODAL);
+
+				mySwingWorker
+						.addPropertyChangeListener(new PropertyChangeListener() {
+
+							@Override
+							public void propertyChange(PropertyChangeEvent evt) {
+								if (evt.getPropertyName().equals("state")) {
+									if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+										dialog.dispose();
+									}
+								}
+							}
+						});
+				mySwingWorker.execute();
+
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Retrieving Access Keys"),
+						BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setLocationRelativeTo(win);
+				dialog.setBounds(50, 50, 300, 100);
+				dialog.setVisible(true);
 
 			}
+
 		});
 
 		btnCancel.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-
+				frame.setVisible(false);
+				Data.uiBucketSelect.setFrameVisible();
 			}
 		});
-		
+
 		btnAdd.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
 				UILicenseAdd uiLicenseAdd = new UILicenseAdd();
 				uiLicenseAdd.runTestJCheckBox();
-				//uiLicenseAdd.runLicenseAdd();
-				uiLicenseAdd.runTestJCheckBox();
-				
+
 			}
 		});
 
@@ -276,9 +275,107 @@ public class UILicenseDetail {
 
 		return panel;
 	}
-	public void setFrameVisible(){
-		 frame.setVisible(true);
+
+	public void setFrameVisible() {
+		frame.setVisible(true);
 	}
+
+	private void getLicenseData() {
+		ArrayList<String> arrayLicenses = new ArrayList<String>();
+		JSONArray licenseList = new APIProcess().nodeLicenseList(
+				Data.targetURL, Data.sessionKey, Data.bucketID);
+		try {
+			String[] columnNames = { "License Number", "Validity", "Storage",
+					"Date Created", "Maximum VCA", "Bucket Name" };
+			Object[][] rowData = new Object[licenseList.length()][columnNames.length];
+
+			for (int i = 0; i < licenseList.length(); i++) {
+				JSONObject license = licenseList.getJSONObject(i);
+
+				String licenseNumber = license.getString("licenseNumber");
+				char[] charArray = licenseNumber.toCharArray();
+				String licenseAdd = "";
+				for (int x = 0; x < charArray.length; x++) {
+					if (x % 5 == 0 && x != 0) {
+
+						licenseAdd += " - " + charArray[x];
+
+					} else {
+						licenseAdd += charArray[x];
+					}
+				}
+				JSONObject response = api.getNodeLicenseDetails(Data.targetURL,
+						Data.sessionKey, Data.bucketID, licenseAdd);
+				rowData[i][0] = licenseAdd;
+				if (response.getInt("duration") == -1) {
+					rowData[i][1] = "Perpetual";
+				} else {
+					rowData[i][1] = response.getInt("duration");
+				}
+				rowData[i][2] = response.getInt("cloudStorage");
+				rowData[i][3] = simpleDate.format(response.getLong("created"));
+				rowData[i][4] = response.getInt("maxVCA");
+				rowData[i][5] = response.getString("bucketName");
+				arrayLicenses.add(licenseAdd);
+			}
+			tblInfo = new JTable(rowData, columnNames);
+			arrayLicense = arrayLicenses.toArray(arrayLicense);
+
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	public void getData(String licenseNumber) {
+		root = new DefaultMutableTreeNode("root");
+
+		try {
+			JSONObject response = api.getNodeLicenseDetails(Data.targetURL,
+					Data.sessionKey, Data.bucketID, licenseNumber);
+			JSONArray features = response.getJSONArray("features");
+			for (String key : Data.featureList.keySet()) {
+				boolean contains = false;
+
+				JSONArray featureArray = Data.featureList.get(key);
+
+				DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
+				ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
+				for (int i = 0; i < features.length(); i++) {
+					String feature = features.getString(i);
+					for (int x = 0; x < featureArray.length(); x++) {
+						try {
+							if (feature.equals(featureArray.getJSONObject(x)
+									.getString("name"))) {
+								DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(
+										featureArray.getJSONObject(x)
+												.getString("name"));
+								element.add(featureElement);
+								arrayFeatureCheckBox.add(featureElement);
+								contains = true;
+							}
+
+						} catch (JSONException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+				if (contains) {
+					root.add(element);
+				}
+			}
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void getFeaturesData() {
+		api.featuresList(Data.targetURL, Data.sessionKey, Data.bucketID);
+	}
+
 }
 
 // need this model to make table uneditable
@@ -293,7 +390,6 @@ class UneditableModel extends DefaultTableModel {
 		return false;
 	}
 
-	// private String[] arrayLicense = new String[]{};
 	//
 	// private JFrame licenseDetail;
 	//
@@ -694,6 +790,5 @@ class UneditableModel extends DefaultTableModel {
 	// }
 	// }
 	//
-	
-}
 
+}
