@@ -91,7 +91,7 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void>{
 			return "ERROR";
 			}
 		}catch(IOException e){
-			JOptionPane.showMessageDialog(gui.uploadInventoryFrame, "Error downloading file: " + e.getMessage(), "Error",
+			JOptionPane.showMessageDialog(gui.frame, "Error downloading file: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 			setProgress(0);
