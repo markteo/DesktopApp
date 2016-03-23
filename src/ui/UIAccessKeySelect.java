@@ -22,9 +22,11 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
 
 import main.Data;
 
@@ -43,23 +45,22 @@ import customColor.CustomColor;
 public class UIAccessKeySelect{
 
 	Thread accessKey;
-	public static DefaultListModel<String> model = new DefaultListModel<String>();
+	public DefaultTableModel model;
 	private JFrame accessKeyFrame;
 	private JList listBucket;
+	private JTable table = new JTable();;
 	public UIAccessKeySelect() {
+		getAccessKeyData();
 		runaccessKeySelect();
 
 	}
 
 	public void runaccessKeySelect() {
-		getAccessKeyData();
 		Panel p = new Panel();
 		Button b = new Button();
 		Label l = new Label();
 		accessKeyFrame = new JFrame("Bucket");
 
-		listBucket = new JList(model);
-		
 		// start of ui
 		accessKeyFrame.setLayout(new BorderLayout());
 		
@@ -76,8 +77,8 @@ public class UIAccessKeySelect{
 		JLabel lblBucketList = l
 				.createLabel("Access Keys List : \n  (Access Key, Remaining Uses, Expiry Date)");
 
-		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		JScrollPane scrollBucket = new JScrollPane(listBucket);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scrollBucket = new JScrollPane(table);
 		scrollBucket.setPreferredSize(new Dimension(300, 150));
 		Component[] BucketListComponents = { lblBucketList, scrollBucket };
 		p.addComponentsToPanel(pnlBucketList, BucketListComponents);
@@ -91,8 +92,8 @@ public class UIAccessKeySelect{
 	
 
 		pnlButtons.add(btnBack);
-		pnlButtons.add(btnSelectElements);
 		pnlButtons.add(btnAdd);
+		pnlButtons.add(btnSelectElements);
 		pnlButtons.add(btnRefresh);
 
 		accessKeyFrame.add(pnlInstruction, BorderLayout.NORTH);
@@ -133,10 +134,8 @@ public class UIAccessKeySelect{
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						String itemSelected = listBucket.getModel()
-								.getElementAt(listBucket.getSelectedIndex()).toString();
-						String[] itemData = itemSelected.split("\\,");
-						Data.accessKey = itemData[0].trim();
+						int selected = table.getSelectedRow();
+						Data.accessKey = (String) table.getModel().getValueAt(selected, 0);
 						accessKeyFrame.setVisible(false);
 						Data.qrGenerator = new JavaQR();
 						return null;
@@ -176,19 +175,26 @@ public class UIAccessKeySelect{
 		});
 	}
 
-	private static void getAccessKeyData() {
+	private void getAccessKeyData() {
 
 		JSONArray accessKeyList = new APIProcess().getUnuseAccessKey(Data.targetURL, Data.sessionKey);
-		model = new DefaultListModel<String>();
+		
+		
 		try {
-
+			Object columnName[] = new Object[] {"Access Key", "Remaining Uses", "Expiry Date"};
+			Object[][] rowData = new Object[accessKeyList.length()][columnName.length];
+			
 			for (int i = 0; i < accessKeyList.length(); i++) {
 				JSONObject accessKey = accessKeyList.getJSONObject(i);
-				model.addElement(accessKey.get("key") + " , "
-						+ accessKey.get("remainingUses") + " , " + accessKey.get("expiryDate"));
+				
+				rowData[i][0] = accessKey.get("key");
+				rowData[i][1] = accessKey.get("remainingUses");
+				rowData[i][2] = accessKey.get("expiryDate");
+				
 			}
-
-
+			model = new DefaultTableModel(rowData, columnName);
+			table.setModel(model);
+			
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -201,7 +207,6 @@ public class UIAccessKeySelect{
 	
 	public void refreshList(){
 		getAccessKeyData();
-		listBucket.setModel(model);
 	}
 
 }
