@@ -10,16 +10,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import customColor.CustomColor;
+import main.Data;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import api.APICall;
+import customColor.CustomColor;
 
 public class UIFileUploadHTTP {
 	//
@@ -167,11 +175,13 @@ public class UIFileUploadHTTP {
 
 	private JButton btnDownload;
 	private JButton btnUpload;
-	private JButton btnBack;
 	private JButton btnCancel;
 	private JButton btnBrowse;
+	private JFileChooser fc = new JFileChooser();
 
+	private String saveDir;
 	private FileDialog fd;
+	private APICall api = new APICall();
 
 	Panel p = new Panel();
 	Button b = new Button();
@@ -201,19 +211,55 @@ public class UIFileUploadHTTP {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				UIFileDownloadHTTP download = new UIFileDownloadHTTP(
-						"http://ci.developer.kaisquare.com/public/files/samples/inventory_template.csv");
+				runFileChooser();
+				downloadFile();
 			}
 		});
 		btnUpload = b.createButton("Upload");
-		btnBack = b.createButton("Back");
-		btnCancel = b.createButton("Cancel");
+		btnUpload.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// insert api for upload
+				String fileURL = tfFileName.getText();
 
+				if (fileURL.isEmpty()) {
+					final JPanel panel = new JPanel();
+					JOptionPane.showMessageDialog(panel, "No file selected",
+							"Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				} else {
+					APICall api = new APICall();
+					String response = api.uploadInventory(Data.targetURL,
+							fileURL, Data.sessionKey);
+					try {
+						JSONObject responseObject = new JSONObject(response);
+						if (responseObject.get("result").equals("ok")) {
+							JOptionPane.showMessageDialog(panel,
+									"File uploaded", "Success",
+									JOptionPane.INFORMATION_MESSAGE);
+							frame.setVisible(false);
+							Data.uiInventorySelect.updateInventoryList();
+						} else {
+							final JPanel panel = new JPanel();
+							JOptionPane.showMessageDialog(panel,
+									"Please check the file", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		btnCancel = b.createButton("Cancel");
+		
+		panel.add(btnCancel);
 		panel.add(btnDownload);
 		panel.add(btnUpload);
-		panel.add(btnBack);
-		panel.add(btnCancel);
+		
 
 		return panel;
 	}
@@ -261,5 +307,32 @@ public class UIFileUploadHTTP {
 		panel.add(btnBrowse, g);
 
 		return panel;
+	}
+	public void runFileChooser() {
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.showSaveDialog(null);
+		saveDir = fc.getSelectedFile().getAbsolutePath();
+
+	}
+	private void downloadFile() {
+		// validate input first
+		if (saveDir.equals("")) {
+			JOptionPane.showMessageDialog(frame, "Please choose a directory", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}else {
+			try {
+				api.getCSVSample(Data.URL, Data.sessionKey, saveDir, this);
+				
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(frame, "Error executing upload task: " + ex.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+	}
+	
+	public JFrame getFrame(){
+		return frame;
 	}
 }
