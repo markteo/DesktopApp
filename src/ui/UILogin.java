@@ -101,51 +101,60 @@ public class UILogin {
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
+						if(tfUser.getText().equals("") || String.valueOf(pfPassword
+								.getPassword()).equals("") || tfBucket.getText().equals("")){
+							JOptionPane
+							.showMessageDialog(
+									loginFrame,
+									"Please fill up all the fields",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+						}else{
+							String username = tfUser.getText();
+							String password = String.valueOf(pfPassword
+									.getPassword());
+							Data.URL = Data.protocol + tfURL.getText();
+							Data.targetURL = Data.protocol + tfURL.getText()
+									+ "/api/" + tfBucket.getText() + "/";
 
-						String username = tfUser.getText();
-						String password = String.valueOf(pfPassword
-								.getPassword());
-						Data.URL = Data.protocol + tfURL.getText();
-						Data.targetURL = Data.protocol + tfURL.getText()
-								+ "/api/" + tfBucket.getText() + "/";
+							String response = api.loginBucket(Data.targetURL,
+									username, password);
 
-						String response = api.loginBucket(Data.targetURL,
-								username, password);
+							try {
 
-						try {
+								if (DesktopAppMain.checkResult(response)) {
+									JSONObject responseJSON = new JSONObject(
+											response);
+									Data.sessionKey = responseJSON.get(
+											"session-key").toString();
+									response = api.getUserFeatures(Data.targetURL,
+											Data.sessionKey);
+									if (checkFeatures(response)) {
+										Data.uiInventorySelect = new UIInventorySelect();
+										loginFrame.setVisible(false);
+										Data.uiInventorySelect.runInventorySelect();
 
-							if (DesktopAppMain.checkResult(response)) {
-								JSONObject responseJSON = new JSONObject(
-										response);
-								Data.sessionKey = responseJSON.get(
-										"session-key").toString();
-								response = api.getUserFeatures(Data.targetURL,
-										Data.sessionKey);
-								if (checkFeatures(response)) {
-									Data.uiInventorySelect = new UIInventorySelect();
-									loginFrame.setVisible(false);
-									Data.uiInventorySelect.runInventorySelect();
-
+									} else {
+										JOptionPane
+												.showMessageDialog(
+														loginFrame,
+														"User does not have necessary features",
+														"Error",
+														JOptionPane.ERROR_MESSAGE);
+									}
 								} else {
-									JOptionPane
-											.showMessageDialog(
-													loginFrame,
-													"User does not have necessary features",
-													"Error",
-													JOptionPane.ERROR_MESSAGE);
+									JOptionPane.showMessageDialog(loginFrame,
+											"Wrong username/password", "Error",
+											JOptionPane.ERROR_MESSAGE);
+
 								}
-							} else {
-								JOptionPane.showMessageDialog(loginFrame,
-										"Wrong username/password", "Error",
-										JOptionPane.ERROR_MESSAGE);
 
+							} catch (JSONException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
 							}
-
-						} catch (JSONException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
 						}
-
+						
 						return null;
 					}
 				};
@@ -226,10 +235,6 @@ public class UILogin {
 		}
 
 		return result;
-	}
-
-	public void resetData() {
-
 	}
 
 	public void setFrameVisible() {
