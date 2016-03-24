@@ -47,7 +47,7 @@ import customColor.CustomColor;
 public class UIInventorySelect {
 	public static APICall api = new APICall();
 	private JFrame inventoryFrame;
-	private JTable listInventory;
+	private JTable listInventory = new JTable();
 	private DefaultTableModel model;
 
 	public void runInventorySelect() {
@@ -56,8 +56,8 @@ public class UIInventorySelect {
 		Label l = new Label();
 
 		// fetch list from server
-		listInventory = getInventoryData();
-		listInventory.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		getInventoryData();
+		listInventory.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
 		for (int column = 0; column < listInventory.getColumnCount(); column++) {
 			TableColumn tableColumn = listInventory.getColumnModel().getColumn(column);
@@ -174,7 +174,7 @@ public class UIInventorySelect {
 		});
 	}
 
-	public JTable getInventoryData() {
+	public void getInventoryData() {
 		JSONArray inventoryList = new APIProcess().inventoryList(Data.targetURL, Data.sessionKey);
 
 		try {
@@ -187,14 +187,19 @@ public class UIInventorySelect {
 				rowData[i][1] = inventoryItem.get("registrationNumber");
 				rowData[i][2] = inventoryItem.get("macAddress");
 			}
-			JTable model = new JTable(rowData, columnNames);
-			return model;
+			model = new DefaultTableModel(rowData, columnNames){
+				@Override
+			    public boolean isCellEditable(int row, int column) {
+			        //all cells false
+			        return false;
+			    }
+			};
+			listInventory.setModel(model);
 
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return null;
 	}
 
 	public void setFrameVisible() {
@@ -202,6 +207,6 @@ public class UIInventorySelect {
 	}
 
 	public void updateInventoryList() {
-		JTable inventoryList = getInventoryData();
+		getInventoryData();
 	}
 }
