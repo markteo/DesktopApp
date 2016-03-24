@@ -62,13 +62,13 @@ public class UILicenseDetail {
 	private JPanel pnlFeatures;
 
 	private JTree tree;
-	private JTable tblInfo;
+	private JTable tblInfo = new JTable();
 
 	private JScrollPane spTreeCheckBox;
 	private JScrollPane spList;
 	private JScrollPane spTable;
 
-	private DefaultListModel<String> model;
+	private DefaultTableModel model;
 	private JList listServiceUsed;
 
 	private JLabel lblCloud;
@@ -129,6 +129,7 @@ public class UILicenseDetail {
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		// init the columnNames, data
 		tblInfo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tblInfo.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
 		tblInfo.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -151,19 +152,13 @@ public class UILicenseDetail {
 
 		GridBagConstraints g = new GridBagConstraints();
 		lblSelectFeature = l
-				.createLabel("Select Features", SwingConstants.LEFT);
+				.createLabel("Features", SwingConstants.LEFT);
 		g.gridx = 0;
 		g.gridy = 0;
 		g.gridwidth = 2;
 		g.insets = new Insets(5, 5, 5, 5);
 		panel.add(lblSelectFeature, g);
 
-		lblServiceApi = l.createLabel("Service APIs Used", SwingConstants.LEFT);
-		g.gridx = 4;
-		g.gridy = 0;
-		g.gridwidth = 2;
-		g.insets = new Insets(5, 5, 5, 5);
-		panel.add(lblServiceApi, g);
 		tree = new JTree(root);
 		spTreeCheckBox = new JScrollPane(tree);
 		spTreeCheckBox.setPreferredSize(new Dimension(300, 300));
@@ -174,17 +169,6 @@ public class UILicenseDetail {
 		g.insets = new Insets(5, 5, 5, 5);
 		panel.add(spTreeCheckBox, g);
 
-		model = new DefaultListModel<>();
-		model.addElement("");
-		listServiceUsed = new JList<String>(model);
-
-		spList = new JScrollPane(listServiceUsed);
-		spList.setPreferredSize(new Dimension(300, 300));
-		g.gridx = 4;
-		g.gridy = 1;
-		g.gridwidth = 3;
-		g.anchor = g.LINE_START;
-		panel.add(spList, g);
 
 		return panel;
 	}
@@ -194,7 +178,7 @@ public class UILicenseDetail {
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
 		btnSubmit = b.createButton("Next");
-		btnCancel = b.createButton("Cancel");
+		btnCancel = b.createButton("Back");
 		btnAdd = b.createButton("Add License");
 
 		btnSubmit.addActionListener(new ActionListener() {
@@ -268,10 +252,12 @@ public class UILicenseDetail {
 
 			}
 		});
-
-		panel.add(btnSubmit);
+		
 		panel.add(btnCancel);
 		panel.add(btnAdd);
+		panel.add(btnSubmit);
+		
+		
 
 		return panel;
 	}
@@ -318,7 +304,13 @@ public class UILicenseDetail {
 				rowData[i][5] = response.getString("bucketName");
 				arrayLicenses.add(licenseAdd);
 			}
-			tblInfo = new JTable(rowData, columnNames);
+			model = new DefaultTableModel(rowData, columnNames){
+				@Override
+			    public boolean isCellEditable(int row, int column) {
+			        return false;
+			    }
+			};
+			tblInfo.setModel(model);
 			arrayLicense = arrayLicenses.toArray(arrayLicense);
 
 		} catch (JSONException e1) {
