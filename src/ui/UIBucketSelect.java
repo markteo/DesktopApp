@@ -13,12 +13,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractButton;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -107,10 +106,20 @@ public class UIBucketSelect{
 					@Override
 					protected Void doInBackground() throws Exception {
 						
-						int selected = listBucket.getSelectedRow();					
-						Data.bucketID = (int) listBucket.getModel().getValueAt(selected, 0);
-						bucketFrame.setVisible(false);
-						Data.uiLicenseDetail = new UILicenseDetail();
+						int selected = listBucket.getSelectedRow();	
+						if(selected == -1){
+							JOptionPane.showMessageDialog(
+									bucketFrame,
+									"Please Select a Bucket",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+							
+						}else{
+							Data.bucketID = (int) listBucket.getModel().getValueAt(selected, 0);
+							bucketFrame.setVisible(false);
+							Data.uiLicenseDetail = new UILicenseDetail();
+						}
+						
 						return null;
 					}
 				};
