@@ -1,7 +1,6 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
@@ -9,135 +8,20 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
-import main.Data;
-
-import org.jdesktop.xswingx.PromptSupport;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import customColor.CustomColor;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
-import api.APICall;
-import customColor.CustomColor;
 
 public class UIFileUploadHTTP {
-
-	public JFrame frame;
-
-	private JLabel lblFileName;
-
-	private JTextField tfFileName;
-
-	private JButton btnDownload;
-	private JButton btnUpload;
-	private JButton btnBack;
-	private JButton btnCancel;
-	private JButton btnBrowse;
-	
-	private FileDialog fd;
-
-	Panel p = new Panel();
-	Button b = new Button();
-	Label l = new Label();
-
-	public void runUpload() {
-		frame = new JFrame("License Details");
-		frame.getContentPane().setBackground(CustomColor.NavyBlue.returnColor());
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		frame.getContentPane().setLayout(new BorderLayout());
-
-		frame.add(createButtonPanel(), BorderLayout.SOUTH);
-		frame.add(createBrowsePanel(), BorderLayout.CENTER);
-
-		frame.setPreferredSize(new Dimension(500, 300));
-		frame.pack();
-		frame.setVisible(true);
-	}
-
-	public JPanel createButtonPanel() {
-		JPanel panel = p.createPanel(Layouts.flow);
-		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-		btnDownload = b.createButton("Download Template");
-		btnDownload.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-			}
-		});
-		btnUpload = b.createButton("Upload");
-		btnBack = b.createButton("Back");
-		btnCancel = b.createButton("Cancel");
-
-		panel.add(btnDownload);
-		panel.add(btnUpload);
-		panel.add(btnBack);
-		panel.add(btnCancel);
-
-		return panel;
-	}
-
-	public JPanel createBrowsePanel() {
-		JPanel panel = p.createPanel(Layouts.gridbag);
-		GridBagConstraints g = new GridBagConstraints();
-
-		fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
-		fd.setFile("*.csv");
-
-		btnBrowse = b.createButton("Browse");
-		btnBrowse.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				fd.setVisible(true);
-				String filename = fd.getDirectory() + fd.getFile();
-				if (filename == null)
-					System.out.println("You cancelled the choice");
-				else
-					System.out.println("You chose " + filename);
-
-				tfFileName.setText(filename);
-			}
-		});
-		lblFileName = l.createLabel("File to upload :");
-		l.addPadding(lblFileName, 10);
-		tfFileName = new JTextField();
-		tfFileName.setEditable(false);
-		tfFileName.setPreferredSize(new Dimension(225, tfFileName.getPreferredSize().height));
-
-		g.gridx = 0;
-		g.gridy = 0;
-		g.fill = g.BOTH;
-		panel.add(lblFileName, g);
-
-		g.gridx = 1;
-		g.gridy = 0;
-		panel.add(tfFileName, g);
-
-		g.gridx = 3;
-		g.gridy = 0;
-		g.insets = new Insets(0, 10, 0, 0);
-		panel.add(btnBrowse, g);
-
-		return panel;
-	}
-
 	//
 	// public static JFrame uploadInventoryFrame;
 	//
@@ -275,4 +159,107 @@ public class UIFileUploadHTTP {
 	// });
 	// }
 
+	private JFrame frame;
+
+	private JLabel lblFileName;
+
+	private JTextField tfFileName;
+
+	private JButton btnDownload;
+	private JButton btnUpload;
+	private JButton btnBack;
+	private JButton btnCancel;
+	private JButton btnBrowse;
+
+	private FileDialog fd;
+
+	Panel p = new Panel();
+	Button b = new Button();
+	Label l = new Label();
+
+	public void runUpload() {
+		frame = new JFrame("License Details");
+		frame.getContentPane().setBackground(CustomColor.NavyBlue.returnColor());
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		frame.getContentPane().setLayout(new BorderLayout());
+
+		frame.add(createButtonPanel(), BorderLayout.SOUTH);
+		frame.add(createBrowsePanel(), BorderLayout.CENTER);
+
+		frame.setPreferredSize(new Dimension(500, 300));
+		frame.pack();
+		frame.setVisible(true);
+	}
+
+	public JPanel createButtonPanel() {
+		JPanel panel = p.createPanel(Layouts.flow);
+		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+		btnDownload = b.createButton("Download Template");
+		btnDownload.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				UIFileDownloadHTTP download = new UIFileDownloadHTTP(
+						"http://ci.developer.kaisquare.com/public/files/samples/inventory_template.csv");
+			}
+		});
+		btnUpload = b.createButton("Upload");
+		btnBack = b.createButton("Back");
+		btnCancel = b.createButton("Cancel");
+
+		panel.add(btnDownload);
+		panel.add(btnUpload);
+		panel.add(btnBack);
+		panel.add(btnCancel);
+
+		return panel;
+	}
+
+	public JPanel createBrowsePanel() {
+		JPanel panel = p.createPanel(Layouts.gridbag);
+		GridBagConstraints g = new GridBagConstraints();
+
+		fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
+		fd.setFile("*.csv");
+
+		btnBrowse = b.createButton("Browse");
+		btnBrowse.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				fd.setVisible(true);
+				String filename = fd.getDirectory() + fd.getFile();
+				if(fd.getDirectory() == null || fd.getFile() == null){
+					filename = "";
+				}
+
+				tfFileName.setText(filename);
+			}
+		});
+		lblFileName = l.createLabel("File to upload:");
+		l.addPadding(lblFileName, 10);
+		tfFileName = new JTextField();
+		tfFileName.setEditable(false);
+		tfFileName.setPreferredSize(new Dimension(225, tfFileName.getPreferredSize().height));
+
+		g.gridx = 0;
+		g.gridy = 0;
+		g.fill = g.BOTH;
+		panel.add(lblFileName, g);
+
+		g.gridx = 1;
+		g.gridy = 0;
+		panel.add(tfFileName, g);
+
+		g.gridx = 3;
+		g.gridy = 0;
+		g.insets = new Insets(0, 10, 0, 0);
+		panel.add(btnBrowse, g);
+
+		return panel;
+	}
 }
