@@ -24,6 +24,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -190,10 +191,20 @@ public class UILicenseDetail {
 					@Override
 					protected Void doInBackground() throws Exception {
 						int row = tblInfo.getSelectedRow();
-						Data.licenseNumber = (String) tblInfo.getModel()
-								.getValueAt(row, 0);
-						frame.setVisible(false);
-						Data.uiAccessKeySelect = new UIAccessKeySelect();
+						if(row == -1){
+							JOptionPane.showMessageDialog(
+									frame,
+									"Please Select a License",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+						}else{
+							Data.licenseNumber = (String) tblInfo.getModel()
+									.getValueAt(row, 0);
+							frame.setVisible(false);
+							Data.uiAccessKeySelect = new UIAccessKeySelect();
+						}
+						
+						
 						return null;
 					}
 				};
