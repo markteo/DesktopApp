@@ -26,6 +26,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
 
 import main.Data;
 
@@ -42,12 +43,12 @@ import customColor.CustomColor;
 
 public class UIBucketSelect{
 	Thread buckets;
-	public JTable listBucket;
+	public JTable listBucket = new JTable();
+	private DefaultTableModel model;
 	private JFrame bucketFrame;
 	public UIBucketSelect(){
 		getBucketData();
 		runBucketSelect();
-		
 	}
 	public void runBucketSelect(){
 		Panel p = new Panel();
@@ -69,6 +70,8 @@ public class UIBucketSelect{
 		
 		
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listBucket.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
 		scrollBucket.setPreferredSize(new Dimension(300, 150));
 		Component[] BucketListComponents = { scrollBucket };
@@ -114,7 +117,7 @@ public class UIBucketSelect{
 		
 				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
 						.getSource());
-				final JDialog dialog = new JDialog(win, "Dialog",
+				final JDialog dialog = new JDialog(win, "License Details",
 						ModalityType.APPLICATION_MODAL);
 		
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
@@ -139,18 +142,13 @@ public class UIBucketSelect{
 				dialog.pack();
 				dialog.setLocationRelativeTo(win);
 				dialog.setBounds(50,50,300,100);
-				dialog.setVisible(true);
-				
-				// do something with selected Bucket
-					
+				dialog.setVisible(true);					
 				
 			}
 		});
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// add Bucket code here
-				// open add frame and close current frame.
 				bucketFrame.setVisible(false);
 				Data.uiInventorySelect.setFrameVisible();
 			}	
@@ -169,9 +167,14 @@ public class UIBucketSelect{
 				rowData[i][0] = bucket.get("bucketID");
 				rowData[i][1] = bucket.get("bucketName");
 			}	
-			listBucket = new JTable(rowData, columnName);
+			model = new DefaultTableModel(rowData, columnName){
+				@Override
+			    public boolean isCellEditable(int row, int column) {
+			        return false;
+			    }
+			};
+			listBucket.setModel(model);
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
