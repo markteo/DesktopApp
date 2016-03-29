@@ -1,4 +1,4 @@
-package ui;
+package ui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -43,7 +43,7 @@ import api.APICall;
 import api.APIProcess;
 import customColor.CustomColor;
 
-public class UILicenseAdd {
+public class UILicenseAdd extends JPanel {
 	private JFrame frame;
 
 	private JPanel pnlButtons;
@@ -73,12 +73,11 @@ public class UILicenseAdd {
 
 	private JButton btnSubmit;
 	private JButton btnCancel;
-	private HashMap<String, String> servicesList; 
+	private HashMap<String, String> servicesList;
 
 	private CheckTreeManager checkTreeManager;
 	private APIProcess api = new APIProcess();
-	private HashMap<String, DefaultMutableTreeNode> checkFeatures = new HashMap<String,
-		 DefaultMutableTreeNode>();
+	private HashMap<String, DefaultMutableTreeNode> checkFeatures = new HashMap<String, DefaultMutableTreeNode>();
 	private APICall apiCall = new APICall();
 
 	Panel p = new Panel();
@@ -164,12 +163,12 @@ public class UILicenseAdd {
 		cbPerpetual.setBackground(CustomColor.NavyBlue.returnColor());
 		cbPerpetual.setForeground(CustomColor.Grey.returnColor());
 		cbPerpetual.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(cbPerpetual.isSelected()){
+				if (cbPerpetual.isSelected()) {
 					spnValidity.setEnabled(false);
-				}else{
+				} else {
 					spnValidity.setEnabled(true);
 				}
 			}
@@ -202,93 +201,97 @@ public class UILicenseAdd {
 		panel.add(lblServiceApi, g);
 		getFeaturesData();
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
-		
-		
-		for(String key : Data.featureList.keySet()){
-			
-			 JSONArray featureArray = Data.featureList.get(key);
-			 DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
-			 ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
-			
-			 for(int i = 0; i < featureArray.length(); i ++){
-				 try {
-					 DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(featureArray.getJSONObject(i).getString("name"));
-					 element.add(featureElement);
-					 arrayFeatureCheckBox.add(featureElement);
-					
-					 
-				 } catch (JSONException e1) {
-					 e1.printStackTrace();
-				 }
-			 }
-			 root.add(element);
-			
+
+		for (String key : Data.featureList.keySet()) {
+
+			JSONArray featureArray = Data.featureList.get(key);
+			DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
+			ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
+
+			for (int i = 0; i < featureArray.length(); i++) {
+				try {
+					DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(
+							featureArray.getJSONObject(i).getString("name"));
+					element.add(featureElement);
+					arrayFeatureCheckBox.add(featureElement);
+
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+			}
+			root.add(element);
+
 		}
 
 		tree = new JTree(root);
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
-			
+
 			@Override
 			public void valueChanged(TreeSelectionEvent e) {
 				TreePath path = tree.getSelectionModel().getSelectionPath();
 				model.removeAllElements();
 				String selected = tree.getSelectionModel().getSelectionPath().getLastPathComponent().toString();
 				servicesList = new HashMap<String, String>();
-				try{
-					if(selected.equalsIgnoreCase("root")){
-						for(String key : Data.featureList.keySet()){
+				try {
+					if (selected.equalsIgnoreCase("root")) {
+						for (String key : Data.featureList.keySet()) {
 							JSONArray featureArray = Data.featureList.get(key);
-							
-							 for(int i = 0; i < featureArray.length(); i ++){
-								 JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
-								 
-								 for(int x = 0; x < servicesArray.length(); x ++){
-									 servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
-								 }
-							 }
+
+							for (int i = 0; i < featureArray.length(); i++) {
+								JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
+
+								for (int x = 0; x < servicesArray.length(); x++) {
+									servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")),
+											servicesArray.getJSONObject(x).getString("name"));
+								}
+							}
 						}
-					}else if(path.getPathCount() == 2){
-						for(String key : Data.featureList.keySet()){
-							if(key.equals(selected)){
+					} else if (path.getPathCount() == 2) {
+						for (String key : Data.featureList.keySet()) {
+							if (key.equals(selected)) {
 								JSONArray featureArray = Data.featureList.get(key);
-								
-								 for(int i = 0; i < featureArray.length(); i ++){
-									 JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
-									 
-									 for(int x = 0; x < servicesArray.length(); x ++){
-										 servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
-									 }
-								 }
-							}else{
+
+								for (int i = 0; i < featureArray.length(); i++) {
+									JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
+
+									for (int x = 0; x < servicesArray.length(); x++) {
+										servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")),
+												servicesArray.getJSONObject(x).getString("name"));
+									}
+								}
+							} else {
 								continue;
 							}
 						}
-					}else{
-						for(String key : Data.featureList.keySet()){
-							if(key.equals(path.getPathComponent(1).toString())){
+					} else {
+						for (String key : Data.featureList.keySet()) {
+							if (key.equals(path.getPathComponent(1).toString())) {
 								JSONArray featureArray = Data.featureList.get(key);
-								
-								 for(int i = 0; i < featureArray.length(); i ++){
-									 if(featureArray.getJSONObject(i).getString("name").equals(selected)){
-										 JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
-										 
-										 for(int x = 0; x < servicesArray.length(); x ++){
-											 servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")), servicesArray.getJSONObject(x).getString("name"));
-										 }
-									 }else{
-										 continue;
-									 }
-								 }
-							}else{
+
+								for (int i = 0; i < featureArray.length(); i++) {
+									if (featureArray.getJSONObject(i).getString("name").equals(selected)) {
+										JSONArray servicesArray = featureArray.getJSONObject(i)
+												.getJSONArray("services");
+
+										for (int x = 0; x < servicesArray.length(); x++) {
+											servicesList.put(
+													Integer.toString(servicesArray.getJSONObject(x).getInt("id")),
+													servicesArray.getJSONObject(x).getString("name"));
+										}
+									} else {
+										continue;
+									}
+								}
+							} else {
 								continue;
 							}
 						}
 					}
-				} catch(JSONException ex){
+				} catch (JSONException ex) {
 					ex.printStackTrace();
 				}
-				for(String serviceKey : servicesList.keySet()){
-					 model.addElement(servicesList.get(serviceKey));
+				for (String serviceKey : servicesList.keySet()) {
+					model.addElement(servicesList.get(serviceKey));
 				}
 				listServiceUsed.setModel(model);
 			}
@@ -331,62 +334,60 @@ public class UILicenseAdd {
 			public void actionPerformed(ActionEvent e) {
 				TreePath[] path = checkTreeManager.getSelectionModel().getSelectionPaths();
 				ArrayList<String> featureL = new ArrayList<String>();
-				String[] features = new String[]{};
-				 //listSelected.
-				 for(TreePath tp : path){
+				String[] features = new String[] {};
+				// listSelected.
+				for (TreePath tp : path) {
 					System.out.println(tp);
 
-					 if(tp.getLastPathComponent().toString().equals("root")){
-						 Object rootNode = tree.getModel().getRoot();
-						 int parentCount = tree.getModel().getChildCount(rootNode);
-						 for(int i = 0; i < parentCount; i ++){
-							 Object parentNode = tree.getModel().getChild(rootNode, i);
-							 int childrenCount = tree.getModel().getChildCount(parentNode);
-							 
-							 for(int x = 0; x < childrenCount; x ++){
-								 featureL.add(tree.getModel().getChild(parentNode, x).toString());
-							 }
-						 }
-					 }else if(tp.getPathCount() == 2){
-						 Object rootNode = tree.getModel().getRoot();
-						 int parentCount = tree.getModel().getChildCount(rootNode);
-						 for(int i = 0; i < parentCount; i ++){
-							 Object parentNode = tree.getModel().getChild(rootNode, i);
-							 if(parentNode.toString().equals(tp.getLastPathComponent().toString())){
-								 
-								 int childrenCount = tree.getModel().getChildCount(parentNode);
-								 
-								 for(int x = 0; x < childrenCount; x ++){
-									 featureL.add(tree.getModel().getChild(parentNode, x).toString());
-								 }
-							 }
-						 }
-					 }
-					 else if (tp.getPathCount() == 3){
-						 featureL.add(tp.getLastPathComponent().toString());
-					 }
-					
+					if (tp.getLastPathComponent().toString().equals("root")) {
+						Object rootNode = tree.getModel().getRoot();
+						int parentCount = tree.getModel().getChildCount(rootNode);
+						for (int i = 0; i < parentCount; i++) {
+							Object parentNode = tree.getModel().getChild(rootNode, i);
+							int childrenCount = tree.getModel().getChildCount(parentNode);
 
-				 }
-			 features = featureL.toArray(features);
-			 String duration = spnValidity.getValue().toString();
-			 if(cbPerpetual.isSelected()){
-				 duration = "-1";
-			 }
-			 String storage = spnCloud.getValue().toString();
-			 String maxVCA = spnConcurrentVCA.getValue().toString();
-			 String response = apiCall.addNodeLicense(Data.targetURL, Data.sessionKey,
-			 Data.bucketID, features, duration, storage, maxVCA);
-			 
-			 try {
-				 JSONObject responseObject = new JSONObject(response);
-				 if(responseObject.get("result").equals("ok")){
-					 frame.setVisible(false);
-					 Data.uiLicenseDetail.setFrameVisible();
-				 }
-			 } catch (JSONException e1) {
-			 e1.printStackTrace();
-			 }
+							for (int x = 0; x < childrenCount; x++) {
+								featureL.add(tree.getModel().getChild(parentNode, x).toString());
+							}
+						}
+					} else if (tp.getPathCount() == 2) {
+						Object rootNode = tree.getModel().getRoot();
+						int parentCount = tree.getModel().getChildCount(rootNode);
+						for (int i = 0; i < parentCount; i++) {
+							Object parentNode = tree.getModel().getChild(rootNode, i);
+							if (parentNode.toString().equals(tp.getLastPathComponent().toString())) {
+
+								int childrenCount = tree.getModel().getChildCount(parentNode);
+
+								for (int x = 0; x < childrenCount; x++) {
+									featureL.add(tree.getModel().getChild(parentNode, x).toString());
+								}
+							}
+						}
+					} else if (tp.getPathCount() == 3) {
+						featureL.add(tp.getLastPathComponent().toString());
+					}
+
+				}
+				features = featureL.toArray(features);
+				String duration = spnValidity.getValue().toString();
+				if (cbPerpetual.isSelected()) {
+					duration = "-1";
+				}
+				String storage = spnCloud.getValue().toString();
+				String maxVCA = spnConcurrentVCA.getValue().toString();
+				String response = apiCall.addNodeLicense(Data.targetURL, Data.sessionKey, Data.bucketID, features,
+						duration, storage, maxVCA);
+
+				try {
+					JSONObject responseObject = new JSONObject(response);
+					if (responseObject.get("result").equals("ok")) {
+						frame.setVisible(false);
+						Data.mainFrame.uiLicenseDetail.setFrameVisible();
+					}
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
 
 			}
 		});
@@ -396,7 +397,7 @@ public class UILicenseAdd {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
-				Data.uiLicenseDetail.setFrameVisible();
+				Data.mainFrame.uiLicenseDetail.setFrameVisible();
 
 			}
 		});
@@ -406,9 +407,9 @@ public class UILicenseAdd {
 
 		return panel;
 	}
-	
-	public void getFeaturesData(){
-		 api.featuresList(Data.targetURL, Data.sessionKey, Data.bucketID);
+
+	public void getFeaturesData() {
+		api.featuresList(Data.targetURL, Data.sessionKey, Data.bucketID);
 	}
-	
+
 }

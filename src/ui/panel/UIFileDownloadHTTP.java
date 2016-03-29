@@ -1,4 +1,4 @@
-package ui;
+package ui.panel;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -252,12 +252,12 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.insets = new Insets(5, 5, 5, 5);
+		constraints.weightx = 0.25;
 
 		// set up components
 		constraints.gridx = 0;
 		constraints.gridy = 3;
 		constraints.gridwidth = 1;
-		constraints.anchor = GridBagConstraints.WEST;
 		add(lblFileName, constraints);
 
 		constraints.gridx = 1;
@@ -273,7 +273,6 @@ public class UIFileDownloadHTTP extends JFrame implements PropertyChangeListener
 		constraints.gridx = 0;
 		constraints.gridy = 5;
 		constraints.gridwidth = 1;
-		constraints.anchor = GridBagConstraints.WEST;
 		add(lblProgress, constraints);
 
 		constraints.gridx = 1;

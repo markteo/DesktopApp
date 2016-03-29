@@ -10,8 +10,8 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-import ui.UIFileDownloadHTTP;
-import ui.UIFileUploadHTTP;
+import ui.panel.UIFileDownloadHTTP;
+import ui.panel.UIFileUploadHTTP;
 
 /**
  * A utility that downloads a file from a URL.

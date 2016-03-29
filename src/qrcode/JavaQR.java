@@ -28,40 +28,39 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import main.Data;
+import ui.panel.UILogin;
 
 import org.jdesktop.xswingx.PromptSupport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ui.UILogin;
 import api.APICall;
 
-
-public class JavaQR implements Runnable {
+public class JavaQR extends JPanel implements Runnable {
 
 	private Thread t;
 	private JFrame frame;
-	
-	public JavaQR(){
+
+	public JavaQR() {
 		start();
 	}
-	
+
 	@Override
 	public void run() {
-		//		Initial Config
+		// Initial Config
 		frame = new JFrame("QR Code Generator");
 		frame.setLayout(new BorderLayout());
 
 		JPanel topPanel = new JPanel();
 		JPanel centerPanel = new JPanel();
 		JPanel bottomPanel = new JPanel();
-		
-		//		Top Panel
-		topPanel.setLayout(new GridLayout(0,1));
+
+		// Top Panel
+		topPanel.setLayout(new GridLayout(0, 1));
 		topPanel.setBorder(BorderFactory.createTitledBorder("Input Data"));
 
 		JPanel rowTopPanel = new JPanel();
-		rowTopPanel.setLayout(new GridLayout(0,2));
+		rowTopPanel.setLayout(new GridLayout(0, 2));
 
 		JLabel accKey = new JLabel("Access Key");
 		JTextField accField = new JTextField(5);
@@ -73,13 +72,13 @@ public class JavaQR implements Runnable {
 
 		JLabel regNo = new JLabel("Register Number");
 		JTextField regField = new JTextField(5);
-		
+
 		PromptSupport.setPrompt("E.G THF11200054160106", regField);
 		PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, regField);
 		PromptSupport.setFontStyle(Font.BOLD, regField);
 		regField.setEditable(false);
 		regField.setText(Data.registrationNumber);
-		
+
 		JLabel licNo = new JLabel("License Number");
 		JFormattedTextField licField = new JFormattedTextField();
 		PromptSupport.setPrompt("E.G 2DAJS - 3J8SS - 9H8HS", licField);
@@ -87,7 +86,7 @@ public class JavaQR implements Runnable {
 		PromptSupport.setFontStyle(Font.BOLD, licField);
 		licField.setEditable(false);
 		licField.setText(Data.licenseNumber);
-		
+
 		JLabel downloadLoc = new JLabel("Download Location");
 		JButton dlBtn = new JButton("Choose Download Folder");
 
@@ -97,13 +96,13 @@ public class JavaQR implements Runnable {
 		rowTopPanel.add(regField);
 		rowTopPanel.add(licNo);
 		rowTopPanel.add(licField);
-		
+
 		topPanel.add(rowTopPanel);
 
-		//		Center Panel
-		centerPanel.setLayout(new GridLayout(0,1));
+		// Center Panel
+		centerPanel.setLayout(new GridLayout(0, 1));
 		centerPanel.setBorder(BorderFactory.createTitledBorder("QR Code"));
-//		centerPanel.setPreferredSize(new Dimension(100,60));
+		// centerPanel.setPreferredSize(new Dimension(100,60));
 
 		JPanel rowCenPanel = new JPanel();
 		rowCenPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -111,7 +110,7 @@ public class JavaQR implements Runnable {
 		JButton genBtn = new JButton("Download QR Code");
 		JButton homeBtn = new JButton("Back to Start");
 		JButton logoutBtn = new JButton("Logout");
-		
+
 		String accessKey = accField.getText().toString();
 		String regKey = regField.getText().toString();
 		String licKey = licField.getText().toString();
@@ -130,7 +129,7 @@ public class JavaQR implements Runnable {
 		QRLogic qrGen = new QRLogic();
 		BufferedImage image = qrGen.generateQR(jsonObject);
 		centerPanel.add(new JLabel(new ImageIcon(image)));
-		
+
 		bottomPanel.setLayout(new GridLayout(2, 1));
 		JPanel rowBottom1 = new JPanel();
 		rowBottom1.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -148,24 +147,25 @@ public class JavaQR implements Runnable {
 		frame.setLocationRelativeTo(null);
 		frame.setSize(1000, 500);
 		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
-		
-		
 
-//		if(accessKey.trim().equalsIgnoreCase("") == true || regKey.trim().equalsIgnoreCase("") == true) {
-//			JOptionPane.showMessageDialog(frame, "Some fields are missing!");
-//		} else if(licKey.trim().length() < 21) {
-//			JOptionPane.showMessageDialog(frame, "License Key is incomplete!");
-//		} else if(dlDir.equalsIgnoreCase("Choose Download Folder") != true ) {
-			
-			//JOptionPane.showMessageDialog(frame, "QR Code Generated in " + fileLocation);
-//		} else {
-//			JOptionPane.showMessageDialog(frame, "Choose a directory!");
-//			System.out.println("No QR Generated");
-//		}
+		// if(accessKey.trim().equalsIgnoreCase("") == true ||
+		// regKey.trim().equalsIgnoreCase("") == true) {
+		// JOptionPane.showMessageDialog(frame, "Some fields are missing!");
+		// } else if(licKey.trim().length() < 21) {
+		// JOptionPane.showMessageDialog(frame, "License Key is incomplete!");
+		// } else if(dlDir.equalsIgnoreCase("Choose Download Folder") != true )
+		// {
 
-//		Buttons Listener
+		// JOptionPane.showMessageDialog(frame, "QR Code Generated in " +
+		// fileLocation);
+		// } else {
+		// JOptionPane.showMessageDialog(frame, "Choose a directory!");
+		// System.out.println("No QR Generated");
+		// }
+
+		// Buttons Listener
 		genBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -177,7 +177,7 @@ public class JavaQR implements Runnable {
 				String filePath = dlDir + "/qrcode-" + newDate + ".png";
 				String fileType = "png";
 
-				if(dlDir.equalsIgnoreCase("Choose Download Folder") != true ) {
+				if (dlDir.equalsIgnoreCase("Choose Download Folder") != true) {
 
 					String fileLocation = dlBtn.getText().toString();
 					File myFile = new File(filePath);
@@ -187,8 +187,8 @@ public class JavaQR implements Runnable {
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
-					}					
-					
+					}
+
 				} else {
 					JOptionPane.showMessageDialog(frame, "Choose a directory!");
 					System.out.println("No QR Generated");
@@ -196,53 +196,52 @@ public class JavaQR implements Runnable {
 			}
 		});
 
-		dlBtn.addActionListener(new ActionListener() {;
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int returnValue = fileChooser.showOpenDialog(null);
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String selectedFile = fileChooser.getSelectedFile().getAbsolutePath();
-				dlBtn.setText(selectedFile);
-			}
-		}
-		});
-		
-		homeBtn.addActionListener(new ActionListener() {
-			
+		dlBtn.addActionListener(new ActionListener() {
+			;
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				Data.uiInventorySelect.setFrameVisible();
-				frame.setVisible(false);
-				
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int returnValue = fileChooser.showOpenDialog(null);
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					String selectedFile = fileChooser.getSelectedFile().getAbsolutePath();
+					dlBtn.setText(selectedFile);
+				}
 			}
 		});
-		
+
+		homeBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				Data.mainFrame.showPanel("inventory");
+				frame.setVisible(false);
+
+			}
+		});
+
 		logoutBtn.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				APICall api = new APICall();
 				try {
 					JSONObject response = new JSONObject(api.logout(Data.targetURL, Data.sessionKey));
-					if(response.getString("result").equals("ok")){
-						Data.uiLogin = new UILogin();
+					if (response.getString("result").equals("ok")) {
+						UILogin login = new UILogin();
 						frame.setVisible(false);
-						Data.uiLogin.runLogin();
-						
 					}
-						
+
 				} catch (JSONException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
-		
-		//      Frame Config
+
+		// Frame Config
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e1) {
@@ -254,16 +253,16 @@ public class JavaQR implements Runnable {
 		} catch (UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
 		}
-		
-		
+
 	}
-	
+
 	public void start() {
 		t = new Thread(this);
 		t.start();
 	}
-	public void setFrameVisible(){
+
+	public void setFrameVisible() {
 		frame.setVisible(true);
 	}
-	
+
 }

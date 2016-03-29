@@ -16,12 +16,13 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import main.Helper;
+import ui.panel.UIFileDownloadHTTP;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class APICall {
-	
+
 	public static final String enc = "UTF-8";
 
 	public String loginBucket(String targetURL, String username, String password) {
@@ -29,33 +30,33 @@ public class APICall {
 		targetURL = targetURL + api;
 		String urlParameters;
 		try {
-			
-			urlParameters = "user-name=" + URLEncoder.encode(username, enc)
-					+ "&password=" + URLEncoder.encode(password, enc);
+
+			urlParameters = "user-name=" + URLEncoder.encode(username, enc) + "&password="
+					+ URLEncoder.encode(password, enc);
 
 			String response = executePost(targetURL, urlParameters);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		} 
+		}
 
 		return null;
 
 	}
-	public String getUserFeatures(String targetURL, String sessionKey){
+
+	public String getUserFeatures(String targetURL, String sessionKey) {
 		String api = "getuserfeatures";
 		targetURL = targetURL + api;
 		String urlParameters;
 		try {
-			urlParameters = "session-key="
-					+ URLEncoder.encode(sessionKey, enc);
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
 
 	public String getInventoryList(String targetURL, String sessionKey) {
@@ -64,8 +65,7 @@ public class APICall {
 		targetURL = targetURL + api;
 		String urlParameters;
 		try {
-			urlParameters = "session-key="
-					+ URLEncoder.encode(sessionKey, enc);
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			return response;
 		} catch (UnsupportedEncodingException e) {
@@ -74,20 +74,19 @@ public class APICall {
 
 		return null;
 	}
-	
-	public String updateInventoryList(String targetURL, JSONObject inventoryDetails, String sessionKey){
-		
+
+	public String updateInventoryList(String targetURL, JSONObject inventoryDetails, String sessionKey) {
+
 		String api = "updateinventory";
 		targetURL = targetURL + api;
 		String urlParameters;
-		
+
 		try {
-			urlParameters = "session-key="
-					+ URLEncoder.encode(sessionKey, enc) + "&inventory-id=" 
-					+ URLEncoder.encode(inventoryDetails.getString("inventoryID"), enc)
-					+ "&registration-name=" + URLEncoder.encode(inventoryDetails.getString("registrationName"), enc)
-					+ "&model-name=" + URLEncoder.encode(inventoryDetails.getString("modelName"), enc)
-					+ "&mac-address=" + URLEncoder.encode(inventoryDetails.getString("macAddress"), enc);
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc) + "&inventory-id="
+					+ URLEncoder.encode(inventoryDetails.getString("inventoryID"), enc) + "&registration-name="
+					+ URLEncoder.encode(inventoryDetails.getString("registrationName"), enc) + "&model-name="
+					+ URLEncoder.encode(inventoryDetails.getString("modelName"), enc) + "&mac-address="
+					+ URLEncoder.encode(inventoryDetails.getString("macAddress"), enc);
 			String response = executePost(targetURL, urlParameters);
 			return response;
 		} catch (UnsupportedEncodingException e) {
@@ -97,15 +96,14 @@ public class APICall {
 		}
 		return null;
 	}
-	
-	public String getBucketDevices(String targetURL, String sessionKey){
-		
+
+	public String getBucketDevices(String targetURL, String sessionKey) {
+
 		String api = "getbucketdevices";
 		targetURL = targetURL + api;
 		String urlParameters;
 		try {
-			urlParameters = "session-key="
-					+ URLEncoder.encode(sessionKey, enc);
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			return response;
 		} catch (UnsupportedEncodingException e) {
@@ -113,245 +111,234 @@ public class APICall {
 		}
 		return null;
 	}
-	
-	public String getBuckets(String targetURL, String sessionKey){
+
+	public String getBuckets(String targetURL, String sessionKey) {
 		System.out.println("Getting buckets:");
 		String api = "getbuckets";
 		targetURL = targetURL + api;
 		String urlParameters;
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc);
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			return response;
-			
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
-		return null;
-	}
-	
-	public String getNodeLicense(String targetURL, String sessionKey, int bucketID){
-		
-		String api = "getnodelicenses";
-		targetURL = targetURL + api;
-		String urlParameters;
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
-					+ URLEncoder.encode(Integer.toString(bucketID), enc);
-			
-			String response = executePost(targetURL, urlParameters);
-			return response;
-			
-		}catch(UnsupportedEncodingException e){
-			e.printStackTrace();
-		}
-		
+
 		return null;
 	}
 
-	public String addNodeLicense(String targetURL, String sessionKey, int bucketID, String[] features, String duration, String storage, String maxVCA){
+	public String getNodeLicense(String targetURL, String sessionKey, int bucketID) {
+
+		String api = "getnodelicenses";
+		targetURL = targetURL + api;
+		String urlParameters;
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc) + "&bucket-id="
+					+ URLEncoder.encode(Integer.toString(bucketID), enc);
+
+			String response = executePost(targetURL, urlParameters);
+			return response;
+
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public String addNodeLicense(String targetURL, String sessionKey, int bucketID, String[] features, String duration,
+			String storage, String maxVCA) {
 		String api = "addnodelicense";
 		targetURL = targetURL + api;
-		
+
 		String urlParameters;
-		
+
 		String feature = "[";
-		
-		for (int i = 0; i < features.length; i ++){
-			if(i == 0){
-				feature = feature + "\"" + features[i] + "\""; 
-			}else{
-				feature = feature + ",\"" + features[i] + "\""; 
+
+		for (int i = 0; i < features.length; i++) {
+			if (i == 0) {
+				feature = feature + "\"" + features[i] + "\"";
+			} else {
+				feature = feature + ",\"" + features[i] + "\"";
 			}
-			
+
 		}
 		feature = feature + "]";
 		System.out.println(feature);
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc) + "&bucket-id="
 					+ URLEncoder.encode(Integer.toString(bucketID), enc) + "&duration-months="
-					+ URLEncoder.encode(duration, enc) + "&cloud-storage-gb="
-					+ URLEncoder.encode(storage, enc) + "&max-vca-count="
-					+ URLEncoder.encode(maxVCA, enc) + "&features="
+					+ URLEncoder.encode(duration, enc) + "&cloud-storage-gb=" + URLEncoder.encode(storage, enc)
+					+ "&max-vca-count=" + URLEncoder.encode(maxVCA, enc) + "&features="
 					+ URLEncoder.encode(feature, enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
-					
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
-	
-	public String updateNodeLicense(String targetURL, String sessionKey, String licenseNumber, String features){
+
+	public String updateNodeLicense(String targetURL, String sessionKey, String licenseNumber, String features) {
 		String api = "updatenodelicense";
 		targetURL = targetURL + api;
-		
+
 		String urlParameters;
-		
+
 		String durationMonths = Helper.readString("Enter duration (months) > ");
 		String cloudStorage = Helper.readString("Enter cloud storage space (GB) > ");
 		String maxVCA = Helper.readString("Enter max VCA count > ");
-		
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc) + "&license-number=" 
+
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc) + "&license-number="
 					+ URLEncoder.encode(licenseNumber, enc) + "&duration-months="
 					+ URLEncoder.encode(durationMonths, enc) + "&cloud-storage-gb="
-					+ URLEncoder.encode(cloudStorage, enc) + "&max-vca-count="
-					+ URLEncoder.encode(maxVCA, enc) + "&features="
-					+ URLEncoder.encode(features, enc);
+					+ URLEncoder.encode(cloudStorage, enc) + "&max-vca-count=" + URLEncoder.encode(maxVCA, enc)
+					+ "&features=" + URLEncoder.encode(features, enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
-					
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	public String getAssignableFeatures(String targetURL, String sessionKey, int bucketID){
+
+	public String getAssignableFeatures(String targetURL, String sessionKey, int bucketID) {
 		String api = "getassignablenodefeatures";
 		targetURL = targetURL + api;
 		String urlParameters;
 
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc) + "&bucket-id=" 
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc) + "&bucket-id="
 					+ URLEncoder.encode(Integer.toString(bucketID), enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
-			
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
-	
-	public String getCSVSample(String targetURL, String sessionKey, String fileLocation, ui.UIFileUploadHTTP ui) throws IOException{
+
+	public String getCSVSample(String targetURL, String sessionKey, String fileLocation, UIFileDownloadHTTP ui)
+			throws IOException {
 		String api = "/public/files/samples/inventory_template.csv";
 		targetURL = targetURL + api;
-		
+
 		System.out.println(targetURL);
 		HttpDownloadUtility http = new HttpDownloadUtility();
 		String response = http.downloadFile(targetURL, fileLocation, sessionKey, ui);
-		//http.addPropertyChangeListener(ui);
+		// http.addPropertyChangeListener(ui);
 		http.execute();
 		System.out.println(response);
-		
+
 		return response;
 	}
-	
-	public String uploadInventory(String targetURL, String fileURL, String sessionKey){
+
+	public String uploadInventory(String targetURL, String fileURL, String sessionKey) {
 		String api = "uploadinventory";
 		targetURL = targetURL + api;
 		File file = new File(fileURL);
 		String urlParameters;
 		System.out.println(sessionKey);
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc);
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc);
 			Upload upload = new Upload();
 			String response = upload.runUpload(targetURL, fileURL, urlParameters);
 			System.out.println("Upload Completed");
 			return response;
-			
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		return null;
 	}
-	public String generateAccessKey(String targetURL, String sessionKey, int userID, String ttl, String maxUse){
-		
+
+	public String generateAccessKey(String targetURL, String sessionKey, int userID, String ttl, String maxUse) {
+
 		String api = "generateaccesskey";
 		targetURL = targetURL + api;
 		String urlParameters;
-		
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc) + "&user-id=" 
-					+ URLEncoder.encode(Integer.toString(userID), enc) + "&ttl="
-					+ URLEncoder.encode(ttl, enc) + "&max-use-count="
-					+ URLEncoder.encode(maxUse, enc);
+
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc) + "&user-id="
+					+ URLEncoder.encode(Integer.toString(userID), enc) + "&ttl=" + URLEncoder.encode(ttl, enc)
+					+ "&max-use-count=" + URLEncoder.encode(maxUse, enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
-			
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
-	public String getUserList(String targetURL, String sessionKey, int bucketID){
-		
+
+	public String getUserList(String targetURL, String sessionKey, int bucketID) {
+
 		String api = "getbucketusersbybucketid";
 		targetURL = targetURL + api;
 		String urlParameters;
-		
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc) + "&bucketid=" 
+
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc) + "&bucketid="
 					+ URLEncoder.encode(Integer.toString(bucketID), enc);
 			String response = executePost(targetURL, urlParameters);
 			System.out.println(response);
 			return response;
-			
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
-	public String getAccessKeyList(String targetURL, String sessionKey){
+
+	public String getAccessKeyList(String targetURL, String sessionKey) {
 		String api = "getaccesskeylist";
 		targetURL = targetURL + api;
 		String urlParameters;
-		
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc);
+
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			return response;
-			
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
-	public String logout(String targetURL, String sessionKey){
+
+	public String logout(String targetURL, String sessionKey) {
 		String api = "logout";
 		targetURL = targetURL + api;
 		String urlParameters;
-		
-		try{
-			urlParameters = "session-key=" 
-					+ URLEncoder.encode(sessionKey, enc);
+
+		try {
+			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc);
 			String response = executePost(targetURL, urlParameters);
 			return response;
-			
-		}catch(UnsupportedEncodingException e){
+
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	public String executePost(String targetURL, String urlParameters) {
 		URL url;
 		HttpURLConnection connection = null;
@@ -360,11 +347,9 @@ public class APICall {
 			url = new URL(targetURL);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-			connection.setRequestProperty("Content-Length",
-					"" + Integer.toString(urlParameters.getBytes().length));
+			connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
 			connection.setRequestProperty("Content-Language", "en-US");
 
 			connection.setUseCaches(false);
@@ -372,8 +357,7 @@ public class APICall {
 			connection.setDoOutput(true);
 
 			// Send request
-			DataOutputStream wr = new DataOutputStream(
-					connection.getOutputStream());
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
 			wr.writeBytes(urlParameters);
 			wr.flush();
 			wr.close();
@@ -390,11 +374,11 @@ public class APICall {
 			rd.close();
 			return response.toString();
 
-		}catch (SocketException se){
+		} catch (SocketException se) {
 			se.printStackTrace();
 			System.out.println("Server is down.");
 			return null;
-		}catch (Exception e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			return null;

@@ -1,4 +1,4 @@
-package ui;
+package ui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,15 +40,15 @@ import ui.components.Panel;
 import api.APIProcess;
 import customColor.CustomColor;
 
-public class UIAccessKeySelect{
+public class UIAccessKeySelect extends JPanel {
 
 	Thread accessKey;
 	public static DefaultListModel<String> model = new DefaultListModel<String>();
 	private JFrame accessKeyFrame;
 	private JList listBucket;
+
 	public UIAccessKeySelect() {
 		runaccessKeySelect();
-
 	}
 
 	public void runaccessKeySelect() {
@@ -59,22 +59,19 @@ public class UIAccessKeySelect{
 		accessKeyFrame = new JFrame("Bucket");
 
 		listBucket = new JList(model);
-		
+
 		// start of ui
 		accessKeyFrame.setLayout(new BorderLayout());
-		
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
-		JLabel lblInstruction = l
-				.createLabel("Access Keys");
+		JLabel lblInstruction = l.createLabel("Access Keys");
 		pnlInstruction.setBackground(CustomColor.LightBlue.returnColor());
 		lblInstruction.setForeground(Color.white);
 		lblInstruction.setFont(new Font("San Serif", Font.PLAIN, 18));
 		pnlInstruction.add(lblInstruction);
 
 		JPanel pnlBucketList = p.createPanel(Layouts.flow);
-		JLabel lblBucketList = l
-				.createLabel("Access Keys List : \n  (Access Key, Remaining Uses, Expiry Date)");
+		JLabel lblBucketList = l.createLabel("Access Keys List : \n  (Access Key, Remaining Uses, Expiry Date)");
 
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
@@ -83,12 +80,11 @@ public class UIAccessKeySelect{
 		p.addComponentsToPanel(pnlBucketList, BucketListComponents);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
-		
+
 		JButton btnBack = b.createButton("Back");
 		JButton btnSelectElements = b.createButton("Next");
 		JButton btnAdd = b.createButton("Add");
 		JButton btnRefresh = b.createButton("Refresh");
-	
 
 		pnlButtons.add(btnBack);
 		pnlButtons.add(btnSelectElements);
@@ -101,55 +97,53 @@ public class UIAccessKeySelect{
 		accessKeyFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		accessKeyFrame.pack();
 		accessKeyFrame.setVisible(true);
-		
+
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				accessKeyFrame.setVisible(false);
-				Data.uiLicenseDetail.setFrameVisible();
+				Data.mainFrame.showPanel("license");
 			}
 		});
-		
+
 		btnRefresh.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				refreshList();
-				
+
 			}
 		});
 		btnAdd.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Data.uiGenerateKey = new UIGenerateKey();
+				Data.mainFrame.uiGenerateKey = new UIGenerateKey();
 				accessKeyFrame.setVisible(false);
 			}
 		});
 		btnSelectElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						String itemSelected = listBucket.getModel()
-								.getElementAt(listBucket.getSelectedIndex()).toString();
+						String itemSelected = listBucket.getModel().getElementAt(listBucket.getSelectedIndex())
+								.toString();
 						String[] itemData = itemSelected.split("\\,");
 						Data.accessKey = itemData[0].trim();
 						accessKeyFrame.setVisible(false);
-						Data.qrGenerator = new JavaQR();
+						Data.mainFrame.qrGenerator = new JavaQR();
 						return null;
 					}
 				};
-		
-				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
-						.getSource());
-				final JDialog dialog = new JDialog(win, "Dialog",
-						ModalityType.APPLICATION_MODAL);
-		
+
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Dialog", ModalityType.APPLICATION_MODAL);
+
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
-		
+
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
 						if (evt.getPropertyName().equals("state")) {
@@ -160,7 +154,7 @@ public class UIAccessKeySelect{
 					}
 				});
 				mySwingWorker.execute();
-		
+
 				JProgressBar progressBar = new JProgressBar();
 				progressBar.setIndeterminate(true);
 				JPanel panel = new JPanel(new BorderLayout());
@@ -169,9 +163,9 @@ public class UIAccessKeySelect{
 				dialog.add(panel);
 				dialog.pack();
 				dialog.setLocationRelativeTo(win);
-				dialog.setBounds(50,50,300,100);
+				dialog.setBounds(50, 50, 300, 100);
 				dialog.setVisible(true);
-				
+
 			}
 		});
 	}
@@ -184,10 +178,9 @@ public class UIAccessKeySelect{
 
 			for (int i = 0; i < accessKeyList.length(); i++) {
 				JSONObject accessKey = accessKeyList.getJSONObject(i);
-				model.addElement(accessKey.get("key") + " , "
-						+ accessKey.get("remainingUses") + " , " + accessKey.get("expiryDate"));
+				model.addElement(accessKey.get("key") + " , " + accessKey.get("remainingUses") + " , "
+						+ accessKey.get("expiryDate"));
 			}
-
 
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
@@ -198,8 +191,8 @@ public class UIAccessKeySelect{
 	public void setFrameVisible() {
 		accessKeyFrame.setVisible(true);
 	}
-	
-	public void refreshList(){
+
+	public void refreshList() {
 		getAccessKeyData();
 		listBucket.setModel(model);
 	}

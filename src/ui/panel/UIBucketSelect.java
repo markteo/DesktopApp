@@ -1,4 +1,4 @@
-package ui;
+package ui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,26 +37,26 @@ import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import ui.components.table.model.UneditableModel;
 import api.APIProcess;
 import customColor.CustomColor;
 
-public class UIBucketSelect{
+public class UIBucketSelect extends JPanel {
 	Thread buckets;
 	public JTable listBucket;
-	private JFrame bucketFrame;
-	public UIBucketSelect(){
+
+	public UIBucketSelect() {
 		getBucketData();
 		runBucketSelect();
-		
 	}
-	public void runBucketSelect(){
+
+	public void runBucketSelect() {
 		Panel p = new Panel();
 		Button b = new Button();
 		Label l = new Label();
-		bucketFrame = new JFrame("Bucket");		
-		
+
 		// start of ui
-		bucketFrame.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
 		JLabel lblInstruction = l.createLabel("Bucket List");
@@ -65,15 +65,13 @@ public class UIBucketSelect{
 		lblInstruction.setFont(new Font("San Serif", Font.PLAIN, 18));
 		pnlInstruction.add(lblInstruction);
 
-		JPanel pnlBucketList = p.createPanel(Layouts.flow);
-		
-		
+		JPanel pnlBucketList = p.createPanel(Layouts.border);
+
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
 		scrollBucket.setPreferredSize(new Dimension(300, 150));
-		Component[] BucketListComponents = { scrollBucket };
-		p.addComponentsToPanel(pnlBucketList, BucketListComponents);
-
+		pnlBucketList.add(scrollBucket,BorderLayout.CENTER);
+		
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
 		JButton btnBack = b.createButton("Back");
 		JButton btnSelectElements = b.createButton("Next");
@@ -83,42 +81,42 @@ public class UIBucketSelect{
 		pnlButtons.add(btnSelectElements);
 		pnlButtons.add(btnRefresh);
 
-		bucketFrame.add(pnlInstruction, BorderLayout.NORTH);
-		bucketFrame.add(pnlBucketList, BorderLayout.CENTER);
-		bucketFrame.add(pnlButtons, BorderLayout.SOUTH);
-		bucketFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		bucketFrame.setVisible(true);
-		bucketFrame.pack();
+		add(pnlInstruction, BorderLayout.NORTH);
+		add(pnlBucketList, BorderLayout.CENTER);
+		add(pnlButtons, BorderLayout.SOUTH);
+		setVisible(true);
+
 		btnRefresh.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				getBucketData();
 			}
 		});
 		btnSelectElements.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						
-						int selected = listBucket.getSelectedRow();					
+
+						int selected = listBucket.getSelectedRow();
 						Data.bucketID = (int) listBucket.getModel().getValueAt(selected, 0);
-						bucketFrame.setVisible(false);
-						Data.uiLicenseDetail = new UILicenseDetail();
+						setVisible(false);
+						Data.mainFrame.uiLicenseDetail = new UILicenseDetail();
+						Data.mainFrame.addPanel(Data.mainFrame.uiLicenseDetail,"license");
+						Data.mainFrame.pack();
+						Data.mainFrame.showPanel("license");
 						return null;
 					}
 				};
-		
-				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
-						.getSource());
-				final JDialog dialog = new JDialog(win, "Dialog",
-						ModalityType.APPLICATION_MODAL);
-		
+
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Dialog", ModalityType.APPLICATION_MODAL);
+
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
-		
+
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
 						if (evt.getPropertyName().equals("state")) {
@@ -129,7 +127,7 @@ public class UIBucketSelect{
 					}
 				});
 				mySwingWorker.execute();
-		
+
 				JProgressBar progressBar = new JProgressBar();
 				progressBar.setIndeterminate(true);
 				JPanel panel = new JPanel(new BorderLayout());
@@ -138,12 +136,11 @@ public class UIBucketSelect{
 				dialog.add(panel);
 				dialog.pack();
 				dialog.setLocationRelativeTo(win);
-				dialog.setBounds(50,50,300,100);
+				dialog.setBounds(50, 50, 300, 100);
 				dialog.setVisible(true);
-				
+
 				// do something with selected Bucket
-					
-				
+
 			}
 		});
 		btnBack.addActionListener(new ActionListener() {
@@ -151,33 +148,32 @@ public class UIBucketSelect{
 			public void actionPerformed(ActionEvent e) {
 				// add Bucket code here
 				// open add frame and close current frame.
-				bucketFrame.setVisible(false);
-				Data.uiInventorySelect.setFrameVisible();
-			}	
+				setVisible(false);
+				Data.mainFrame.showPanel("inventory");
+			}
 		});
 	}
-	
-	private void getBucketData(){
-		
-		
+
+	private void getBucketData() {
+
 		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
 		try {
 			Object[][] rowData = new Object[bucketList.length()][2];
-			Object columnName[] = new Object[] {"Bucket ID", "Bucket Name"};
-			for (int i = 0; i < bucketList.length(); i++){
+			Object columnName[] = new Object[] { "Bucket ID", "Bucket Name" };
+			for (int i = 0; i < bucketList.length(); i++) {
 				JSONObject bucket = bucketList.getJSONObject(i);
 				rowData[i][0] = bucket.get("bucketID");
 				rowData[i][1] = bucket.get("bucketName");
-			}	
-			listBucket = new JTable(rowData, columnName);
+			}
+			listBucket = new JTable(new UneditableModel(rowData, columnName));
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 
-	public void setFrameVisible(){
-		bucketFrame.setVisible(true);
+	public void setPanelVisible() {
+		setVisible(true);
 	}
 
 }

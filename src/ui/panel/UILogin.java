@@ -1,17 +1,16 @@
-package ui;
+package ui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -32,47 +31,58 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import api.APICall;
-import customColor.CustomColor;
 import main.Data;
 import main.DesktopAppMain;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import ui.frame.KAIQRFrame;
 
-public class UILogin {
+public class UILogin extends JFrame {
 
 	public static APICall api = new APICall();
-	private static JFrame loginFrame;
 
-	public static void runLogin() {
+	private JFrame frame = Data.mainFrame;
 
+	private JPanel loginPanel;
+	private JPanel buttonPanel;
+
+	private JLabel lblUser;
+	private JLabel lblPassword;
+	private JLabel lblURL;
+	private JLabel lblBucket;
+
+	private JTextField tfURL;
+	private JTextField tfBucket;
+	private JTextField tfUser;
+	private JPasswordField pfPassword;
+
+	public UILogin() {
+		super("login");
 		Label l = new Label();
 
-		loginFrame = new JFrame("Login");
-		loginFrame.setLayout(new BorderLayout());
-		loginFrame.setPreferredSize(new Dimension(400, 300));
+		setLayout(new BorderLayout());
+		this.setPreferredSize(new Dimension(400, 300));
 
 		Panel p = new Panel();
-		JPanel loginPanel = p.createPanel(Layouts.grid, 4, 2);
+		loginPanel = p.createPanel(Layouts.grid, 4, 2);
 		loginPanel.setBorder(new EmptyBorder(25, 25, 0, 25));
-		JLabel lblUser = new JLabel("Username:");
-		JLabel lblPassword = new JLabel("Password:");
-		JLabel lblURL = l.createLabel("Server URL");
-		JLabel lblBucket = l.createLabel("Bucket");
-		lblUser.setForeground(CustomColor.Grey.returnColor());
-		lblPassword.setForeground(CustomColor.Grey.returnColor());
+		lblUser = l.createLabel("Username:");
+		lblPassword = l.createLabel("Password:");
+		lblURL = l.createLabel("Server URL");
+		lblBucket = l.createLabel("Bucket");
 
-		JTextField tfURL = new JTextField();
+		tfURL = new JTextField();
 		tfURL.setText("kaiup.kaisquare.com");
-		JTextField tfBucket = new JTextField();
+		tfBucket = new JTextField();
 		PromptSupport.setPrompt("BucketName", tfBucket);
-		JTextField tfUser = new JTextField();
+		tfUser = new JTextField();
 		PromptSupport.setPrompt("Username", tfUser);
-		JPasswordField pfPassword = new JPasswordField();
+		pfPassword = new JPasswordField();
 		PromptSupport.setPrompt("Password", pfPassword);
 
-		JPanel buttonPanel = p.createPanel(Layouts.flow);
+		buttonPanel = p.createPanel(Layouts.flow);
 		buttonPanel.setBorder(new EmptyBorder(0, 0, 25, 0));
 		Button b = new Button();
 		JButton btnLogin = b.createButton("Login");
@@ -82,16 +92,12 @@ public class UILogin {
 		Component[] arrayBtn = { btnLogin, btnExit };
 		p.addComponentsToPanel(buttonPanel, arrayBtn);
 
-		Component[] arrayComponents = { lblURL, tfURL, lblBucket, tfBucket,
-				lblUser, tfUser, lblPassword, pfPassword };
+		Component[] arrayComponents = { lblURL, tfURL, lblBucket, tfBucket, lblUser, tfUser, lblPassword, pfPassword };
 		// picLabel.setBounds(50, 50, 50, 50);
 		p.addComponentsToPanel(loginPanel, arrayComponents);
 		// loginFrame.add(picLabel,BorderLayout.NORTH);
-		loginFrame.add(loginPanel, BorderLayout.CENTER);
-		loginFrame.add(buttonPanel, BorderLayout.SOUTH);
-		loginFrame.pack();
-		loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		loginFrame.setVisible(true);
+		add(loginPanel, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.SOUTH);
 
 		btnLogin.addActionListener(new ActionListener() {
 
@@ -103,44 +109,33 @@ public class UILogin {
 					protected Void doInBackground() throws Exception {
 
 						String username = tfUser.getText();
-						String password = String.valueOf(pfPassword
-								.getPassword());
+						String password = String.valueOf(pfPassword.getPassword());
 						Data.URL = Data.protocol + tfURL.getText();
-						Data.targetURL = Data.protocol + tfURL.getText()
-								+ "/api/" + tfBucket.getText() + "/";
+						Data.targetURL = Data.protocol + tfURL.getText() + "/api/" + tfBucket.getText() + "/";
 
-						String response = api.loginBucket(Data.targetURL,
-								username, password);
+						String response = api.loginBucket(Data.targetURL, username, password);
 
 						try {
 
 							if (DesktopAppMain.checkResult(response)) {
-								JSONObject responseJSON = new JSONObject(
-										response);
-								Data.sessionKey = responseJSON.get(
-										"session-key").toString();
-								response = api.getUserFeatures(Data.targetURL,
-										Data.sessionKey);
+								JSONObject responseJSON = new JSONObject(response);
+								Data.sessionKey = responseJSON.get("session-key").toString();
+								response = api.getUserFeatures(Data.targetURL, Data.sessionKey);
 								if (checkFeatures(response)) {
-									Data.uiInventorySelect = new UIInventorySelect();
-									loginFrame.setVisible(false);
-									Data.uiInventorySelect.runInventorySelect();
-
+									Data.mainFrame = new KAIQRFrame();
+									Data.mainFrame.addPanel(new UIInventorySelect(), "inventory");
+									Data.mainFrame.showPanel("inventory");
+									Data.mainFrame.pack();
+									Data.mainFrame.setVisible(true);
+									Data.loginFrame.setVisible(false);
 								} else {
-									JOptionPane
-											.showMessageDialog(
-													loginFrame,
-													"User does not have necessary features",
-													"Error",
-													JOptionPane.ERROR_MESSAGE);
+									JOptionPane.showMessageDialog(frame, "User does not have necessary features",
+											"Error", JOptionPane.ERROR_MESSAGE);
 								}
 							} else {
-								JOptionPane.showMessageDialog(loginFrame,
-										"Wrong username/password", "Error",
+								JOptionPane.showMessageDialog(frame, "Wrong username/password", "Error",
 										JOptionPane.ERROR_MESSAGE);
-
 							}
-
 						} catch (JSONException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -150,31 +145,27 @@ public class UILogin {
 					}
 				};
 
-				Window win = SwingUtilities
-						.getWindowAncestor((AbstractButton) e.getSource());
-				final JDialog dialog = new JDialog(win, "Login",
-						ModalityType.APPLICATION_MODAL);
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Login", ModalityType.APPLICATION_MODAL);
 
-				mySwingWorker
-						.addPropertyChangeListener(new PropertyChangeListener() {
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
 
-							@Override
-							public void propertyChange(PropertyChangeEvent evt) {
-								if (evt.getPropertyName().equals("state")) {
-									if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
-										dialog.dispose();
-									}
-								}
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
 							}
-						});
+						}
+					}
+				});
 				mySwingWorker.execute();
 
 				JProgressBar progressBar = new JProgressBar();
 				progressBar.setIndeterminate(true);
 				JPanel panel = new JPanel(new BorderLayout());
 				panel.add(progressBar, BorderLayout.CENTER);
-				panel.add(new JLabel("Logging in .........."),
-						BorderLayout.PAGE_START);
+				panel.add(new JLabel("Logging in .........."), BorderLayout.PAGE_START);
 				dialog.add(panel);
 				dialog.pack();
 				dialog.setLocationRelativeTo(win);
@@ -190,6 +181,8 @@ public class UILogin {
 				System.exit(0);
 			}
 		});
+		pack();
+		setVisible(true);
 	}
 
 	public static boolean checkFeatures(String response) {
@@ -206,11 +199,9 @@ public class UILogin {
 
 					String featureName = feature.getString("name");
 
-					if (featureName.equals("bucket-management")
-							|| featureName.equals("inventory-management")
+					if (featureName.equals("bucket-management") || featureName.equals("inventory-management")
 							|| featureName.equals("access-key-management")) {
-						System.out.println("Feature: "
-								+ feature.getString("name"));
+						System.out.println("Feature: " + feature.getString("name"));
 						featureList.put(featureName, feature.getString("name"));
 
 					}
@@ -226,13 +217,5 @@ public class UILogin {
 		}
 
 		return result;
-	}
-
-	public void resetData() {
-
-	}
-
-	public void setFrameVisible() {
-		loginFrame.setVisible(true);
 	}
 }

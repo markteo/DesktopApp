@@ -7,14 +7,7 @@ import javax.swing.JFrame;
 
 import org.json.JSONArray;
 
-import qrcode.JavaQR;
-import ui.UIAccessKeySelect;
-import ui.UIBucketSelect;
-import ui.UIFileUploadHTTP;
-import ui.UIGenerateKey;
-import ui.UIInventorySelect;
-import ui.UILicenseDetail;
-import ui.UILogin;
+import ui.frame.KAIQRFrame;
 
 public class Data {
 	public static String bucket;
@@ -26,16 +19,10 @@ public class Data {
 	public static String registrationNumber;
 	public static int bucketID;
 	public static String licenseNumber;
-	public static UIInventorySelect uiInventorySelect;
-	public static UIBucketSelect uiBucketSelect;
 	public static HashMap<String, JSONArray> featureList;
-	public static UIGenerateKey uiGenerateKey;
-	public static UIAccessKeySelect uiAccessKeySelect;
-	public static UILicenseDetail uiLicenseDetail;
 	public static String accessKey;
-	public static JavaQR qrGenerator;
-	public static UILogin uiLogin;
 	public static JDialog loadingScreen;
 	public static JFrame loadingFrame;
-	public static UIFileUploadHTTP uiFileUpload;
+	public static KAIQRFrame mainFrame;
+	public static JFrame loginFrame;
 }

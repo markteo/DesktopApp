@@ -1,4 +1,4 @@
-package ui;
+package ui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -16,12 +16,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import customColor.CustomColor;
+import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
 
-public class UIFileUploadHTTP {
+public class UIFileUploadHTTP extends JPanel {
 	//
 	// public static JFrame uploadInventoryFrame;
 	//
@@ -159,8 +160,6 @@ public class UIFileUploadHTTP {
 	// });
 	// }
 
-	private JFrame frame;
-
 	private JLabel lblFileName;
 
 	private JTextField tfFileName;
@@ -177,19 +176,15 @@ public class UIFileUploadHTTP {
 	Button b = new Button();
 	Label l = new Label();
 
-	public void runUpload() {
-		frame = new JFrame("License Details");
-		frame.getContentPane().setBackground(CustomColor.NavyBlue.returnColor());
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	public UIFileUploadHTTP() {
+		setBackground(CustomColor.NavyBlue.returnColor());
 
-		frame.getContentPane().setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 
-		frame.add(createButtonPanel(), BorderLayout.SOUTH);
-		frame.add(createBrowsePanel(), BorderLayout.CENTER);
+		add(createButtonPanel(), BorderLayout.SOUTH);
+		add(createBrowsePanel(), BorderLayout.CENTER);
 
-		frame.setPreferredSize(new Dimension(500, 300));
-		frame.pack();
-		frame.setVisible(true);
+		setPreferredSize(new Dimension(500, 300));
 	}
 
 	public JPanel createButtonPanel() {
@@ -221,8 +216,9 @@ public class UIFileUploadHTTP {
 	public JPanel createBrowsePanel() {
 		JPanel panel = p.createPanel(Layouts.gridbag);
 		GridBagConstraints g = new GridBagConstraints();
+		g.weightx = 0.5;
 
-		fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
+		fd = new FileDialog(Data.mainFrame, "Choose a file", FileDialog.LOAD);
 		fd.setFile("*.csv");
 
 		btnBrowse = b.createButton("Browse");
@@ -233,7 +229,7 @@ public class UIFileUploadHTTP {
 				// TODO Auto-generated method stub
 				fd.setVisible(true);
 				String filename = fd.getDirectory() + fd.getFile();
-				if(fd.getDirectory() == null || fd.getFile() == null){
+				if (fd.getDirectory() == null || fd.getFile() == null) {
 					filename = "";
 				}
 
