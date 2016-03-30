@@ -1,4 +1,4 @@
-package ui.panel;
+package ui.frame;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -33,17 +33,15 @@ import org.json.JSONObject;
 import api.APICall;
 import main.Data;
 import main.DesktopAppMain;
+import ui.panel.UIInventorySelect;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
-import ui.frame.KAIQRFrame;
 
 public class UILogin extends JFrame {
 
 	public static APICall api = new APICall();
-
-	private JFrame frame = Data.mainFrame;
 
 	private JPanel loginPanel;
 	private JPanel buttonPanel;
@@ -60,12 +58,14 @@ public class UILogin extends JFrame {
 
 	public UILogin() {
 		super("login");
+
 		Label l = new Label();
 
 		setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(400, 300));
 
 		Panel p = new Panel();
+
 		loginPanel = p.createPanel(Layouts.grid, 4, 2);
 		loginPanel.setBorder(new EmptyBorder(25, 25, 0, 25));
 		lblUser = l.createLabel("Username:");
@@ -107,38 +107,47 @@ public class UILogin extends JFrame {
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
+						if (tfUser.getText().equals("") || String.valueOf(pfPassword.getPassword()).equals("")
+								|| tfBucket.getText().equals("")) {
+							JOptionPane.showMessageDialog(Data.mainFrame, "Please fill up all the fields", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						} else {
+							String username = tfUser.getText();
+							String password = String.valueOf(pfPassword.getPassword());
+							Data.URL = Data.protocol + tfURL.getText();
+							Data.targetURL = Data.protocol + tfURL.getText() + "/api/" + tfBucket.getText() + "/";
 
-						String username = tfUser.getText();
-						String password = String.valueOf(pfPassword.getPassword());
-						Data.URL = Data.protocol + tfURL.getText();
-						Data.targetURL = Data.protocol + tfURL.getText() + "/api/" + tfBucket.getText() + "/";
+							String response = api.loginBucket(Data.targetURL, username, password);
 
-						String response = api.loginBucket(Data.targetURL, username, password);
+							try {
 
-						try {
+								if (DesktopAppMain.checkResult(response)) {
+									JSONObject responseJSON = new JSONObject(response);
+									Data.sessionKey = responseJSON.get("session-key").toString();
+									response = api.getUserFeatures(Data.targetURL, Data.sessionKey);
+									if (checkFeatures(response)) {
+										Data.mainFrame = new KAIQRFrame();
+										Data.mainFrame.uiInventorySelect = new UIInventorySelect();
+										Data.mainFrame.addPanel(Data.mainFrame.uiInventorySelect, "inventory");
+										Data.mainFrame.showPanel("inventory");
+										Data.mainFrame.pack();
+										setVisible(false);
+										Data.mainFrame.setVisible(true);
 
-							if (DesktopAppMain.checkResult(response)) {
-								JSONObject responseJSON = new JSONObject(response);
-								Data.sessionKey = responseJSON.get("session-key").toString();
-								response = api.getUserFeatures(Data.targetURL, Data.sessionKey);
-								if (checkFeatures(response)) {
-									Data.mainFrame = new KAIQRFrame();
-									Data.mainFrame.addPanel(new UIInventorySelect(), "inventory");
-									Data.mainFrame.showPanel("inventory");
-									Data.mainFrame.pack();
-									Data.mainFrame.setVisible(true);
-									Data.loginFrame.setVisible(false);
+									} else {
+										JOptionPane.showMessageDialog(Data.loginFrame,
+												"User does not have necessary features", "Error",
+												JOptionPane.ERROR_MESSAGE);
+									}
 								} else {
-									JOptionPane.showMessageDialog(frame, "User does not have necessary features",
-											"Error", JOptionPane.ERROR_MESSAGE);
+									JOptionPane.showMessageDialog(Data.loginFrame, "Wrong username/password", "Error",
+											JOptionPane.ERROR_MESSAGE);
 								}
-							} else {
-								JOptionPane.showMessageDialog(frame, "Wrong username/password", "Error",
-										JOptionPane.ERROR_MESSAGE);
+
+							} catch (JSONException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
 							}
-						} catch (JSONException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
 						}
 
 						return null;
@@ -159,6 +168,7 @@ public class UILogin extends JFrame {
 						}
 					}
 				});
+
 				mySwingWorker.execute();
 
 				JProgressBar progressBar = new JProgressBar();
@@ -171,7 +181,6 @@ public class UILogin extends JFrame {
 				dialog.setLocationRelativeTo(win);
 				dialog.setBounds(50, 50, 300, 100);
 				dialog.setVisible(true);
-
 			}
 		});
 
@@ -180,8 +189,10 @@ public class UILogin extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
+
 		});
 		pack();
+		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 

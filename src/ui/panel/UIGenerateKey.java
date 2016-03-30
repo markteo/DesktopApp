@@ -35,8 +35,6 @@ public class UIGenerateKey extends JPanel {
 	private String[] arrayUser = new String[] {};
 	private String[] arrayTimeUnit;
 
-	private JFrame frameGenerate;
-
 	private JPanel pnlAccessKey;
 	private JPanel pnlButtons;
 
@@ -94,8 +92,7 @@ public class UIGenerateKey extends JPanel {
 		Label l = new Label();
 		Button b = new Button();
 
-		frameGenerate = new JFrame("Generate Access Key");
-		frameGenerate.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 		pnlAccessKey = p.createPanel(Layouts.gridbag);
 		pnlButtons = p.createPanel(Layouts.flow);
 		GridBagConstraints gc = new GridBagConstraints();
@@ -203,17 +200,13 @@ public class UIGenerateKey extends JPanel {
 		Component[] buttonList = { btnBack, btnNext };
 		p.addComponentsToPanel(pnlButtons, buttonList);
 
-		frameGenerate.add(pnlAccessKey, BorderLayout.CENTER);
-		frameGenerate.add(pnlButtons, BorderLayout.SOUTH);
-		frameGenerate.pack();
-		frameGenerate.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frameGenerate.setVisible(true);
+		add(pnlAccessKey, BorderLayout.CENTER);
+		add(pnlButtons, BorderLayout.SOUTH);
 		btnNext.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				Data.accessKey = lblKey.getText();
-				frameGenerate.setVisible(false);
 				Data.mainFrame.qrGenerator = new JavaQR();
 			}
 		});
@@ -221,7 +214,6 @@ public class UIGenerateKey extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				frameGenerate.setVisible(false);
 				Data.mainFrame.showPanel("access");
 				Data.mainFrame.uiAccessKeySelect.refreshList();
 			}

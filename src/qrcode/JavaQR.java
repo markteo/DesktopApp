@@ -28,7 +28,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import main.Data;
-import ui.panel.UILogin;
+import ui.frame.UILogin;
 
 import org.jdesktop.xswingx.PromptSupport;
 import org.json.JSONException;
@@ -39,7 +39,6 @@ import api.APICall;
 public class JavaQR extends JPanel implements Runnable {
 
 	private Thread t;
-	private JFrame frame;
 
 	public JavaQR() {
 		start();
@@ -48,8 +47,8 @@ public class JavaQR extends JPanel implements Runnable {
 	@Override
 	public void run() {
 		// Initial Config
-		frame = new JFrame("QR Code Generator");
-		frame.setLayout(new BorderLayout());
+
+		setLayout(new BorderLayout());
 
 		JPanel topPanel = new JPanel();
 		JPanel centerPanel = new JPanel();
@@ -141,14 +140,10 @@ public class JavaQR extends JPanel implements Runnable {
 		rowCenPanel.add(logoutBtn);
 		bottomPanel.add(rowBottom1);
 		bottomPanel.add(rowCenPanel);
-		frame.add(topPanel, BorderLayout.NORTH);
-		frame.add(bottomPanel, BorderLayout.SOUTH);
-		frame.add(centerPanel, BorderLayout.CENTER);
-		frame.setLocationRelativeTo(null);
-		frame.setSize(1000, 500);
-		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+		add(topPanel, BorderLayout.NORTH);
+		add(bottomPanel, BorderLayout.SOUTH);
+		add(centerPanel, BorderLayout.CENTER);
+		Data.mainFrame.setSize(1000, 500);
 
 		// if(accessKey.trim().equalsIgnoreCase("") == true ||
 		// regKey.trim().equalsIgnoreCase("") == true) {
@@ -183,14 +178,14 @@ public class JavaQR extends JPanel implements Runnable {
 					File myFile = new File(filePath);
 					try {
 						ImageIO.write(image, fileType, myFile);
-						JOptionPane.showMessageDialog(frame, "QR Code Saved in " + fileLocation);
+						JOptionPane.showMessageDialog(Data.mainFrame, "QR Code Saved in " + fileLocation);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 
 				} else {
-					JOptionPane.showMessageDialog(frame, "Choose a directory!");
+					JOptionPane.showMessageDialog(Data.mainFrame, "Choose a directory!");
 					System.out.println("No QR Generated");
 				}
 			}
@@ -214,10 +209,7 @@ public class JavaQR extends JPanel implements Runnable {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				Data.mainFrame.showPanel("inventory");
-				frame.setVisible(false);
-
 			}
 		});
 
@@ -231,7 +223,7 @@ public class JavaQR extends JPanel implements Runnable {
 					JSONObject response = new JSONObject(api.logout(Data.targetURL, Data.sessionKey));
 					if (response.getString("result").equals("ok")) {
 						UILogin login = new UILogin();
-						frame.setVisible(false);
+						Data.mainFrame.setVisible(false);
 					}
 
 				} catch (JSONException e1) {
@@ -260,9 +252,4 @@ public class JavaQR extends JPanel implements Runnable {
 		t = new Thread(this);
 		t.start();
 	}
-
-	public void setFrameVisible() {
-		frame.setVisible(true);
-	}
-
 }

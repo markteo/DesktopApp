@@ -1,4 +1,4 @@
-package ui.panel;
+package ui.frame;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -8,21 +8,29 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import api.APICall;
 import customColor.CustomColor;
 import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
+import ui.panel.UIFileDownloadHTTP;
 
-public class UIFileUploadHTTP extends JPanel {
+public class UIFileUploadHTTP extends JFrame {
 	//
 	// public static JFrame uploadInventoryFrame;
 	//
@@ -177,6 +185,7 @@ public class UIFileUploadHTTP extends JPanel {
 	Label l = new Label();
 
 	public UIFileUploadHTTP() {
+		super("Download Inventory Template");
 		setBackground(CustomColor.NavyBlue.returnColor());
 
 		setLayout(new BorderLayout());
@@ -185,6 +194,8 @@ public class UIFileUploadHTTP extends JPanel {
 		add(createBrowsePanel(), BorderLayout.CENTER);
 
 		setPreferredSize(new Dimension(500, 300));
+		setVisible(true);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
 
 	public JPanel createButtonPanel() {
@@ -202,13 +213,49 @@ public class UIFileUploadHTTP extends JPanel {
 			}
 		});
 		btnUpload = b.createButton("Upload");
+		btnUpload.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// insert api for upload
+				String fileURL = tfFileName.getText();
+
+				if (fileURL.isEmpty()) {
+					final JPanel panel = new JPanel();
+					JOptionPane.showMessageDialog(panel, "No file selected", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				} else {
+					APICall api = new APICall();
+					String response = api.uploadInventory(Data.targetURL, fileURL, Data.sessionKey);
+					try {
+						JSONObject responseObject = new JSONObject(response);
+						if (responseObject.get("result").equals("ok")) {
+							JOptionPane.showMessageDialog(panel, "File uploaded", "Success",
+									JOptionPane.INFORMATION_MESSAGE);
+							Data.mainFrame.uiInventorySelect.updateInventoryList();
+						} else {
+							JOptionPane.showMessageDialog(Data.mainFrame, "Please check the file", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 		btnBack = b.createButton("Back");
-		btnCancel = b.createButton("Cancel");
+		btnBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
 
 		panel.add(btnDownload);
 		panel.add(btnUpload);
 		panel.add(btnBack);
-		panel.add(btnCancel);
 
 		return panel;
 	}
@@ -220,6 +267,14 @@ public class UIFileUploadHTTP extends JPanel {
 
 		fd = new FileDialog(Data.mainFrame, "Choose a file", FileDialog.LOAD);
 		fd.setFile("*.csv");
+		fd.setFilenameFilter(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+				// TODO Auto-generated method stub
+				return name.endsWith(".csv");
+			}
+		});
 
 		btnBrowse = b.createButton("Browse");
 		btnBrowse.addActionListener(new ActionListener() {

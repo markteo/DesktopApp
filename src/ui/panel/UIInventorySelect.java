@@ -16,6 +16,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -36,11 +37,13 @@ import api.APICall;
 import api.APIProcess;
 import customColor.CustomColor;
 import main.Data;
+import ui.panel.UIBucketSelect;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
 import ui.components.table.model.UneditableModel;
+import ui.frame.UIFileUploadHTTP;
 
 public class UIInventorySelect extends JPanel {
 	public static APICall api = new APICall();
@@ -53,49 +56,22 @@ public class UIInventorySelect extends JPanel {
 	private JButton btnAddElements;
 	private JButton btnSelectElements;
 
+	private DefaultTableModel model;
+
 	Panel p = new Panel();
 	Button b = new Button();
 	Label l = new Label();
 
-	private JTable listInventory;
+	private JTable listInventory = new JTable();
 
 	public UIInventorySelect() {
 		setBackground(CustomColor.NavyBlue.returnColor());
 		setLayout(new BorderLayout());
 
 		// fetch list from server
-		listInventory = getInventoryData();
+		getInventoryData();
 		listInventory.setShowHorizontalLines(false);
 		listInventory.setAutoCreateRowSorter(true);
-
-		// listInventory.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		//
-		// for (int column = 0; column < listInventory.getColumnCount();
-		// column++) {
-		// TableColumn tableColumn =
-		// listInventory.getColumnModel().getColumn(column);
-		// int preferredWidth = tableColumn.getMinWidth();
-		// int maxWidth = tableColumn.getMaxWidth();
-		//
-		// for (int row = 0; row < listInventory.getRowCount(); row++) {
-		// TableCellRenderer cellRenderer = listInventory.getCellRenderer(row,
-		// column);
-		// Component c = listInventory.prepareRenderer(cellRenderer, row,
-		// column);
-		// int width = c.getPreferredSize().width +
-		// listInventory.getIntercellSpacing().width;
-		// preferredWidth = Math.max(preferredWidth, width);
-		//
-		// // We've exceeded the maximum width, no need to check other rows
-		//
-		// if (preferredWidth >= maxWidth) {
-		// preferredWidth = maxWidth;
-		// break;
-		// }
-		// }
-		//
-		// tableColumn.setPreferredWidth(preferredWidth);
-		// }
 
 		// start of ui
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
@@ -109,7 +85,7 @@ public class UIInventorySelect extends JPanel {
 		listInventory.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listInventory.setOpaque(false);
 		JScrollPane scrollInventory = new JScrollPane(listInventory);
-		scrollInventory.setPreferredSize(new Dimension(400,200));
+		scrollInventory.setPreferredSize(new Dimension(400, 200));
 		pnlInventoryList.add(scrollInventory, BorderLayout.CENTER);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
@@ -125,9 +101,8 @@ public class UIInventorySelect extends JPanel {
 		btnAddElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Data.mainFrame.addPanel(Data.mainFrame.uiFileUpload = new UIFileUploadHTTP() , "upload");
-				Data.mainFrame.pack();
-				Data.mainFrame.showPanel("upload");
+				Data.mainFrame.uiFileUpload = new UIFileUploadHTTP();
+				Data.mainFrame.uiFileUpload.pack();
 			}
 		});
 
@@ -141,16 +116,19 @@ public class UIInventorySelect extends JPanel {
 
 						// do something with selected inventory
 						int selected = listInventory.getSelectedRow();
-						Data.registrationNumber = (String) listInventory.getModel().getValueAt(selected, 1);
-						setVisible(false);
-
-						if (Data.mainFrame.uiBucketSelect != null) {
-							Data.mainFrame.showPanel("bucket");
+						if (selected == -1) {
+							JOptionPane.showMessageDialog(Data.mainFrame, "Please Select an Inventory Item", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						} else {
-							Data.mainFrame.uiBucketSelect = new UIBucketSelect();
-							Data.mainFrame.addPanel(Data.mainFrame.uiBucketSelect,"bucket");
-							Data.mainFrame.pack();
-							Data.mainFrame.showPanel("bucket");
+							Data.registrationNumber = (String) listInventory.getModel().getValueAt(selected, 1);
+
+							if (Data.mainFrame.uiBucketSelect != null) {
+								Data.mainFrame.showPanel("bucket");
+							} else {
+								Data.mainFrame.addPanel(Data.mainFrame.uiBucketSelect = new ui.panel.UIBucketSelect(),
+										"bucket");
+								Data.mainFrame.showPanel("bucket");
+							}
 						}
 						return null;
 					}
@@ -185,10 +163,13 @@ public class UIInventorySelect extends JPanel {
 
 			}
 		});
+
+		setVisible(true);
 	}
 
-	public JTable getInventoryData() {
+	public void getInventoryData() {
 		JSONArray inventoryList = new APIProcess().inventoryList(Data.targetURL, Data.sessionKey);
+
 		try {
 			Object rowData[][] = new Object[inventoryList.length()][3];
 			Object columnNames[] = { "ID", "Registration Number", "MAC Address" };
@@ -199,17 +180,21 @@ public class UIInventorySelect extends JPanel {
 				rowData[i][1] = inventoryItem.get("registrationNumber");
 				rowData[i][2] = inventoryItem.get("macAddress");
 			}
-			JTable model = new JTable(new UneditableModel(rowData, columnNames));
-			return model;
+			model = new DefaultTableModel(rowData, columnNames) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
+			listInventory.setModel(model);
 
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			return null;
 		}
 	}
 
 	public void updateInventoryList() {
-		JTable inventoryList = getInventoryData();
+		getInventoryData();
 	}
 }

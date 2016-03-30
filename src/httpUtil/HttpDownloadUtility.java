@@ -10,8 +10,9 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
+import main.Data;
+import ui.frame.UIFileUploadHTTP;
 import ui.panel.UIFileDownloadHTTP;
-import ui.panel.UIFileUploadHTTP;
 
 /**
  * A utility that downloads a file from a URL.
@@ -40,7 +41,6 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 	 */
 	public String downloadFile(String fileURL, String saveDir, String sessionKey, UIFileDownloadHTTP ui) {
 		try {
-			gui = ui;
 			URL url = new URL(fileURL);
 			httpConn = (HttpURLConnection) url.openConnection();
 			httpConn.setRequestMethod("GET");
@@ -97,13 +97,13 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 				return "ERROR";
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(gui, "Error downloading file: " + e.getMessage(), "Error",
+			JOptionPane.showMessageDialog(Data.mainFrame, "Error downloading file: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 			setProgress(0);
 			cancel(true);
 		}
-		ui.setFileInfo(fileName,contentLength);
+		ui.setFileInfo(fileName, contentLength);
 
 		return null;
 	}

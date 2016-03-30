@@ -56,12 +56,11 @@ public class UIAccessKeySelect extends JPanel {
 		Panel p = new Panel();
 		Button b = new Button();
 		Label l = new Label();
-		accessKeyFrame = new JFrame("Bucket");
 
 		listBucket = new JList(model);
 
 		// start of ui
-		accessKeyFrame.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
 		JLabel lblInstruction = l.createLabel("Access Keys");
@@ -91,35 +90,32 @@ public class UIAccessKeySelect extends JPanel {
 		pnlButtons.add(btnAdd);
 		pnlButtons.add(btnRefresh);
 
-		accessKeyFrame.add(pnlInstruction, BorderLayout.NORTH);
-		accessKeyFrame.add(pnlBucketList, BorderLayout.CENTER);
-		accessKeyFrame.add(pnlButtons, BorderLayout.SOUTH);
-		accessKeyFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		accessKeyFrame.pack();
-		accessKeyFrame.setVisible(true);
+		add(pnlInstruction, BorderLayout.NORTH);
+		add(pnlBucketList, BorderLayout.CENTER);
+		add(pnlButtons, BorderLayout.SOUTH);
+		// accessKeyFrame.pack();
+		// accessKeyFrame.setVisible(true);
 
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				accessKeyFrame.setVisible(false);
 				Data.mainFrame.showPanel("license");
 			}
 		});
 
 		btnRefresh.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				refreshList();
-
 			}
 		});
 		btnAdd.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Data.mainFrame.uiGenerateKey = new UIGenerateKey();
-				accessKeyFrame.setVisible(false);
+				Data.mainFrame.addPanel(Data.mainFrame.uiGenerateKey, "generateKey");
+				Data.mainFrame.pack();
+				Data.mainFrame.showPanel("generateKey");
 			}
 		});
 		btnSelectElements.addActionListener(new ActionListener() {
@@ -133,8 +129,10 @@ public class UIAccessKeySelect extends JPanel {
 								.toString();
 						String[] itemData = itemSelected.split("\\,");
 						Data.accessKey = itemData[0].trim();
-						accessKeyFrame.setVisible(false);
 						Data.mainFrame.qrGenerator = new JavaQR();
+						Data.mainFrame.pack();
+						Data.mainFrame.addPanel(Data.mainFrame.qrGenerator, "generateQR");
+						Data.mainFrame.showPanel("generateQR");
 						return null;
 					}
 				};
@@ -165,7 +163,6 @@ public class UIAccessKeySelect extends JPanel {
 				dialog.setLocationRelativeTo(win);
 				dialog.setBounds(50, 50, 300, 100);
 				dialog.setVisible(true);
-
 			}
 		});
 	}
@@ -175,7 +172,6 @@ public class UIAccessKeySelect extends JPanel {
 		JSONArray accessKeyList = new APIProcess().getUnuseAccessKey(Data.targetURL, Data.sessionKey);
 		model = new DefaultListModel<String>();
 		try {
-
 			for (int i = 0; i < accessKeyList.length(); i++) {
 				JSONObject accessKey = accessKeyList.getJSONObject(i);
 				model.addElement(accessKey.get("key") + " , " + accessKey.get("remainingUses") + " , "

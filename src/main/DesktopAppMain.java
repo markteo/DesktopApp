@@ -24,7 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ui.frame.KAIQRFrame;
-import ui.panel.UILogin;
+import ui.frame.UILogin;
 
 public class DesktopAppMain {
 
@@ -36,7 +36,7 @@ public class DesktopAppMain {
 		initFrame = new JFrame("KAI Tool QR Generator");
 		JButton showWaitBtn = new JButton(new ShowWaitAction("Start"));
 		initFrame.add(showWaitBtn, BorderLayout.CENTER);
-		initFrame.setSize(300, 300);
+		initFrame.setSize(150, 150);
 		initFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initFrame.setLocation(dim.width / 2 - initFrame.getSize().width / 2,
 				dim.height / 2 - initFrame.getSize().height / 2);
@@ -47,7 +47,6 @@ public class DesktopAppMain {
 		// ModalityType.DOCUMENT_MODAL);
 		// Data.loadingScreen.setSize(200, 150);
 		// Data.loadingScreen.setLocationRelativeTo(Data.loadingFrame);
-
 	}
 
 	public static boolean checkResult(String response) {
@@ -63,7 +62,6 @@ public class DesktopAppMain {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return result;
 	}
 }
@@ -79,8 +77,8 @@ class ShowWaitAction extends AbstractAction {
 		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				System.out.println("This running");
 				Data.loginFrame = new UILogin();
+				Data.loginFrame.setVisible(true);
 				DesktopAppMain.initFrame.setVisible(false);
 				return null;
 			}

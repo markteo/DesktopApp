@@ -84,22 +84,16 @@ public class UILicenseAdd extends JPanel {
 	Button b = new Button();
 	Label l = new Label();
 
-	public void runTestJCheckBox() {
-		frame = new JFrame("Add License");
-		frame.getContentPane().setBackground(CustomColor.NavyBlue.returnColor());
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		frame.getContentPane().setLayout(new BorderLayout());
+	public UILicenseAdd() {
+		setBackground(CustomColor.NavyBlue.returnColor());
+		setLayout(new BorderLayout());
 
 		pnlSetting = createSettingPnl();
 		pnlFeatures = createPnlFeature();
 		pnlButtons = createButtonPanel();
-		frame.getContentPane().add(pnlSetting, BorderLayout.NORTH);
-		frame.getContentPane().add(pnlFeatures, BorderLayout.CENTER);
-		frame.getContentPane().add(pnlButtons, BorderLayout.SOUTH);
-
-		frame.pack();
-		frame.setVisible(true);
+		add(pnlSetting, BorderLayout.NORTH);
+		add(pnlFeatures, BorderLayout.CENTER);
+		add(pnlButtons, BorderLayout.SOUTH);
 	}
 
 	public DefaultMutableTreeNode createNode(String name) {
@@ -383,22 +377,19 @@ public class UILicenseAdd extends JPanel {
 					JSONObject responseObject = new JSONObject(response);
 					if (responseObject.get("result").equals("ok")) {
 						frame.setVisible(false);
-						Data.mainFrame.uiLicenseDetail.setFrameVisible();
+						Data.mainFrame.showPanel("license");
 					}
 				} catch (JSONException e1) {
 					e1.printStackTrace();
 				}
-
 			}
 		});
 
 		btnCancel.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
-				Data.mainFrame.uiLicenseDetail.setFrameVisible();
-
+				setVisible(false);
+				Data.mainFrame.showPanel("license");
 			}
 		});
 

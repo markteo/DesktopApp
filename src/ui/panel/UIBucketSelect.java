@@ -2,7 +2,6 @@ package ui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -13,12 +12,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractButton;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -26,24 +23,26 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-
-import main.Data;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import api.APIProcess;
+import customColor.CustomColor;
+import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
 import ui.components.table.model.UneditableModel;
-import api.APIProcess;
-import customColor.CustomColor;
 
 public class UIBucketSelect extends JPanel {
 	Thread buckets;
-	public JTable listBucket;
+	public JTable listBucket = new JTable();
+	private DefaultTableModel model;
 
 	public UIBucketSelect() {
 		getBucketData();
@@ -70,8 +69,8 @@ public class UIBucketSelect extends JPanel {
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
 		scrollBucket.setPreferredSize(new Dimension(300, 150));
-		pnlBucketList.add(scrollBucket,BorderLayout.CENTER);
-		
+		pnlBucketList.add(scrollBucket, BorderLayout.CENTER);
+
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
 		JButton btnBack = b.createButton("Back");
 		JButton btnSelectElements = b.createButton("Next");
@@ -102,12 +101,15 @@ public class UIBucketSelect extends JPanel {
 					protected Void doInBackground() throws Exception {
 
 						int selected = listBucket.getSelectedRow();
-						Data.bucketID = (int) listBucket.getModel().getValueAt(selected, 0);
-						setVisible(false);
-						Data.mainFrame.uiLicenseDetail = new UILicenseDetail();
-						Data.mainFrame.addPanel(Data.mainFrame.uiLicenseDetail,"license");
-						Data.mainFrame.pack();
-						Data.mainFrame.showPanel("license");
+						if (selected == -1) {
+							JOptionPane.showMessageDialog(Data.mainFrame, "Please Select a Bucket", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						} else {
+							Data.bucketID = (int) listBucket.getModel().getValueAt(selected, 0);
+							Data.mainFrame.addPanel(Data.mainFrame.uiLicenseDetail = new UILicenseDetail(), "license");
+							Data.mainFrame.pack();
+							Data.mainFrame.showPanel("license");
+						}
 						return null;
 					}
 				};
@@ -165,7 +167,7 @@ public class UIBucketSelect extends JPanel {
 				rowData[i][0] = bucket.get("bucketID");
 				rowData[i][1] = bucket.get("bucketName");
 			}
-			listBucket = new JTable(new UneditableModel(rowData, columnName));
+			listBucket.setModel(new UneditableModel(rowData, columnName));
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
