@@ -4,19 +4,28 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import main.Data;
 
@@ -205,9 +214,43 @@ public class UIGenerateKey extends JPanel {
 		btnNext.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				Data.accessKey = lblKey.getText();
-				Data.mainFrame.qrGenerator = new JavaQR();
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {				Data.accessKey = lblKey.getText();
+						Data.mainFrame.qrGenerator = new JavaQR();
+						Data.mainFrame.pack();
+						Data.mainFrame.addPanel(Data.mainFrame.qrGenerator, "generateQR");
+						Data.mainFrame.showPanel("generateQR");
+						return null;
+					}
+				};
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
+
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
+							}
+						}
+					}
+				});
+				mySwingWorker.execute();
+
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Generating QR Code......."), BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
+				dialog.setVisible(true);
+			
 			}
 		});
 		btnBack.addActionListener(new ActionListener() {
@@ -215,7 +258,7 @@ public class UIGenerateKey extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				Data.mainFrame.showPanel("access");
-				Data.mainFrame.uiAccessKeySelect.refreshList();
+				Data.mainFrame.uiAccessKeySelect.getAccessKeyData();
 			}
 		});
 		btnGenerate.addActionListener(new ActionListener() {
