@@ -107,7 +107,8 @@ class ShowWaitAction extends AbstractAction {
 		panel.add(new JLabel("Initializing......."), BorderLayout.PAGE_START);
 		dialog.add(panel);
 		dialog.pack();
-		dialog.setLocationRelativeTo(win);
+		dialog.setBounds(50, 50, 300, 100);
+		dialog.setLocationRelativeTo(Data.loginFrame);
 		dialog.setVisible(true);
 	}
 }
