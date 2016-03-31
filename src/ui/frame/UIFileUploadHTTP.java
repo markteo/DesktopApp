@@ -10,25 +10,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import main.Data;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import api.APICall;
-import customColor.CustomColor;
-import main.Data;
 import ui.components.Button;
 import ui.components.Label;
 import ui.components.Layouts;
 import ui.components.Panel;
-import ui.panel.UIFileDownloadHTTP;
+import api.APICall;
+import customColor.CustomColor;
 
 public class UIFileUploadHTTP extends JFrame {
 	//
@@ -177,6 +179,8 @@ public class UIFileUploadHTTP extends JFrame {
 	private JButton btnBack;
 	private JButton btnCancel;
 	private JButton btnBrowse;
+	private JFileChooser fc = new JFileChooser();
+
 
 	private FileDialog fd;
 
@@ -208,8 +212,14 @@ public class UIFileUploadHTTP extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				UIFileDownloadHTTP download = new UIFileDownloadHTTP(
-						"http://ci.developer.kaisquare.com/public/files/samples/inventory_template.csv");
+
+				APICall api = new APICall();
+				String saveDir = runFileChooser();
+				try {
+					api.getCSVSample(Data.URL, Data.sessionKey, saveDir);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnUpload = b.createButton("Upload");
@@ -312,5 +322,12 @@ public class UIFileUploadHTTP extends JFrame {
 		panel.add(btnBrowse, g);
 
 		return panel;
+	}
+	public String runFileChooser() {
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.showSaveDialog(null);
+		String saveDir = fc.getSelectedFile().getAbsolutePath();
+
+		return saveDir;
 	}
 }
