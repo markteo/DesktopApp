@@ -135,8 +135,8 @@ public class JavaQR extends JPanel implements Runnable {
 
 		rowBottom1.add(downloadLoc);
 		rowBottom1.add(dlBtn);
-		rowCenPanel.add(genBtn);
 		rowCenPanel.add(homeBtn);
+		rowCenPanel.add(genBtn);
 		rowCenPanel.add(logoutBtn);
 		bottomPanel.add(rowBottom1);
 		bottomPanel.add(rowCenPanel);
