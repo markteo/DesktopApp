@@ -16,7 +16,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import main.Helper;
-import ui.panel.UIFileDownloadHTTP;
+import ui.frame.UIFileUploadHTTP;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -229,14 +229,14 @@ public class APICall {
 
 	}
 
-	public String getCSVSample(String targetURL, String sessionKey, String fileLocation, UIFileDownloadHTTP ui)
+	public String getCSVSample(String targetURL, String sessionKey, String fileLocation)
 			throws IOException {
 		String api = "/public/files/samples/inventory_template.csv";
 		targetURL = targetURL + api;
 
 		System.out.println(targetURL);
 		HttpDownloadUtility http = new HttpDownloadUtility();
-		String response = http.downloadFile(targetURL, fileLocation, sessionKey, ui);
+		String response = http.downloadFile(targetURL, fileLocation, sessionKey);
 		// http.addPropertyChangeListener(ui);
 		http.execute();
 		System.out.println(response);
