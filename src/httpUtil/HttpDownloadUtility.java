@@ -12,7 +12,6 @@ import javax.swing.SwingWorker;
 
 import main.Data;
 import ui.frame.UIFileUploadHTTP;
-import ui.panel.UIFileDownloadHTTP;
 
 /**
  * A utility that downloads a file from a URL.
@@ -22,7 +21,6 @@ import ui.panel.UIFileDownloadHTTP;
  */
 public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 	private static final int BUFFER_SIZE = 4096;
-	private static UIFileDownloadHTTP gui;
 	private String fileName = "";
 	private String disposition;
 	private String contentType;
@@ -39,7 +37,7 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 	 *            path of the directory to save the file
 	 * @throws IOException
 	 */
-	public String downloadFile(String fileURL, String saveDir, String sessionKey, UIFileDownloadHTTP ui) {
+	public String downloadFile(String fileURL, String saveDir, String sessionKey) {
 		try {
 			URL url = new URL(fileURL);
 			httpConn = (HttpURLConnection) url.openConnection();
@@ -103,7 +101,6 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 			setProgress(0);
 			cancel(true);
 		}
-		ui.setFileInfo(fileName, contentLength);
 
 		return null;
 	}
@@ -127,7 +124,7 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 	@Override
 	protected void done() {
 		if (!isCancelled()) {
-			JOptionPane.showMessageDialog(gui, "File has been downloaded successfully!", "Message",
+			JOptionPane.showMessageDialog(Data.mainFrame, "File has been downloaded successfully!", "Message",
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
