@@ -376,7 +376,6 @@ public class UILicenseAdd extends JPanel {
 				try {
 					JSONObject responseObject = new JSONObject(response);
 					if (responseObject.get("result").equals("ok")) {
-						frame.setVisible(false);
 						Data.mainFrame.showPanel("license");
 					}
 				} catch (JSONException e1) {
