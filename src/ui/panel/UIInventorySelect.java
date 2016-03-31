@@ -98,6 +98,9 @@ public class UIInventorySelect extends JPanel {
 		add(pnlInstruction, BorderLayout.NORTH);
 		add(pnlInventoryList, BorderLayout.CENTER);
 		add(pnlButtons, BorderLayout.SOUTH);
+		
+		setVisible(true);
+
 		btnAddElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -135,7 +138,7 @@ public class UIInventorySelect extends JPanel {
 				};
 
 				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
-				final JDialog dialog = new JDialog(win, "Bucket", ModalityType.APPLICATION_MODAL);
+				final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
 
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -157,14 +160,13 @@ public class UIInventorySelect extends JPanel {
 				panel.add(new JLabel("Getting Buckets......."), BorderLayout.PAGE_START);
 				dialog.add(panel);
 				dialog.pack();
-				dialog.setLocationRelativeTo(win);
 				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
 				dialog.setVisible(true);
 
 			}
 		});
 
-		setVisible(true);
 	}
 
 	public void getInventoryData() {
