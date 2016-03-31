@@ -170,10 +170,13 @@ public class UILicenseDetail extends JPanel {
 		JPanel panel = p.createPanel(Layouts.flow);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-		btnSubmit = b.createButton("Submit");
+		btnSubmit = b.createButton("Next");
 		btnBack = b.createButton("Back");
 		btnAdd = b.createButton("Add");
-
+		
+		panel.add(btnBack);
+		panel.add(btnAdd);
+		panel.add(btnSubmit);
 		btnBack.addActionListener(new ActionListener() {
 
 			@Override
@@ -236,8 +239,8 @@ public class UILicenseDetail extends JPanel {
 				panel.add(new JLabel("Retrieving Access Keys"), BorderLayout.PAGE_START);
 				dialog.add(panel);
 				dialog.pack();
-				dialog.setLocationRelativeTo(win);
 				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
 				dialog.setVisible(true);
 
 			}
@@ -265,9 +268,7 @@ public class UILicenseDetail extends JPanel {
 			}
 		});
 
-		panel.add(btnSubmit);
-		panel.add(btnBack);
-		panel.add(btnAdd);
+		
 
 		return panel;
 	}

@@ -57,7 +57,7 @@ public class UILogin extends JFrame {
 	private JPasswordField pfPassword;
 
 	public UILogin() {
-		super("login");
+		super("Login");
 
 		Label l = new Label();
 
@@ -98,7 +98,11 @@ public class UILogin extends JFrame {
 		// loginFrame.add(picLabel,BorderLayout.NORTH);
 		add(loginPanel, BorderLayout.CENTER);
 		add(buttonPanel, BorderLayout.SOUTH);
-
+		pack();
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		
+		setVisible(true);
 		btnLogin.addActionListener(new ActionListener() {
 
 			@Override
@@ -156,7 +160,7 @@ public class UILogin extends JFrame {
 
 				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
 				final JDialog dialog = new JDialog(win, "Login", ModalityType.APPLICATION_MODAL);
-
+				
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
@@ -178,8 +182,8 @@ public class UILogin extends JFrame {
 				panel.add(new JLabel("Logging in .........."), BorderLayout.PAGE_START);
 				dialog.add(panel);
 				dialog.pack();
-				dialog.setLocationRelativeTo(win);
 				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
 				dialog.setVisible(true);
 			}
 		});
@@ -191,9 +195,7 @@ public class UILogin extends JFrame {
 			}
 
 		});
-		pack();
-		setLocationRelativeTo(null);
-		setVisible(true);
+		
 	}
 
 	public static boolean checkFeatures(String response) {

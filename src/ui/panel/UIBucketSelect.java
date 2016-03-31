@@ -77,8 +77,9 @@ public class UIBucketSelect extends JPanel {
 		JButton btnRefresh = b.createButton("Refresh Bucket List");
 
 		pnlButtons.add(btnBack);
-		pnlButtons.add(btnSelectElements);
 		pnlButtons.add(btnRefresh);
+		pnlButtons.add(btnSelectElements);
+
 
 		add(pnlInstruction, BorderLayout.NORTH);
 		add(pnlBucketList, BorderLayout.CENTER);
@@ -115,7 +116,7 @@ public class UIBucketSelect extends JPanel {
 				};
 
 				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
-				final JDialog dialog = new JDialog(win, "Dialog", ModalityType.APPLICATION_MODAL);
+				final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
 
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -137,8 +138,8 @@ public class UIBucketSelect extends JPanel {
 				panel.add(new JLabel("Retrieving Licenses......."), BorderLayout.PAGE_START);
 				dialog.add(panel);
 				dialog.pack();
-				dialog.setLocationRelativeTo(win);
 				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
 				dialog.setVisible(true);
 
 				// do something with selected Bucket
@@ -160,8 +161,8 @@ public class UIBucketSelect extends JPanel {
 
 		JSONArray bucketList = new APIProcess().bucketList(Data.targetURL, Data.sessionKey);
 		try {
-			Object[][] rowData = new Object[bucketList.length()][2];
 			Object columnName[] = new Object[] { "Bucket ID", "Bucket Name" };
+			Object[][] rowData = new Object[bucketList.length()][columnName.length];
 			for (int i = 0; i < bucketList.length(); i++) {
 				JSONObject bucket = bucketList.getJSONObject(i);
 				rowData[i][0] = bucket.get("bucketID");
@@ -169,7 +170,6 @@ public class UIBucketSelect extends JPanel {
 			}
 			listBucket.setModel(new UneditableModel(rowData, columnName));
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
