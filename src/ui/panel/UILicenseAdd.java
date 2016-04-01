@@ -5,24 +5,33 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -112,7 +121,8 @@ public class UILicenseAdd extends JPanel {
 		g.anchor = g.FIRST_LINE_START;
 		panel.add(lblCloud, g);
 
-		lblValidity = l.createLabel("Validity Period (Months):", SwingConstants.LEFT);
+		lblValidity = l.createLabel("Validity Period (Months):",
+				SwingConstants.LEFT);
 		g.gridx = 0;
 		g.gridy = 1;
 		g.gridwidth = 2;
@@ -120,7 +130,8 @@ public class UILicenseAdd extends JPanel {
 		g.insets = new Insets(5, 5, 5, 5);
 		panel.add(lblValidity, g);
 
-		lblConcurrentVCA = l.createLabel("Max Concurrent VCA:", SwingConstants.LEFT);
+		lblConcurrentVCA = l.createLabel("Max Concurrent VCA:",
+				SwingConstants.LEFT);
 		g.gridx = 0;
 		g.gridy = 2;
 		g.gridwidth = 2;
@@ -180,7 +191,8 @@ public class UILicenseAdd extends JPanel {
 		JPanel panel = p.createPanel(Layouts.gridbag);
 
 		GridBagConstraints g = new GridBagConstraints();
-		lblSelectFeature = l.createLabel("Select Features", SwingConstants.LEFT);
+		lblSelectFeature = l
+				.createLabel("Select Features", SwingConstants.LEFT);
 		g.gridx = 0;
 		g.gridy = 0;
 		g.gridwidth = 2;
@@ -224,7 +236,8 @@ public class UILicenseAdd extends JPanel {
 			public void valueChanged(TreeSelectionEvent e) {
 				TreePath path = tree.getSelectionModel().getSelectionPath();
 				model.removeAllElements();
-				String selected = tree.getSelectionModel().getSelectionPath().getLastPathComponent().toString();
+				String selected = tree.getSelectionModel().getSelectionPath()
+						.getLastPathComponent().toString();
 				servicesList = new HashMap<String, String>();
 				try {
 					if (selected.equalsIgnoreCase("root")) {
@@ -232,25 +245,38 @@ public class UILicenseAdd extends JPanel {
 							JSONArray featureArray = Data.featureList.get(key);
 
 							for (int i = 0; i < featureArray.length(); i++) {
-								JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
+								JSONArray servicesArray = featureArray
+										.getJSONObject(i).getJSONArray(
+												"services");
 
 								for (int x = 0; x < servicesArray.length(); x++) {
-									servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")),
-											servicesArray.getJSONObject(x).getString("name"));
+									servicesList.put(Integer
+											.toString(servicesArray
+													.getJSONObject(x).getInt(
+															"id")),
+											servicesArray.getJSONObject(x)
+													.getString("name"));
 								}
 							}
 						}
 					} else if (path.getPathCount() == 2) {
 						for (String key : Data.featureList.keySet()) {
 							if (key.equals(selected)) {
-								JSONArray featureArray = Data.featureList.get(key);
+								JSONArray featureArray = Data.featureList
+										.get(key);
 
 								for (int i = 0; i < featureArray.length(); i++) {
-									JSONArray servicesArray = featureArray.getJSONObject(i).getJSONArray("services");
+									JSONArray servicesArray = featureArray
+											.getJSONObject(i).getJSONArray(
+													"services");
 
 									for (int x = 0; x < servicesArray.length(); x++) {
-										servicesList.put(Integer.toString(servicesArray.getJSONObject(x).getInt("id")),
-												servicesArray.getJSONObject(x).getString("name"));
+										servicesList.put(Integer
+												.toString(servicesArray
+														.getJSONObject(x)
+														.getInt("id")),
+												servicesArray.getJSONObject(x)
+														.getString("name"));
 									}
 								}
 							} else {
@@ -260,17 +286,25 @@ public class UILicenseAdd extends JPanel {
 					} else {
 						for (String key : Data.featureList.keySet()) {
 							if (key.equals(path.getPathComponent(1).toString())) {
-								JSONArray featureArray = Data.featureList.get(key);
+								JSONArray featureArray = Data.featureList
+										.get(key);
 
 								for (int i = 0; i < featureArray.length(); i++) {
-									if (featureArray.getJSONObject(i).getString("name").equals(selected)) {
-										JSONArray servicesArray = featureArray.getJSONObject(i)
-												.getJSONArray("services");
+									if (featureArray.getJSONObject(i)
+											.getString("name").equals(selected)) {
+										JSONArray servicesArray = featureArray
+												.getJSONObject(i).getJSONArray(
+														"services");
 
-										for (int x = 0; x < servicesArray.length(); x++) {
-											servicesList.put(
-													Integer.toString(servicesArray.getJSONObject(x).getInt("id")),
-													servicesArray.getJSONObject(x).getString("name"));
+										for (int x = 0; x < servicesArray
+												.length(); x++) {
+											servicesList.put(Integer
+													.toString(servicesArray
+															.getJSONObject(x)
+															.getInt("id")),
+													servicesArray
+															.getJSONObject(x)
+															.getString("name"));
 										}
 									} else {
 										continue;
@@ -326,61 +360,110 @@ public class UILicenseAdd extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TreePath[] path = checkTreeManager.getSelectionModel().getSelectionPaths();
-				ArrayList<String> featureL = new ArrayList<String>();
-				String[] features = new String[] {};
-				// listSelected.
-				for (TreePath tp : path) {
-					System.out.println(tp);
 
-					if (tp.getLastPathComponent().toString().equals("root")) {
-						Object rootNode = tree.getModel().getRoot();
-						int parentCount = tree.getModel().getChildCount(rootNode);
-						for (int i = 0; i < parentCount; i++) {
-							Object parentNode = tree.getModel().getChild(rootNode, i);
-							int childrenCount = tree.getModel().getChildCount(parentNode);
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {
+						TreePath[] path = checkTreeManager.getSelectionModel()
+								.getSelectionPaths();
+						ArrayList<String> featureL = new ArrayList<String>();
+						String[] features = new String[] {};
+						for (TreePath tp : path) {
+							System.out.println(tp);
 
-							for (int x = 0; x < childrenCount; x++) {
-								featureL.add(tree.getModel().getChild(parentNode, x).toString());
-							}
-						}
-					} else if (tp.getPathCount() == 2) {
-						Object rootNode = tree.getModel().getRoot();
-						int parentCount = tree.getModel().getChildCount(rootNode);
-						for (int i = 0; i < parentCount; i++) {
-							Object parentNode = tree.getModel().getChild(rootNode, i);
-							if (parentNode.toString().equals(tp.getLastPathComponent().toString())) {
+							if (tp.getLastPathComponent().toString()
+									.equals("root")) {
+								Object rootNode = tree.getModel().getRoot();
+								int parentCount = tree.getModel()
+										.getChildCount(rootNode);
+								for (int i = 0; i < parentCount; i++) {
+									Object parentNode = tree.getModel()
+											.getChild(rootNode, i);
+									int childrenCount = tree.getModel()
+											.getChildCount(parentNode);
 
-								int childrenCount = tree.getModel().getChildCount(parentNode);
-
-								for (int x = 0; x < childrenCount; x++) {
-									featureL.add(tree.getModel().getChild(parentNode, x).toString());
+									for (int x = 0; x < childrenCount; x++) {
+										featureL.add(tree.getModel()
+												.getChild(parentNode, x)
+												.toString());
+									}
 								}
+							} else if (tp.getPathCount() == 2) {
+								Object rootNode = tree.getModel().getRoot();
+								int parentCount = tree.getModel()
+										.getChildCount(rootNode);
+								for (int i = 0; i < parentCount; i++) {
+									Object parentNode = tree.getModel()
+											.getChild(rootNode, i);
+									if (parentNode.toString().equals(
+											tp.getLastPathComponent()
+													.toString())) {
+
+										int childrenCount = tree.getModel()
+												.getChildCount(parentNode);
+
+										for (int x = 0; x < childrenCount; x++) {
+											featureL.add(tree.getModel()
+													.getChild(parentNode, x)
+													.toString());
+										}
+									}
+								}
+							} else if (tp.getPathCount() == 3) {
+								featureL.add(tp.getLastPathComponent()
+										.toString());
+							}
+
+						}
+						features = featureL.toArray(features);
+						String duration = spnValidity.getValue().toString();
+						if (cbPerpetual.isSelected()) {
+							duration = "-1";
+						}
+						String storage = spnCloud.getValue().toString();
+						String maxVCA = spnConcurrentVCA.getValue().toString();
+						String response = apiCall.addNodeLicense(
+								Data.targetURL, Data.sessionKey, Data.bucketID,
+								features, duration, storage, maxVCA);
+
+						try {
+							JSONObject responseObject = new JSONObject(response);
+							if (responseObject.get("result").equals("ok")) {
+								Data.mainFrame.uiLicenseDetail.getLicenseData();
+								Data.mainFrame.showPanel("license");
+							}
+						} catch (JSONException e1) {
+							e1.printStackTrace();
+						}
+						return null;
+					}
+				};
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
+
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
 							}
 						}
-					} else if (tp.getPathCount() == 3) {
-						featureL.add(tp.getLastPathComponent().toString());
 					}
+				});
+				mySwingWorker.execute();
 
-				}
-				features = featureL.toArray(features);
-				String duration = spnValidity.getValue().toString();
-				if (cbPerpetual.isSelected()) {
-					duration = "-1";
-				}
-				String storage = spnCloud.getValue().toString();
-				String maxVCA = spnConcurrentVCA.getValue().toString();
-				String response = apiCall.addNodeLicense(Data.targetURL, Data.sessionKey, Data.bucketID, features,
-						duration, storage, maxVCA);
-
-				try {
-					JSONObject responseObject = new JSONObject(response);
-					if (responseObject.get("result").equals("ok")) {
-						Data.mainFrame.showPanel("license");
-					}
-				} catch (JSONException e1) {
-					e1.printStackTrace();
-				}
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Retrieving License..."), BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
+				dialog.setVisible(true);
 			}
 		});
 
