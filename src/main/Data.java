@@ -25,4 +25,5 @@ public class Data {
 	public static JFrame loadingFrame;
 	public static KAIQRFrame mainFrame;
 	public static JFrame loginFrame;
+	public static HashMap<String, String> fieldNames;
 }
