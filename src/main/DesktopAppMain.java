@@ -8,6 +8,11 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -23,7 +28,6 @@ import javax.swing.SwingWorker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ui.frame.KAIQRFrame;
 import ui.frame.UILogin;
 
 public class DesktopAppMain {
@@ -31,6 +35,47 @@ public class DesktopAppMain {
 	public static JFrame initFrame;
 
 	public static void main(String args[]) {
+		
+		Data.fieldNames = new HashMap<String, String>();
+        String fileName = "messages.en";
+
+        // This will reference one line at a time
+        String line = null;
+
+        try {
+            // FileReader reads text files in the default encoding.
+            FileReader fileReader = 
+                new FileReader(fileName);
+
+            // Always wrap FileReader in BufferedReader.
+            BufferedReader bufferedReader = 
+                new BufferedReader(fileReader);
+
+            while((line = bufferedReader.readLine()) != null) {
+            	String[] lineSplit = line.split("\\=");
+            	if(lineSplit.length == 2){
+            		Data.fieldNames.put(lineSplit[0].trim(), lineSplit[1].trim());
+            	}
+            	
+            }   
+
+            // Always close files.
+            bufferedReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println(
+                "Unable to open file '" + 
+                fileName + "'");                
+        }
+        catch(IOException ex) {
+            System.out.println(
+                "Error reading file '" 
+                + fileName + "'");                  
+            // Or we could just do this: 
+            // ex.printStackTrace();
+        }
+
+		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		initFrame = new JFrame("KAI Tool QR Generator");
