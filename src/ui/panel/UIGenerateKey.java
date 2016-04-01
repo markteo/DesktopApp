@@ -256,28 +256,91 @@ public class UIGenerateKey extends JPanel {
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				Data.mainFrame.showPanel("access");
-				Data.mainFrame.uiAccessKeySelect.getAccessKeyData();
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {	
+						Data.mainFrame.showPanel("access");
+						Data.mainFrame.uiAccessKeySelect.getAccessKeyData();
+						return null;
+					}
+					
+				};
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
+
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
+							}
+						}
+					}
+				});
+				mySwingWorker.execute();
+
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Updating Access Keys......."), BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
+				dialog.setVisible(true);
 			}
 		});
 		btnGenerate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				int userID = getUserID(listUser.getSelectedItem().toString());
-				String timeFrame = listTimeUnit.getSelectedItem().toString();
-				int timeNum = Integer.parseInt(spinExpiration.getValue().toString());
-				if (timeFrame.equals("Hour")) {
-					timeNum = timeNum * 60;
-				} else if (timeFrame.equals("Days")) {
-					timeNum = timeNum * 60 * 24;
-				}
-				int uses = Integer.parseInt(spinUses.getValue().toString());
-				if (cbUnlimited.isSelected()) {
-					uses = -1;
-				}
-				generateKey(userID, timeNum, uses);
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {	
+						int userID = getUserID(listUser.getSelectedItem().toString());
+						String timeFrame = listTimeUnit.getSelectedItem().toString();
+						int timeNum = Integer.parseInt(spinExpiration.getValue().toString());
+						if (timeFrame.equals("Hour")) {
+							timeNum = timeNum * 60;
+						} else if (timeFrame.equals("Days")) {
+							timeNum = timeNum * 60 * 24;
+						}
+						int uses = Integer.parseInt(spinUses.getValue().toString());
+						if (cbUnlimited.isSelected()) {
+							uses = -1;
+						}
+						generateKey(userID, timeNum, uses);
+						return null;
+					}
+				};
+				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
+
+				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
+							}
+						}
+					}
+				});
+				mySwingWorker.execute();
+
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Generating Access Key......"), BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
+				dialog.setVisible(true);
 
 			}
 		});
