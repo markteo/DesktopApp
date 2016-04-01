@@ -217,7 +217,7 @@ public class UILicenseDetail extends JPanel {
 				};
 
 				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
-				final JDialog dialog = new JDialog(win, "Dialog", ModalityType.APPLICATION_MODAL);
+				final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
 
 				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -320,7 +320,7 @@ public class UILicenseDetail extends JPanel {
 		api.featuresList(Data.targetURL, Data.sessionKey, Data.bucketID);
 	}
 
-	private void getLicenseData() {
+	public void getLicenseData() {
 		ArrayList<String> arrayLicenses = new ArrayList<String>();
 		JSONArray licenseList = new APIProcess().nodeLicenseList(Data.targetURL, Data.sessionKey, Data.bucketID);
 		try {
