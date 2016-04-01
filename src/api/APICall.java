@@ -113,7 +113,6 @@ public class APICall {
 	}
 
 	public String getBuckets(String targetURL, String sessionKey) {
-		System.out.println("Getting buckets:");
 		String api = "getbuckets";
 		targetURL = targetURL + api;
 		String urlParameters;
@@ -174,7 +173,6 @@ public class APICall {
 					+ "&max-vca-count=" + URLEncoder.encode(maxVCA, enc) + "&features="
 					+ URLEncoder.encode(feature, enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 
 		} catch (UnsupportedEncodingException e) {
@@ -201,7 +199,6 @@ public class APICall {
 					+ URLEncoder.encode(cloudStorage, enc) + "&max-vca-count=" + URLEncoder.encode(maxVCA, enc)
 					+ "&features=" + URLEncoder.encode(features, enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 
 		} catch (UnsupportedEncodingException e) {
@@ -219,7 +216,6 @@ public class APICall {
 			urlParameters = "session-key=" + URLEncoder.encode(sessionKey, enc) + "&bucket-id="
 					+ URLEncoder.encode(Integer.toString(bucketID), enc);
 			String response = executePost(targetURL, urlParameters);
-			System.out.println(response);
 			return response;
 
 		} catch (UnsupportedEncodingException e) {
