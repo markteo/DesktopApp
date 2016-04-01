@@ -18,6 +18,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -131,6 +132,10 @@ public class UIAccessKeySelect extends JPanel {
 							Data.mainFrame.pack();
 							Data.mainFrame.addPanel(Data.mainFrame.qrGenerator, "generateQR");
 							Data.mainFrame.showPanel("generateQR");
+						}else{
+							JOptionPane.showMessageDialog(Data.mainFrame,
+									"Please Select Access Key", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 						
 						return null;
