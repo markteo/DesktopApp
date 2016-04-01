@@ -294,9 +294,8 @@ public class UIFileUploadHTTP extends JFrame {
 									JOptionPane.showMessageDialog(panel,
 											"File uploaded", "Success",
 											JOptionPane.INFORMATION_MESSAGE);
-									Data.mainFrame.uiInventorySelect
-											.updateInventoryList();
-									Data.mainFrame.uiFileUpload.setVisible(false);
+									closeFrame(e);
+									
 								} else {
 									JOptionPane.showMessageDialog(
 											Data.mainFrame,
@@ -423,5 +422,47 @@ public class UIFileUploadHTTP extends JFrame {
 		String saveDir = fc.getSelectedFile().getAbsolutePath();
 
 		return saveDir;
+	}
+	
+	private void closeFrame(ActionEvent e){
+		
+		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				Data.mainFrame.uiInventorySelect.updateInventoryList();
+				Data.mainFrame.uiFileUpload.setVisible(false);
+				return null;
+			}
+		};
+		Window win = SwingUtilities
+				.getWindowAncestor((AbstractButton) e.getSource());
+		final JDialog dialog = new JDialog(win, "Loading",
+				ModalityType.APPLICATION_MODAL);
+
+		mySwingWorker
+				.addPropertyChangeListener(new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals("state")) {
+							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+								dialog.dispose();
+							}
+						}
+					}
+				});
+		mySwingWorker.execute();
+
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setIndeterminate(true);
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(progressBar, BorderLayout.CENTER);
+		panel.add(new JLabel("Refreshing Inventory......."),
+				BorderLayout.PAGE_START);
+		dialog.add(panel);
+		dialog.pack();
+		dialog.setBounds(50, 50, 300, 100);
+		dialog.setLocationRelativeTo(Data.mainFrame.uiFileUpload);
+		dialog.setVisible(true);
 	}
 }
