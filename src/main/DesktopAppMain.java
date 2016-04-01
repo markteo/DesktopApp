@@ -37,6 +37,7 @@ public class DesktopAppMain {
 	public static void main(String args[]) {
 		
 		Data.fieldNames = new HashMap<String, String>();
+		Data.reverseNames = new HashMap<String, String>();
         String fileName = "messages.en";
 
         // This will reference one line at a time
@@ -55,6 +56,7 @@ public class DesktopAppMain {
             	String[] lineSplit = line.split("\\=");
             	if(lineSplit.length == 2){
             		Data.fieldNames.put(lineSplit[0].trim(), lineSplit[1].trim());
+            		Data.reverseNames.put(lineSplit[1].trim(), lineSplit[0].trim());
             	}
             	
             }   
