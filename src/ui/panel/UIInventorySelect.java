@@ -98,14 +98,57 @@ public class UIInventorySelect extends JPanel {
 		add(pnlInstruction, BorderLayout.NORTH);
 		add(pnlInventoryList, BorderLayout.CENTER);
 		add(pnlButtons, BorderLayout.SOUTH);
-		
+
 		setVisible(true);
 
 		btnAddElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Data.mainFrame.uiFileUpload = new UIFileUploadHTTP();
-				Data.mainFrame.uiFileUpload.pack();
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {
+						if(Data.mainFrame.uiFileUpload == null){
+							Data.mainFrame.uiFileUpload = new UIFileUploadHTTP();
+							Data.mainFrame.uiFileUpload.pack();
+						}else{
+							Data.mainFrame.uiFileUpload.setVisible(true);
+						}
+						
+						return null;
+					}
+				};
+
+				Window win = SwingUtilities
+						.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Loading",
+						ModalityType.APPLICATION_MODAL);
+
+				mySwingWorker
+						.addPropertyChangeListener(new PropertyChangeListener() {
+
+							@Override
+							public void propertyChange(PropertyChangeEvent evt) {
+								if (evt.getPropertyName().equals("state")) {
+									if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+										dialog.dispose();
+									}
+								}
+							}
+						});
+				mySwingWorker.execute();
+
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);
+				JPanel panel = new JPanel(new BorderLayout());
+				panel.add(progressBar, BorderLayout.CENTER);
+				panel.add(new JLabel("Loading......."),
+						BorderLayout.PAGE_START);
+				dialog.add(panel);
+				dialog.pack();
+				dialog.setBounds(50, 50, 300, 100);
+				dialog.setLocationRelativeTo(Data.mainFrame);
+				dialog.setVisible(true);
+
 			}
 		});
 
@@ -120,16 +163,20 @@ public class UIInventorySelect extends JPanel {
 						// do something with selected inventory
 						int selected = listInventory.getSelectedRow();
 						if (selected == -1) {
-							JOptionPane.showMessageDialog(Data.mainFrame, "Please Select an Inventory Item", "Error",
+							JOptionPane.showMessageDialog(Data.mainFrame,
+									"Please Select an Inventory Item", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						} else {
-							Data.registrationNumber = (String) listInventory.getModel().getValueAt(selected, 1);
+							Data.registrationNumber = (String) listInventory
+									.getModel().getValueAt(selected, 1);
 
 							if (Data.mainFrame.uiBucketSelect != null) {
 								Data.mainFrame.showPanel("bucket");
 							} else {
-								Data.mainFrame.addPanel(Data.mainFrame.uiBucketSelect = new ui.panel.UIBucketSelect(),
-										"bucket");
+								Data.mainFrame
+										.addPanel(
+												Data.mainFrame.uiBucketSelect = new ui.panel.UIBucketSelect(),
+												"bucket");
 								Data.mainFrame.showPanel("bucket");
 							}
 						}
@@ -137,27 +184,31 @@ public class UIInventorySelect extends JPanel {
 					}
 				};
 
-				Window win = SwingUtilities.getWindowAncestor((AbstractButton) e.getSource());
-				final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
+				Window win = SwingUtilities
+						.getWindowAncestor((AbstractButton) e.getSource());
+				final JDialog dialog = new JDialog(win, "Loading",
+						ModalityType.APPLICATION_MODAL);
 
-				mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+				mySwingWorker
+						.addPropertyChangeListener(new PropertyChangeListener() {
 
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						if (evt.getPropertyName().equals("state")) {
-							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
-								dialog.dispose();
+							@Override
+							public void propertyChange(PropertyChangeEvent evt) {
+								if (evt.getPropertyName().equals("state")) {
+									if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+										dialog.dispose();
+									}
+								}
 							}
-						}
-					}
-				});
+						});
 				mySwingWorker.execute();
 
 				JProgressBar progressBar = new JProgressBar();
 				progressBar.setIndeterminate(true);
 				JPanel panel = new JPanel(new BorderLayout());
 				panel.add(progressBar, BorderLayout.CENTER);
-				panel.add(new JLabel("Getting Buckets......."), BorderLayout.PAGE_START);
+				panel.add(new JLabel("Getting Buckets......."),
+						BorderLayout.PAGE_START);
 				dialog.add(panel);
 				dialog.pack();
 				dialog.setBounds(50, 50, 300, 100);
@@ -170,7 +221,8 @@ public class UIInventorySelect extends JPanel {
 	}
 
 	public void getInventoryData() {
-		JSONArray inventoryList = new APIProcess().inventoryList(Data.targetURL, Data.sessionKey);
+		JSONArray inventoryList = new APIProcess().inventoryList(
+				Data.targetURL, Data.sessionKey);
 
 		try {
 			Object rowData[][] = new Object[inventoryList.length()][3];
