@@ -2,6 +2,7 @@ package api;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -192,6 +193,22 @@ public class APIProcess {
 			}
 
 		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		String[] arrayFeatures = {};
+		Data.features = new HashMap<String, String[]>();
+		try{
+			for (String key: Data.featureList.keySet()){
+				ArrayList<String> stringFeatures = new ArrayList<String>();
+				String newKey = Data.fieldNames.get(key);
+				JSONArray features = Data.featureList.get(key);
+				for(int i = 0; i < features.length(); i ++){
+					JSONObject feature = features.getJSONObject(i);
+					stringFeatures.add(Data.fieldNames.get(feature.get("name")));
+				}
+				Data.features.put(newKey, stringFeatures.toArray(arrayFeatures));
+			}
+		}catch(JSONException e){
 			e.printStackTrace();
 		}
 

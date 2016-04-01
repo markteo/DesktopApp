@@ -26,4 +26,7 @@ public class Data {
 	public static KAIQRFrame mainFrame;
 	public static JFrame loginFrame;
 	public static HashMap<String, String> fieldNames;
+	public static HashMap<String, String> reverseNames;
+	public static HashMap<String, String[]> features;
+	public static HashMap<String, HashMap<String, String>> reverseFeature;
 }
