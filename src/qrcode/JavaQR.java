@@ -69,7 +69,7 @@ public class JavaQR extends JPanel implements Runnable {
 		accField.setEditable(false);
 		accField.setText(Data.accessKey);
 
-		JLabel regNo = new JLabel("Register Number");
+		JLabel regNo = new JLabel("Registration Number");
 		JTextField regField = new JTextField(5);
 
 		PromptSupport.setPrompt("E.G THF11200054160106", regField);
@@ -86,8 +86,6 @@ public class JavaQR extends JPanel implements Runnable {
 		licField.setEditable(false);
 		licField.setText(Data.licenseNumber);
 
-		JLabel downloadLoc = new JLabel("Download Location");
-		JButton dlBtn = new JButton("Choose Download Folder");
 
 		rowTopPanel.add(accKey);
 		rowTopPanel.add(accField);
@@ -113,7 +111,6 @@ public class JavaQR extends JPanel implements Runnable {
 		String accessKey = accField.getText().toString();
 		String regKey = regField.getText().toString();
 		String licKey = licField.getText().toString();
-		String dlDir = dlBtn.getText().toString();
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("accessKey", accessKey);
@@ -123,22 +120,16 @@ public class JavaQR extends JPanel implements Runnable {
 			e1.printStackTrace();
 		}
 
-		String fileLocation = dlBtn.getText().toString();
-		fileLocation = "./";
+
 		QRLogic qrGen = new QRLogic();
 		BufferedImage image = qrGen.generateQR(jsonObject);
 		centerPanel.add(new JLabel(new ImageIcon(image)));
 
 		bottomPanel.setLayout(new GridLayout(2, 1));
-		JPanel rowBottom1 = new JPanel();
-		rowBottom1.setLayout(new FlowLayout(FlowLayout.CENTER));
-
-		rowBottom1.add(downloadLoc);
-		rowBottom1.add(dlBtn);
+		
 		rowCenPanel.add(homeBtn);
 		rowCenPanel.add(genBtn);
 		rowCenPanel.add(logoutBtn);
-		bottomPanel.add(rowBottom1);
 		bottomPanel.add(rowCenPanel);
 		add(topPanel, BorderLayout.NORTH);
 		add(bottomPanel, BorderLayout.SOUTH);
@@ -167,18 +158,20 @@ public class JavaQR extends JPanel implements Runnable {
 			public void actionPerformed(ActionEvent e) {
 				Date date = new Date();
 				String newDate = new SimpleDateFormat("yyyy-MM-dd h-m-a").format(date);
-				String dlDir = dlBtn.getText().toString();
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooser.showSaveDialog(null);
+				String dlDir = fileChooser.getSelectedFile().getAbsolutePath();
 
 				String filePath = dlDir + "/qrcode-" + newDate + ".png";
 				String fileType = "png";
-
+				
 				if (dlDir.equalsIgnoreCase("Choose Download Folder") != true) {
 
-					String fileLocation = dlBtn.getText().toString();
 					File myFile = new File(filePath);
 					try {
 						ImageIO.write(image, fileType, myFile);
-						JOptionPane.showMessageDialog(Data.mainFrame, "QR Code Saved in " + fileLocation);
+						JOptionPane.showMessageDialog(Data.mainFrame, "QR Code Saved in " + dlDir);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -190,20 +183,7 @@ public class JavaQR extends JPanel implements Runnable {
 				}
 			}
 		});
-
-		dlBtn.addActionListener(new ActionListener() {
-			;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int returnValue = fileChooser.showOpenDialog(null);
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					String selectedFile = fileChooser.getSelectedFile().getAbsolutePath();
-					dlBtn.setText(selectedFile);
-				}
-			}
-		});
+	
 
 		homeBtn.addActionListener(new ActionListener() {
 
