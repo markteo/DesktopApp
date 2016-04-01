@@ -214,7 +214,6 @@ public class UILogin extends JFrame {
 
 					if (featureName.equals("bucket-management") || featureName.equals("inventory-management")
 							|| featureName.equals("access-key-management")) {
-						System.out.println("Feature: " + feature.getString("name"));
 						featureList.put(featureName, feature.getString("name"));
 
 					}
