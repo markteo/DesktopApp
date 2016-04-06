@@ -89,7 +89,7 @@ public class UILogin extends JFrame {
 		JButton btnExit = b.createButton("Exit");
 		btnLogin.setPreferredSize(new Dimension(150, 50));
 		btnExit.setPreferredSize(new Dimension(150, 50));
-		Component[] arrayBtn = { btnLogin, btnExit };
+		Component[] arrayBtn = {  btnExit, btnLogin };
 		p.addComponentsToPanel(buttonPanel, arrayBtn);
 
 		Component[] arrayComponents = { lblURL, tfURL, lblBucket, tfBucket, lblUser, tfUser, lblPassword, pfPassword };
