@@ -259,8 +259,8 @@ public class UIGenerateKey extends JPanel {
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {	
-						Data.mainFrame.showPanel("access");
 						Data.mainFrame.uiAccessKeySelect.getAccessKeyData();
+						Data.mainFrame.showPanel("access");
 						return null;
 					}
 					
