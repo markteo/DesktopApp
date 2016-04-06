@@ -38,6 +38,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import main.Data;
+import main.MyDataNode;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -206,23 +207,45 @@ public class UILicenseAdd extends JPanel {
 		g.insets = new Insets(5, 5, 5, 5);
 		panel.add(lblServiceApi, g);
 		getFeaturesData();
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
-		for (String key : Data.features.keySet()) {
+		DefaultMutableTreeNode root = new MyDataNode("Features", "Features");
+		for (String key: Data.featureList.keySet()){
+			try{
+				DefaultMutableTreeNode element = new MyDataNode(key, Data.fieldNames.get(key));
+				
+				JSONArray features = Data.featureList.get(key);
+				ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
 
-			String[] featureArray = Data.features.get(key);
-			DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
-			ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
-
-			for (int i = 0; i < featureArray.length; i++) {
-
-				DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(
-						featureArray[i]);
-				element.add(featureElement);
-				arrayFeatureCheckBox.add(featureElement);
+				for(int i = 0; i < features.length(); i ++){
+					JSONObject feature = features.getJSONObject(i);
+					DefaultMutableTreeNode featureElement = new MyDataNode((String) feature.get("name"), Data.fieldNames.get(feature.get("name")));
+					element.add(featureElement);
+					arrayFeatureCheckBox.add(featureElement);
+				}
+				
+				root.add(element);
+				
+			}catch(JSONException e){
+				e.printStackTrace();
 			}
-			root.add(element);
-
+			
 		}
+//		for (String key : Data.features.keySet()) {
+//
+//			String[] featureArray = Data.features.get(key);
+//			DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
+//			ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
+//
+//			for (int i = 0; i < featureArray.length; i++) {
+//
+//				DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(
+//						featureArray[i]);
+////				featureElement.setUserObject(featureArray[]);
+//				element.add(featureElement);
+//				arrayFeatureCheckBox.add(featureElement);
+//			}
+//			root.add(element);
+//
+//		}
 
 		tree = new JTree(root);
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -233,10 +256,11 @@ public class UILicenseAdd extends JPanel {
 				model.removeAllElements();
 				String item = tree.getSelectionModel().getSelectionPath()
 						.getLastPathComponent().toString();
-				String selected = Data.reverseNames.get(item);
+				MyDataNode node  = (MyDataNode) tree.getSelectionModel().getSelectionPath().getLastPathComponent();
+				String selected = node.getValue();
 				servicesList = new HashMap<String, String>();
 				try {
-					if (selected.equalsIgnoreCase("root")) {
+					if (selected.equalsIgnoreCase("Features")) {
 						for (String key : Data.featureList.keySet()) {
 							JSONArray featureArray = Data.featureList.get(key);
 
@@ -280,16 +304,11 @@ public class UILicenseAdd extends JPanel {
 							}
 						}
 					} else {
+						MyDataNode nodePath = (MyDataNode) path.getPathComponent(1);
 						for (String key : Data.featureList.keySet()) {
-							if (key.equals(Data.reverseNames.get(path.getPathComponent(1).toString()))){
+							if (key.equals(nodePath.getValue())){
 
 								JSONArray featureArray = Data.featureList.get(key);
-								for(String keys: Data.fieldNames.keySet()){
-									if(Data.fieldNames.get(keys).equals(item)){
-										selected = keys;
-										break;
-									}
-								}
 								for (int i = 0; i < featureArray.length(); i++) {
 									System.out.println(featureArray.getJSONObject(i)
 											.getString("name") + ":" + selected);
@@ -300,7 +319,6 @@ public class UILicenseAdd extends JPanel {
 														"services");
 										System.out.println(servicesArray);
 										for (int x = 0; x < servicesArray.length(); x++) {
-											System.out.println("there");
 											servicesList.put(Integer.toString(servicesArray
 															.getJSONObject(x)
 															.getInt("id")),
@@ -371,10 +389,9 @@ public class UILicenseAdd extends JPanel {
 						ArrayList<String> featureL = new ArrayList<String>();
 						String[] features = new String[] {};
 						for (TreePath tp : path) {
-							System.out.println(tp);
 
 							if (tp.getLastPathComponent().toString()
-									.equals("root")) {
+									.equals("Features")) {
 								Object rootNode = tree.getModel().getRoot();
 								int parentCount = tree.getModel()
 										.getChildCount(rootNode);
@@ -385,9 +402,9 @@ public class UILicenseAdd extends JPanel {
 											.getChildCount(parentNode);
 
 									for (int x = 0; x < childrenCount; x++) {
-										featureL.add(tree.getModel()
-												.getChild(parentNode, x)
-												.toString());
+										MyDataNode node = (MyDataNode) tree.getModel()
+												.getChild(parentNode, x);
+										featureL.add(node.getValue());
 									}
 								}
 							} else if (tp.getPathCount() == 2) {
@@ -405,15 +422,15 @@ public class UILicenseAdd extends JPanel {
 												.getChildCount(parentNode);
 
 										for (int x = 0; x < childrenCount; x++) {
-											featureL.add(tree.getModel()
-													.getChild(parentNode, x)
-													.toString());
+											MyDataNode node = (MyDataNode) tree.getModel()
+													.getChild(parentNode, x);
+											featureL.add(node.getValue());
 										}
 									}
 								}
 							} else if (tp.getPathCount() == 3) {
-								featureL.add(tp.getLastPathComponent()
-										.toString());
+								MyDataNode node = (MyDataNode) tp.getLastPathComponent();
+								featureL.add(node.getValue());
 							}
 
 						}

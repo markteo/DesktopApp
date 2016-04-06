@@ -274,7 +274,7 @@ public class UILicenseDetail extends JPanel {
 	}
 
 	public void getData(String licenseNumber) {
-		root = new DefaultMutableTreeNode("root");
+		root = new DefaultMutableTreeNode("Features");
 
 		try {
 			JSONObject response = api.getNodeLicenseDetails(Data.targetURL, Data.sessionKey, Data.bucketID,
@@ -285,7 +285,7 @@ public class UILicenseDetail extends JPanel {
 
 				JSONArray featureArray = Data.featureList.get(key);
 
-				DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
+				DefaultMutableTreeNode element = new DefaultMutableTreeNode(Data.fieldNames.get(key));
 				ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
 				for (int i = 0; i < features.length(); i++) {
 					String feature = features.getString(i);
@@ -293,7 +293,7 @@ public class UILicenseDetail extends JPanel {
 						try {
 							if (feature.equals(featureArray.getJSONObject(x).getString("name"))) {
 								DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(
-										featureArray.getJSONObject(x).getString("name"));
+										Data.fieldNames.get(featureArray.getJSONObject(x).getString("name")));
 								element.add(featureElement);
 								arrayFeatureCheckBox.add(featureElement);
 								contains = true;
