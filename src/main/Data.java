@@ -1,5 +1,6 @@
 package main;
 
+import java.io.BufferedReader;
 import java.util.HashMap;
 
 import javax.swing.JDialog;
@@ -29,4 +30,5 @@ public class Data {
 	public static HashMap<String, String> reverseNames;
 	public static HashMap<String, String[]> features;
 	public static HashMap<String, HashMap<String, String>> reverseFeature;
+	public static BufferedReader bufferLines;
 }

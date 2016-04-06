@@ -207,23 +207,18 @@ public class UILicenseAdd extends JPanel {
 		panel.add(lblServiceApi, g);
 		getFeaturesData();
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+		for (String key : Data.features.keySet()) {
 
-		for (String key : Data.featureList.keySet()) {
-
-			JSONArray featureArray = Data.featureList.get(key);
+			String[] featureArray = Data.features.get(key);
 			DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
 			ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
 
-			for (int i = 0; i < featureArray.length(); i++) {
-				try {
-					DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(
-							featureArray.getJSONObject(i).getString("name"));
-					element.add(featureElement);
-					arrayFeatureCheckBox.add(featureElement);
+			for (int i = 0; i < featureArray.length; i++) {
 
-				} catch (JSONException e1) {
-					e1.printStackTrace();
-				}
+				DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(
+						featureArray[i]);
+				element.add(featureElement);
+				arrayFeatureCheckBox.add(featureElement);
 			}
 			root.add(element);
 
@@ -236,8 +231,9 @@ public class UILicenseAdd extends JPanel {
 			public void valueChanged(TreeSelectionEvent e) {
 				TreePath path = tree.getSelectionModel().getSelectionPath();
 				model.removeAllElements();
-				String selected = tree.getSelectionModel().getSelectionPath()
+				String item = tree.getSelectionModel().getSelectionPath()
 						.getLastPathComponent().toString();
+				String selected = Data.reverseNames.get(item);
 				servicesList = new HashMap<String, String>();
 				try {
 					if (selected.equalsIgnoreCase("root")) {
@@ -285,21 +281,27 @@ public class UILicenseAdd extends JPanel {
 						}
 					} else {
 						for (String key : Data.featureList.keySet()) {
-							if (key.equals(path.getPathComponent(1).toString())) {
-								JSONArray featureArray = Data.featureList
-										.get(key);
+							if (key.equals(Data.reverseNames.get(path.getPathComponent(1).toString()))){
 
+								JSONArray featureArray = Data.featureList.get(key);
+								for(String keys: Data.fieldNames.keySet()){
+									if(Data.fieldNames.get(keys).equals(item)){
+										selected = keys;
+										break;
+									}
+								}
 								for (int i = 0; i < featureArray.length(); i++) {
+									System.out.println(featureArray.getJSONObject(i)
+											.getString("name") + ":" + selected);
 									if (featureArray.getJSONObject(i)
 											.getString("name").equals(selected)) {
 										JSONArray servicesArray = featureArray
 												.getJSONObject(i).getJSONArray(
 														"services");
-
-										for (int x = 0; x < servicesArray
-												.length(); x++) {
-											servicesList.put(Integer
-													.toString(servicesArray
+										System.out.println(servicesArray);
+										for (int x = 0; x < servicesArray.length(); x++) {
+											System.out.println("there");
+											servicesList.put(Integer.toString(servicesArray
 															.getJSONObject(x)
 															.getInt("id")),
 													servicesArray

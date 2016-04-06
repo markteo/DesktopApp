@@ -12,6 +12,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
@@ -38,19 +40,22 @@ public class DesktopAppMain {
 		
 		Data.fieldNames = new HashMap<String, String>();
 		Data.reverseNames = new HashMap<String, String>();
-        String fileName = "messages.en";
+        String fileName = "./files/messages.en";
 
         // This will reference one line at a time
         String line = null;
 
         try {
             // FileReader reads text files in the default encoding.
-            FileReader fileReader = 
-                new FileReader(fileName);
+        	
+        	URL url = DesktopAppMain.class.getResource("/resources/messages.en");
+        	System.out.println(url);
+//            FileReader fileReader = 
+//                new FileReader(url.toString());
 
             // Always wrap FileReader in BufferedReader.
             BufferedReader bufferedReader = 
-                new BufferedReader(fileReader);
+                new BufferedReader(new InputStreamReader(url.openStream()));
 
             while((line = bufferedReader.readLine()) != null) {
             	String[] lineSplit = line.split("\\=");

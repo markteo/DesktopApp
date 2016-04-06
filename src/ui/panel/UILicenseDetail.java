@@ -147,7 +147,7 @@ public class UILicenseDetail extends JPanel {
 		g.fill = g.BOTH;
 		g.anchor = g.CENTER;
 
-		lblSelectFeature = l.createLabel("Select Features", SwingConstants.LEFT);
+		lblSelectFeature = l.createLabel("Features", SwingConstants.LEFT);
 		g.gridx = 0;
 		g.gridy = 0;
 		g.gridwidth = 2;
