@@ -63,26 +63,20 @@ public class JavaQR extends JPanel implements Runnable {
 
 		JLabel accKey = new JLabel("Access Key");
 		JTextField accField = new JTextField(5);
-		PromptSupport.setPrompt("E.G Z76GU", accField);
-		PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, accField);
-		PromptSupport.setFontStyle(Font.BOLD, accField);
+		
 		accField.setEditable(false);
 		accField.setText(Data.accessKey);
 
 		JLabel regNo = new JLabel("Registration Number");
 		JTextField regField = new JTextField(5);
 
-		PromptSupport.setPrompt("E.G THF11200054160106", regField);
-		PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, regField);
-		PromptSupport.setFontStyle(Font.BOLD, regField);
+		
 		regField.setEditable(false);
 		regField.setText(Data.registrationNumber);
 
 		JLabel licNo = new JLabel("License Number");
 		JFormattedTextField licField = new JFormattedTextField();
-		PromptSupport.setPrompt("E.G 2DAJS - 3J8SS - 9H8HS", licField);
-		PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, licField);
-		PromptSupport.setFontStyle(Font.BOLD, licField);
+		
 		licField.setEditable(false);
 		licField.setText(Data.licenseNumber);
 
@@ -159,11 +153,13 @@ public class JavaQR extends JPanel implements Runnable {
 				Date date = new Date();
 				String newDate = new SimpleDateFormat("yyyy-MM-dd h-m-a").format(date);
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fileChooser.showSaveDialog(null);
 				String dlDir = fileChooser.getSelectedFile().getAbsolutePath();
-
-				String filePath = dlDir + "/qrcode-" + newDate + ".png";
+				String fileName = fileChooser.getSelectedFile().getName();
+				
+				System.out.println(fileName);
+				String filePath = dlDir + fileName + ".png";
 				String fileType = "png";
 				
 				if (dlDir.equalsIgnoreCase("Choose Download Folder") != true) {
