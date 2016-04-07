@@ -167,17 +167,24 @@ public class UIInventorySelect extends JPanel {
 									"Please Select an Inventory Item", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						} else {
-							Data.registrationNumber = (String) listInventory
-									.getModel().getValueAt(selected, 1);
+							String status = (String) listInventory.getModel().getValueAt(selected, 3);
+							if(status.equals("Registered")){
+								JOptionPane.showMessageDialog(Data.mainFrame,
+										"Select an Unregistered Inventory Item", "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}else{
+								Data.registrationNumber = (String) listInventory
+										.getModel().getValueAt(selected, 1);
 
-							if (Data.mainFrame.uiBucketSelect != null) {
-								Data.mainFrame.showPanel("bucket");
-							} else {
-								Data.mainFrame
-										.addPanel(
-												Data.mainFrame.uiBucketSelect = new ui.panel.UIBucketSelect(),
-												"bucket");
-								Data.mainFrame.showPanel("bucket");
+								if (Data.mainFrame.uiBucketSelect != null) {
+									Data.mainFrame.showPanel("bucket");
+								} else {
+									Data.mainFrame
+											.addPanel(
+													Data.mainFrame.uiBucketSelect = new ui.panel.UIBucketSelect(),
+													"bucket");
+									Data.mainFrame.showPanel("bucket");
+								}
 							}
 						}
 						return null;
@@ -221,18 +228,29 @@ public class UIInventorySelect extends JPanel {
 	}
 
 	public void getInventoryData() {
-		JSONArray inventoryList = new APIProcess().inventoryList(
+		JSONObject inventoryList = new APIProcess().inventoryList(
 				Data.targetURL, Data.sessionKey);
 
 		try {
-			Object rowData[][] = new Object[inventoryList.length()][3];
-			Object columnNames[] = { "ID", "Registration Number", "MAC Address" };
-			for (int i = 0; i < inventoryList.length(); i++) {
+			JSONArray used = inventoryList.getJSONArray("used");
+			JSONArray unused = inventoryList.getJSONArray("unused");
+			Object columnNames[] = { "ID", "Registration Number", "MAC Address", "Status" };
+			Object rowData[][] = new Object[used.length() + unused.length()][columnNames.length];
+			for (int i = 0; i < used.length(); i++) {
 
-				JSONObject inventoryItem = inventoryList.getJSONObject(i);
+				JSONObject inventoryItem = used.getJSONObject(i);
 				rowData[i][0] = inventoryItem.get("id");
 				rowData[i][1] = inventoryItem.get("registrationNumber");
 				rowData[i][2] = inventoryItem.get("macAddress");
+				rowData[i][3] = "Registered";
+			}
+			
+			for(int i = used.length(), x = 0; x < unused.length(); i ++, x++ ){
+				JSONObject inventoryItem = unused.getJSONObject(x);
+				rowData[i][0] = inventoryItem.get("id");
+				rowData[i][1] = inventoryItem.get("registrationNumber");
+				rowData[i][2] = inventoryItem.get("macAddress");
+				rowData[i][3] = "Unregistered";
 			}
 			model = new DefaultTableModel(rowData, columnNames) {
 				@Override

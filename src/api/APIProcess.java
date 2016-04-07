@@ -134,8 +134,8 @@ public class APIProcess {
 		return null;
 	}
 
-	public JSONArray inventoryList(String targetURL, String sessionKey) {
-		JSONArray inventoryList = new JSONArray();
+	public JSONObject inventoryList(String targetURL, String sessionKey) {
+		JSONObject inventoryList = new JSONObject();
 
 		String response = api.getInventoryList(targetURL, sessionKey);
 
@@ -144,7 +144,8 @@ public class APIProcess {
 			JSONObject inventoryResponse = new JSONObject(response);
 
 			JSONArray inventory = inventoryResponse.getJSONArray("inventory-list");
-
+			JSONArray usedInventory = new JSONArray();
+			JSONArray unusedInventory = new JSONArray();
 			for (int x = 0; x < inventory.length(); x++) {
 
 				JSONObject item = inventory.getJSONObject(x);
@@ -157,10 +158,21 @@ public class APIProcess {
 					itemAdd.put("registrationNumber", item.get("registrationNumber"));
 					itemAdd.put("macAddress", item.get("macAddress"));
 
-					inventoryList.put(itemAdd);
+					unusedInventory.put(itemAdd);
+				}else{
+					JSONObject itemAdd = new JSONObject();
+					itemAdd.put("id", item.get("inventoryId"));
+					itemAdd.put("registrationNumber", item.get("registrationNumber"));
+					itemAdd.put("macAddress", item.get("macAddress"));
+
+					usedInventory.put(itemAdd);
 				}
 			}
-
+			
+			inventoryList.put("used", usedInventory);
+			inventoryList.put("unused", unusedInventory);
+			
+			
 			return inventoryList;
 
 		} catch (JSONException e) {
