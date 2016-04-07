@@ -157,9 +157,14 @@ public class JavaQR extends JPanel implements Runnable {
 				fileChooser.showSaveDialog(null);
 				String dlDir = fileChooser.getSelectedFile().getAbsolutePath();
 				String fileName = fileChooser.getSelectedFile().getName();
+				String filePath = "";
+				if(fileName != null){
+					filePath =  dlDir +"/"+  fileName + ".png";
+				}else{
+					filePath = dlDir + "/" + Data.registrationNumber + ".png";
+				}
 				
 				System.out.println(fileName);
-				String filePath = dlDir + fileName + ".png";
 				String fileType = "png";
 				
 				if (dlDir.equalsIgnoreCase("Choose Download Folder") != true) {
