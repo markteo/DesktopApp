@@ -59,7 +59,7 @@ public class QRLogic {
 			g.setFont(g.getFont().deriveFont(15f));
 			g.setColor(Color.BLACK);
 			try {
-				g.drawString(jsonObject.getString("registrationNumber"), 20, 170);
+				g.drawString(jsonObject.getString("registrationNumber"), 5, 170);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
