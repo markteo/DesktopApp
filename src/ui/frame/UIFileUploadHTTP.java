@@ -222,49 +222,55 @@ public class UIFileUploadHTTP extends JFrame {
 
 				APICall api = new APICall();
 				String saveDir = runFileChooser();
-				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
-					@Override
-					protected Void doInBackground() throws Exception {
-						try {
-							api.getCSVSample(Data.URL, Data.sessionKey, saveDir);
-						} catch (IOException e1) {
-							e1.printStackTrace();
+
+				if (saveDir != null) {
+
+					SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+						@Override
+						protected Void doInBackground() throws Exception {
+							try {
+								api.getCSVSample(Data.URL, Data.sessionKey,
+										saveDir);
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+							return null;
 						}
-						return null;
-					}
-				};
-				
-				Window win = SwingUtilities
-						.getWindowAncestor((AbstractButton) e.getSource());
-				final JDialog dialog = new JDialog(win, "Loading",
-						ModalityType.APPLICATION_MODAL);
+					};
 
-				mySwingWorker
-						.addPropertyChangeListener(new PropertyChangeListener() {
+					Window win = SwingUtilities
+							.getWindowAncestor((AbstractButton) e.getSource());
+					final JDialog dialog = new JDialog(win, "Loading",
+							ModalityType.APPLICATION_MODAL);
 
-							@Override
-							public void propertyChange(PropertyChangeEvent evt) {
-								if (evt.getPropertyName().equals("state")) {
-									if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
-										dialog.dispose();
+					mySwingWorker
+							.addPropertyChangeListener(new PropertyChangeListener() {
+
+								@Override
+								public void propertyChange(
+										PropertyChangeEvent evt) {
+									if (evt.getPropertyName().equals("state")) {
+										if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+											dialog.dispose();
+										}
 									}
 								}
-							}
-						});
-				mySwingWorker.execute();
+							});
+					mySwingWorker.execute();
 
-				JProgressBar progressBar = new JProgressBar();
-				progressBar.setIndeterminate(true);
-				JPanel panel = new JPanel(new BorderLayout());
-				panel.add(progressBar, BorderLayout.CENTER);
-				panel.add(new JLabel("Downloading......."),
-						BorderLayout.PAGE_START);
-				dialog.add(panel);
-				dialog.pack();
-				dialog.setBounds(50, 50, 300, 100);
-				dialog.setLocationRelativeTo(Data.mainFrame.uiFileUpload);
-				dialog.setVisible(true);
+					JProgressBar progressBar = new JProgressBar();
+					progressBar.setIndeterminate(true);
+					JPanel panel = new JPanel(new BorderLayout());
+					panel.add(progressBar, BorderLayout.CENTER);
+					panel.add(new JLabel("Downloading......."),
+							BorderLayout.PAGE_START);
+					dialog.add(panel);
+					dialog.pack();
+					dialog.setBounds(50, 50, 300, 100);
+					dialog.setLocationRelativeTo(Data.mainFrame.uiFileUpload);
+					dialog.setVisible(true);
 
+				}
 			}
 		});
 		btnUpload = b.createButton("Upload");
@@ -295,7 +301,7 @@ public class UIFileUploadHTTP extends JFrame {
 											"File uploaded", "Success",
 											JOptionPane.INFORMATION_MESSAGE);
 									closeFrame(e);
-									
+
 								} else {
 									JOptionPane.showMessageDialog(
 											Data.mainFrame,
@@ -372,7 +378,6 @@ public class UIFileUploadHTTP extends JFrame {
 
 			@Override
 			public boolean accept(File dir, String name) {
-				// TODO Auto-generated method stub
 				return name.endsWith(".csv");
 			}
 		});
@@ -382,7 +387,6 @@ public class UIFileUploadHTTP extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				fd.setVisible(true);
 				String filename = fd.getDirectory() + fd.getFile();
 				if (fd.getDirectory() == null || fd.getFile() == null) {
@@ -419,13 +423,19 @@ public class UIFileUploadHTTP extends JFrame {
 	public String runFileChooser() {
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fc.showSaveDialog(null);
-		String saveDir = fc.getSelectedFile().getAbsolutePath();
+		try{
+			String saveDir = fc.getSelectedFile().getAbsolutePath();
+			System.out.println(saveDir);
+			return saveDir;
 
-		return saveDir;
+		}catch(NullPointerException e){
+			return null;
+		}
+
 	}
-	
-	private void closeFrame(ActionEvent e){
-		
+
+	private void closeFrame(ActionEvent e) {
+
 		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -434,23 +444,22 @@ public class UIFileUploadHTTP extends JFrame {
 				return null;
 			}
 		};
-		Window win = SwingUtilities
-				.getWindowAncestor((AbstractButton) e.getSource());
+		Window win = SwingUtilities.getWindowAncestor((AbstractButton) e
+				.getSource());
 		final JDialog dialog = new JDialog(win, "Loading",
 				ModalityType.APPLICATION_MODAL);
 
-		mySwingWorker
-				.addPropertyChangeListener(new PropertyChangeListener() {
+		mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
 
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						if (evt.getPropertyName().equals("state")) {
-							if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
-								dialog.dispose();
-							}
-						}
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals("state")) {
+					if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+						dialog.dispose();
 					}
-				});
+				}
+			}
+		});
 		mySwingWorker.execute();
 
 		JProgressBar progressBar = new JProgressBar();
