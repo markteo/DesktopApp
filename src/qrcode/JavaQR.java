@@ -153,13 +153,14 @@ public class JavaQR extends JPanel implements Runnable {
 				Date date = new Date();
 				String newDate = new SimpleDateFormat("yyyy-MM-dd h-m-a").format(date);
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				fileChooser.showSaveDialog(null);
-				String dlDir = fileChooser.getSelectedFile().getAbsolutePath();
+				String dlDir = fileChooser.getSelectedFile().getPath();
+				
 				String fileName = fileChooser.getSelectedFile().getName();
 				String filePath = "";
 				if(fileName != null){
-					filePath =  dlDir +"/"+  fileName + ".png";
+					filePath =  dlDir + ".png";
 				}else{
 					filePath = dlDir + "/" + Data.registrationNumber + ".png";
 				}
