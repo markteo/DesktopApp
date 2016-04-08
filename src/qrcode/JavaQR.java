@@ -154,9 +154,11 @@ public class JavaQR extends JPanel implements Runnable {
 				String newDate = new SimpleDateFormat("yyyy-MM-dd h-m-a").format(date);
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				File myFile = new File(Data.registrationNumber + ".png");
+				fileChooser.setSelectedFile(myFile);
 				fileChooser.showSaveDialog(null);
 				String dlDir = fileChooser.getSelectedFile().getPath();
-				
+
 				String fileName = fileChooser.getSelectedFile().getName();
 				String filePath = "";
 				if(fileName != null){
@@ -165,12 +167,11 @@ public class JavaQR extends JPanel implements Runnable {
 					filePath = dlDir + "/" + Data.registrationNumber + ".png";
 				}
 				
-				System.out.println(fileName);
 				String fileType = "png";
+				myFile = new File(filePath);
 				
 				if (dlDir.equalsIgnoreCase("Choose Download Folder") != true) {
 
-					File myFile = new File(filePath);
 					try {
 						ImageIO.write(image, fileType, myFile);
 						JOptionPane.showMessageDialog(Data.mainFrame, "QR Code Saved in " + dlDir);
