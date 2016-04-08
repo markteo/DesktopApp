@@ -116,6 +116,7 @@ public class UIAccessKeySelect extends JPanel {
 				Data.mainFrame.showPanel("generateKey");
 			}
 		});
+		
 		btnSelectElements.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
