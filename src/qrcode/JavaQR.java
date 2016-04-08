@@ -156,7 +156,7 @@ public class JavaQR extends JPanel implements Runnable {
 				fileChooser.setSelectedFile(myFile);
 				fileChooser.showSaveDialog(null);
 				String dlDir = fileChooser.getSelectedFile().getPath();
-
+				System.out.println(dlDir);
 				String fileName = fileChooser.getSelectedFile().getName();
 				String filePath = "";
 				if(fileName != null){
@@ -168,7 +168,7 @@ public class JavaQR extends JPanel implements Runnable {
 				String fileType = "png";
 				myFile = new File(filePath);
 				
-				if (dlDir.equalsIgnoreCase("Choose Download Folder") != true) {
+				if (dlDir != null) {
 
 					try {
 						ImageIO.write(image, fileType, myFile);
@@ -178,9 +178,6 @@ public class JavaQR extends JPanel implements Runnable {
 						e1.printStackTrace();
 					}
 
-				} else {
-					JOptionPane.showMessageDialog(Data.mainFrame, "Choose a directory!");
-					System.out.println("No QR Generated");
 				}
 			}
 		});
