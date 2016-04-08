@@ -70,13 +70,12 @@ public class UIAccessKeySelect extends JPanel {
 		lblInstruction.setFont(new Font("San Serif", Font.PLAIN, 18));
 		pnlInstruction.add(lblInstruction);
 
-		JPanel pnlBucketList = p.createPanel(Layouts.flow);
+		JPanel pnlBucketList = p.createPanel(Layouts.border);
 
 		listBucket.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollBucket = new JScrollPane(listBucket);
-		scrollBucket.setPreferredSize(new Dimension(300, 150));
 		Component[] BucketListComponents = { scrollBucket };
-		p.addComponentsToPanel(pnlBucketList, BucketListComponents);
+		pnlBucketList.add(scrollBucket,BorderLayout.CENTER);
 
 		JPanel pnlButtons = p.createPanel(Layouts.flow);
 
