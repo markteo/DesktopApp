@@ -100,7 +100,6 @@ public class JavaQR extends JPanel implements Runnable {
 
 		JButton genBtn = new JButton("Download QR Code");
 		JButton homeBtn = new JButton("Back to Start");
-		JButton logoutBtn = new JButton("Logout");
 
 		String accessKey = accField.getText().toString();
 		String regKey = regField.getText().toString();
@@ -123,7 +122,6 @@ public class JavaQR extends JPanel implements Runnable {
 		
 		rowCenPanel.add(homeBtn);
 		rowCenPanel.add(genBtn);
-		rowCenPanel.add(logoutBtn);
 		bottomPanel.add(rowCenPanel);
 		add(topPanel, BorderLayout.NORTH);
 		add(bottomPanel, BorderLayout.SOUTH);
@@ -196,25 +194,7 @@ public class JavaQR extends JPanel implements Runnable {
 			}
 		});
 
-		logoutBtn.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				APICall api = new APICall();
-				try {
-					JSONObject response = new JSONObject(api.logout(Data.targetURL, Data.sessionKey));
-					if (response.getString("result").equals("ok")) {
-						UILogin login = new UILogin();
-						Data.mainFrame.setVisible(false);
-					}
-
-				} catch (JSONException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		
 
 		// Frame Config
 		try {
