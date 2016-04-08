@@ -15,6 +15,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import main.Data;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import api.APICall;
 import customColor.CustomColor;
 import qrcode.JavaQR;
 import ui.components.Button;
@@ -83,7 +89,7 @@ public class KAIQRFrame extends JFrame {
 			}
 		});
 
-		setUndecorated(true);
+		//setUndecorated(true);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		menuPanel = p.createPanel(Layouts.grid, 5, 1);
@@ -92,7 +98,17 @@ public class KAIQRFrame extends JFrame {
 		btnLogOut.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(DISPOSE_ON_CLOSE);
+				APICall api = new APICall();
+				try {
+					JSONObject response = new JSONObject(api.logout(Data.targetURL, Data.sessionKey));
+					if (response.getString("result").equals("ok")) {
+						UILogin login = new UILogin();
+						Data.mainFrame.setVisible(false);
+					}
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		menuPanel.add(btnLogOut);
