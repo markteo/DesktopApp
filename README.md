@@ -17,4 +17,5 @@ Users will require accounts that have access to these features:
 - Bucket Management
 - Inventory Managemnet
 - Access Key Management
+- License Management
 
