@@ -1,6 +1,9 @@
 #Desktop App - QR Code Generator
 
-This is a desktop application that generates a QR Code for download at the end.
+This is a desktop application that generates a QR Code for download at the end. The program runs as a wizard, guiding the user to choose all the information needed to generate a QR Code.
+This application also has the ability to add new Licenses, Inventory items and generate Access Keys for use.
+
+Java 1.8 and above is required.
 
 ## Running the Desktop App
 
