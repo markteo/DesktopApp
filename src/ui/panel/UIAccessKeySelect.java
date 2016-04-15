@@ -59,8 +59,6 @@ public class UIAccessKeySelect extends JPanel {
 		Button b = new Button();
 		Label l = new Label();
 
-
-		// start of ui
 		setLayout(new BorderLayout());
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
@@ -81,7 +79,7 @@ public class UIAccessKeySelect extends JPanel {
 
 		JButton btnBack = b.createButton("Back");
 		JButton btnSelectElements = b.createButton("Next");
-		JButton btnAdd = b.createButton("Add");
+		JButton btnAdd = b.createButton("Generate Access Key");
 		JButton btnRefresh = b.createButton("Refresh");
 
 		pnlButtons.add(btnBack);
@@ -188,7 +186,6 @@ public class UIAccessKeySelect extends JPanel {
 			}
 			listBucket.setModel(new UneditableModel(rowData, columnName));
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

@@ -54,7 +54,6 @@ public class UIBucketSelect extends JPanel {
 		Button b = new Button();
 		Label l = new Label();
 
-		// start of ui
 		setLayout(new BorderLayout());
 
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
@@ -141,16 +140,11 @@ public class UIBucketSelect extends JPanel {
 				dialog.setBounds(50, 50, 300, 100);
 				dialog.setLocationRelativeTo(Data.mainFrame);
 				dialog.setVisible(true);
-
-				// do something with selected Bucket
-
 			}
 		});
 		btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// add Bucket code here
-				// open add frame and close current frame.
 				setVisible(false);
 				Data.mainFrame.showPanel("inventory");
 			}

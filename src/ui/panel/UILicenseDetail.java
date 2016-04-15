@@ -172,7 +172,7 @@ public class UILicenseDetail extends JPanel {
 
 		btnSubmit = b.createButton("Next");
 		btnBack = b.createButton("Back");
-		btnAdd = b.createButton("Add");
+		btnAdd = b.createButton("Add License");
 		
 		panel.add(btnBack);
 		panel.add(btnAdd);
@@ -251,7 +251,6 @@ public class UILicenseDetail extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				setVisible(false);
 				Data.mainFrame.showPanel("bucket");
 			}
@@ -310,7 +309,6 @@ public class UILicenseDetail extends JPanel {
 			}
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -359,7 +357,6 @@ public class UILicenseDetail extends JPanel {
 			arrayLicense = arrayLicenses.toArray(arrayLicense);
 
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

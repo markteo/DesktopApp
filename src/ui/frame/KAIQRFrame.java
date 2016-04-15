@@ -89,7 +89,6 @@ public class KAIQRFrame extends JFrame {
 			}
 		});
 
-		//setUndecorated(true);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		menuPanel = p.createPanel(Layouts.grid, 5, 1);
@@ -106,7 +105,6 @@ public class KAIQRFrame extends JFrame {
 						Data.mainFrame.setVisible(false);
 					}
 				} catch (JSONException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}

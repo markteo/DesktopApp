@@ -42,18 +42,11 @@ public class DesktopAppMain {
 		Data.reverseNames = new HashMap<String, String>();
         String fileName = "./files/messages.en";
 
-        // This will reference one line at a time
         String line = null;
 
         try {
-            // FileReader reads text files in the default encoding.
         	
         	URL url = DesktopAppMain.class.getResource("/resources/messages.en");
-        	System.out.println(url);
-//            FileReader fileReader = 
-//                new FileReader(url.toString());
-
-            // Always wrap FileReader in BufferedReader.
             BufferedReader bufferedReader = 
                 new BufferedReader(new InputStreamReader(url.openStream()));
 
@@ -65,8 +58,6 @@ public class DesktopAppMain {
             	}
             	
             }   
-
-            // Always close files.
             bufferedReader.close();         
         }
         catch(FileNotFoundException ex) {
@@ -77,28 +68,14 @@ public class DesktopAppMain {
         catch(IOException ex) {
             System.out.println(
                 "Error reading file '" 
-                + fileName + "'");                  
-            // Or we could just do this: 
-            // ex.printStackTrace();
+                + fileName + "'");
         }
 
 		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-		initFrame = new JFrame("KAI Tool QR Generator");
-		JButton showWaitBtn = new JButton(new ShowWaitAction("Start"));
-		initFrame.add(showWaitBtn, BorderLayout.CENTER);
-		initFrame.setSize(150, 150);
-		initFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		initFrame.setLocation(dim.width / 2 - initFrame.getSize().width / 2,
-				dim.height / 2 - initFrame.getSize().height / 2);
-		initFrame.setVisible(true);
-
-		// Data.loadingFrame.setVisible(true);
-		// Data.loadingScreen = new JDialog(Data.loadingFrame, "Busy",
-		// ModalityType.DOCUMENT_MODAL);
-		// Data.loadingScreen.setSize(200, 150);
-		// Data.loadingScreen.setLocationRelativeTo(Data.loadingFrame);
+		Data.loginFrame = new UILogin();
+		Data.loginFrame.setVisible(true);
 	}
 
 	public static boolean checkResult(String response) {
@@ -111,56 +88,8 @@ public class DesktopAppMain {
 				result = true;
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;
-	}
-}
-
-class ShowWaitAction extends AbstractAction {
-
-	public ShowWaitAction(String name) {
-		super(name);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
-			@Override
-			protected Void doInBackground() throws Exception {
-				Data.loginFrame = new UILogin();
-				Data.loginFrame.setVisible(true);
-				DesktopAppMain.initFrame.setVisible(false);
-				return null;
-			}
-		};
-
-		Window win = SwingUtilities.getWindowAncestor((AbstractButton) evt.getSource());
-		final JDialog dialog = new JDialog(win, "Loading", ModalityType.APPLICATION_MODAL);
-
-		mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getPropertyName().equals("state")) {
-					if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
-						dialog.dispose();
-					}
-				}
-			}
-		});
-		mySwingWorker.execute();
-
-		JProgressBar progressBar = new JProgressBar();
-		progressBar.setIndeterminate(true);
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(progressBar, BorderLayout.CENTER);
-		panel.add(new JLabel("Initializing......."), BorderLayout.PAGE_START);
-		dialog.add(panel);
-		dialog.pack();
-		dialog.setBounds(50, 50, 300, 100);
-		dialog.setLocationRelativeTo(Data.loginFrame);
-		dialog.setVisible(true);
 	}
 }

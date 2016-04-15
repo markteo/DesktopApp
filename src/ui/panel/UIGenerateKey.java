@@ -75,7 +75,6 @@ public class UIGenerateKey extends JPanel {
 	private JButton btnCancel;
 
 	public String generateKey(int userID, int timeNum, int maxUses) {
-		// Input generate key function here
 		JSONObject response;
 		try {
 			response = new JSONObject(api.generateAccessKey(Data.targetURL, Data.sessionKey, userID,
@@ -85,7 +84,6 @@ public class UIGenerateKey extends JPanel {
 			return result;
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "error";
@@ -108,7 +106,6 @@ public class UIGenerateKey extends JPanel {
 
 		arrayTimeUnit = new String[] { "Hour", "Minutes", "Days" };
 
-		// initialize combobox here
 		gc.gridx = 2;
 		gc.gridy = 2;
 		listUser = new JComboBox<>(arrayUser);
@@ -120,11 +117,9 @@ public class UIGenerateKey extends JPanel {
 		listTimeUnit = new JComboBox<>(arrayTimeUnit);
 		pnlAccessKey.add(listTimeUnit, gc);
 
-		// initialize spinner model
 		smExpiration = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
 		smUses = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
 
-		// intialize spinner
 		gc.gridx = 2;
 		gc.gridy = 3;
 		spinExpiration = new JSpinner(smExpiration);
@@ -137,7 +132,6 @@ public class UIGenerateKey extends JPanel {
 		spinUses.setPreferredSize(new Dimension(150, 25));
 		pnlAccessKey.add(spinUses, gc);
 
-		// init checkbox
 		gc.gridx = 3;
 		gc.gridy = 4;
 		cbUnlimited = new JCheckBox("Unlimited");
@@ -147,7 +141,6 @@ public class UIGenerateKey extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				if (cbUnlimited.isSelected()) {
 					spinUses.setEnabled(false);
 
@@ -158,7 +151,6 @@ public class UIGenerateKey extends JPanel {
 		});
 		pnlAccessKey.add(cbUnlimited, gc);
 
-		// initialize label
 		gc.gridx = 1;
 		gc.gridy = 1;
 
@@ -190,14 +182,12 @@ public class UIGenerateKey extends JPanel {
 		l.addPadding(lblAccessKey, 10);
 		pnlAccessKey.add(lblAccessKey, gc);
 
-		// initialize TextField
 		gc.gridx = 2;
 		gc.gridy = 5;
 		lblKey = l.createLabel("");
 		lblKey.setPreferredSize(new Dimension(150, 25));
 		pnlAccessKey.add(lblKey, gc);
 
-		// initialize button
 		gc.gridx = 3;
 		gc.gridy = 5;
 		gc.gridwidth = 150;
@@ -356,7 +346,6 @@ public class UIGenerateKey extends JPanel {
 			}
 			arrayUser = userList.toArray(arrayUser);
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
@@ -372,7 +361,6 @@ public class UIGenerateKey extends JPanel {
 					return userID;
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

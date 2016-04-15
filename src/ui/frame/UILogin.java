@@ -93,9 +93,7 @@ public class UILogin extends JFrame {
 		p.addComponentsToPanel(buttonPanel, arrayBtn);
 
 		Component[] arrayComponents = { lblURL, tfURL, lblBucket, tfBucket, lblUser, tfUser, lblPassword, pfPassword };
-		// picLabel.setBounds(50, 50, 50, 50);
 		p.addComponentsToPanel(loginPanel, arrayComponents);
-		// loginFrame.add(picLabel,BorderLayout.NORTH);
 		add(loginPanel, BorderLayout.CENTER);
 		add(buttonPanel, BorderLayout.SOUTH);
 		pack();
@@ -149,7 +147,6 @@ public class UILogin extends JFrame {
 								}
 
 							} catch (JSONException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 						}
@@ -212,14 +209,13 @@ public class UILogin extends JFrame {
 
 					String featureName = feature.getString("name");
 
-					if (featureName.equals("bucket-management") || featureName.equals("inventory-management")
-							|| featureName.equals("access-key-management")) {
+					if (featureName.equals("global-license-management") || featureName.equals("inventory-management")
+							|| featureName.equals("access-key-management") || featureName.equals("bucket-management")) {
 						featureList.put(featureName, feature.getString("name"));
-
 					}
 				}
 
-				if (featureList.size() == 3) {
+				if (featureList.size() == 4) {
 					return true;
 				}
 			}

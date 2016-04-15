@@ -6,45 +6,27 @@ import javax.swing.plaf.ActionMapUIResource;
 import java.awt.event.*;
 import java.awt.*;
 
-/**
- * Maintenance tip - There were some tricks to getting this code
- * working:
- *
- * 1. You have to overwite addMouseListener() to do nothing
- * 2. You have to add a mouse event on mousePressed by calling
- * super.addMouseListener()
- * 3. You have to replace the UIActionMap for the keyboard event
- * "pressed" with your own one.
- * 4. You have to remove the UIActionMap for the keyboard event
- * "released".
- * 5. You have to grab focus when the next state is entered,
- * otherwise clicking on the component won't get the focus.
- * 6. You have to make a TristateDecorator as a button model that
- * wraps the original button model and does state management.
- */
+
 public class TristateCheckBox extends JCheckBox{
     private final TristateDecorator model;
 
     public TristateCheckBox(String text, Icon icon, Boolean initial){
         super(text, icon);
-        // Add a listener for when the mouse is pressed
         super.addMouseListener(new MouseAdapter(){
             public void mousePressed(MouseEvent e){
                 grabFocus();
                 model.nextState();
             }
         });
-        // Reset the keyboard action map
         ActionMap map = new ActionMapUIResource();
-        map.put("pressed", new AbstractAction(){      //NOI18N
+        map.put("pressed", new AbstractAction(){      
             public void actionPerformed(ActionEvent e){
                 grabFocus();
                 model.nextState();
             }
         });
-        map.put("released", null);                     //NOI18N
+        map.put("released", null);                     
         SwingUtilities.replaceUIActionMap(this, map);
-        // set the model to the adapted model
         model = new TristateDecorator(getModel());
         setModel(model);
         setState(initial);
@@ -62,29 +44,19 @@ public class TristateCheckBox extends JCheckBox{
         this(null);
     }
 
-    /** No one may add mouse listeners, not even Swing! */
     public void addMouseListener(MouseListener l){}
 
-    /**
-     * Set the new state to either SELECTED, NOT_SELECTED or
-     * DONT_CARE.  If state == null, it is treated as DONT_CARE.
-     */
+    
     public void setState(Boolean state){
         model.setState(state);
     }
 
-    /** Return the current state, which is determined by the
-     * selection status of the model. */
+    
     public Boolean getState(){
         return model.getState();
     }
 
-    /**
-     * Exactly which Design Pattern is this?  Is it an Adapter,
-     * a Proxy or a Decorator?  In this case, my vote lies with the
-     * Decorator, because we are extending functionality and
-     * "decorating" the original model with a more powerful model.
-     */
+    
     private class TristateDecorator implements ButtonModel{
         private final ButtonModel other;
         private TristateDecorator(ButtonModel other){
@@ -107,30 +79,18 @@ public class TristateCheckBox extends JCheckBox{
             }
         }
 
-        /**
-         * The current state is embedded in the selection / armed
-         * state of the model.
-         *
-         * We return the SELECTED state when the checkbox is selected
-         * but not armed, DONT_CARE state when the checkbox is
-         * selected and armed (grey) and NOT_SELECTED when the
-         * checkbox is deselected.
-         */
+      
         private Boolean getState(){
             if(isSelected() && !isArmed()){
-                // normal black tick
                 return Boolean.TRUE;
             } else if(isSelected() && isArmed()){
-                // don't care grey tick
                 return null;
             } else{
-                // normal deselected
                 return Boolean.FALSE;
             }
         }
 
 
-        /** We rotate between NOT_SELECTED, SELECTED and DONT_CARE.*/
         private void nextState(){
             Boolean current = getState();
             if(current == Boolean.FALSE){
@@ -143,7 +103,6 @@ public class TristateCheckBox extends JCheckBox{
         }
 
 
-        /** Filter: No one may change the armed status except us. */
         public void setArmed(boolean b){
         }
 
@@ -151,10 +110,8 @@ public class TristateCheckBox extends JCheckBox{
             return isEnabled();
         }
 
-        /** We disable focusing on the component when it is not
-         * enabled. */
+
         public void setEnabled(boolean b){
-//            setFocusable(b);
             other.setEnabled(b);
         }
 

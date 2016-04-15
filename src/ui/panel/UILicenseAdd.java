@@ -229,23 +229,6 @@ public class UILicenseAdd extends JPanel {
 			}
 			
 		}
-//		for (String key : Data.features.keySet()) {
-//
-//			String[] featureArray = Data.features.get(key);
-//			DefaultMutableTreeNode element = new DefaultMutableTreeNode(key);
-//			ArrayList<DefaultMutableTreeNode> arrayFeatureCheckBox = new ArrayList<DefaultMutableTreeNode>();
-//
-//			for (int i = 0; i < featureArray.length; i++) {
-//
-//				DefaultMutableTreeNode featureElement = new DefaultMutableTreeNode(
-//						featureArray[i]);
-////				featureElement.setUserObject(featureArray[]);
-//				element.add(featureElement);
-//				arrayFeatureCheckBox.add(featureElement);
-//			}
-//			root.add(element);
-//
-//		}
 
 		tree = new JTree(root);
 		tree.addTreeSelectionListener(new TreeSelectionListener() {

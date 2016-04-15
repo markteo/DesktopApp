@@ -8,7 +8,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-// @author Santhosh Kumar T - santhosh@in.fiorano.com 
 public class CheckTreeSelectionModel extends DefaultTreeSelectionModel {
 	private TreeModel model;
 
@@ -17,7 +16,7 @@ public class CheckTreeSelectionModel extends DefaultTreeSelectionModel {
 		setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 	}
 
-	// tests whether there is any unselected node in the subtree of given path
+	
 	public boolean isPartiallySelected(TreePath path) {
 		if (isPathSelected(path, true))
 			return false;
@@ -31,9 +30,6 @@ public class CheckTreeSelectionModel extends DefaultTreeSelectionModel {
 		return false;
 	}
 
-	// tells whether given path is selected.
-	// if dig is true, then a path is assumed to be selected, if
-	// one of its ancestor is selected.
 	public boolean isPathSelected(TreePath path, boolean dig) {
 		if (!dig)
 			return super.isPathSelected(path);
@@ -42,7 +38,6 @@ public class CheckTreeSelectionModel extends DefaultTreeSelectionModel {
 		return path != null;
 	}
 
-	// is path1 descendant of path2
 	private boolean isDescendant(TreePath path1, TreePath path2) {
 		Object obj1[] = path1.getPath();
 		Object obj2[] = path2.getPath();
@@ -65,7 +60,6 @@ public class CheckTreeSelectionModel extends DefaultTreeSelectionModel {
 	}
 
 	public void addSelectionPaths(TreePath[] paths) {
-		// unselect all descendants of paths[]
 		for (int i = 0; i < paths.length; i++) {
 			TreePath path = paths[i];
 			TreePath[] selectionPaths = getSelectionPaths();
@@ -79,9 +73,7 @@ public class CheckTreeSelectionModel extends DefaultTreeSelectionModel {
 			super.removeSelectionPaths((TreePath[]) toBeRemoved.toArray(new TreePath[0]));
 		}
 
-		// if all siblings are selected then unselect them and select parent
-		// recursively
-		// otherwize just select that path.
+		
 		for (int i = 0; i < paths.length; i++) {
 			TreePath path = paths[i];
 			TreePath temp = null;
@@ -104,7 +96,6 @@ public class CheckTreeSelectionModel extends DefaultTreeSelectionModel {
 		}
 	}
 
-	// tells whether all siblings of given path are selected.
 	private boolean areSiblingsSelected(TreePath path) {
 		TreePath parent = path.getParentPath();
 		if (parent == null)
@@ -133,9 +124,7 @@ public class CheckTreeSelectionModel extends DefaultTreeSelectionModel {
 		}
 	}
 
-	// if any ancestor node of given path is selected then unselect it
-	// and selection all its descendants except given path and descendants.
-	// otherwise just unselect the given path
+	
 	private void toggleRemoveSelection(TreePath path) {
 		Stack stack = new Stack();
 		TreePath parent = path.getParentPath();

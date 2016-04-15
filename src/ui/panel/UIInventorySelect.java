@@ -68,12 +68,10 @@ public class UIInventorySelect extends JPanel {
 		setBackground(CustomColor.NavyBlue.returnColor());
 		setLayout(new BorderLayout());
 
-		// fetch list from server
 		getInventoryData();
 		listInventory.setShowHorizontalLines(false);
 		listInventory.setAutoCreateRowSorter(true);
 
-		// start of ui
 		JPanel pnlInstruction = p.createPanel(Layouts.flow);
 		JLabel lblInstruction = l.createLabel("Inventory List");
 		pnlInstruction.setBackground(CustomColor.LightBlue.returnColor());
@@ -160,7 +158,6 @@ public class UIInventorySelect extends JPanel {
 					@Override
 					protected Void doInBackground() throws Exception {
 
-						// do something with selected inventory
 						int selected = listInventory.getSelectedRow();
 						if (selected == -1) {
 							JOptionPane.showMessageDialog(Data.mainFrame,
@@ -261,7 +258,6 @@ public class UIInventorySelect extends JPanel {
 			listInventory.setModel(model);
 
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

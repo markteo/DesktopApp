@@ -46,7 +46,6 @@ public class JavaQR extends JPanel implements Runnable {
 
 	@Override
 	public void run() {
-		// Initial Config
 
 		setLayout(new BorderLayout());
 
@@ -54,7 +53,6 @@ public class JavaQR extends JPanel implements Runnable {
 		JPanel centerPanel = new JPanel();
 		JPanel bottomPanel = new JPanel();
 
-		// Top Panel
 		topPanel.setLayout(new GridLayout(0, 1));
 		topPanel.setBorder(BorderFactory.createTitledBorder("Input Data"));
 
@@ -90,10 +88,8 @@ public class JavaQR extends JPanel implements Runnable {
 
 		topPanel.add(rowTopPanel);
 
-		// Center Panel
 		centerPanel.setLayout(new GridLayout(0, 1));
 		centerPanel.setBorder(BorderFactory.createTitledBorder("QR Code"));
-		// centerPanel.setPreferredSize(new Dimension(100,60));
 
 		JPanel rowCenPanel = new JPanel();
 		rowCenPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -128,22 +124,6 @@ public class JavaQR extends JPanel implements Runnable {
 		add(centerPanel, BorderLayout.CENTER);
 		Data.mainFrame.setSize(1000, 500);
 
-		// if(accessKey.trim().equalsIgnoreCase("") == true ||
-		// regKey.trim().equalsIgnoreCase("") == true) {
-		// JOptionPane.showMessageDialog(frame, "Some fields are missing!");
-		// } else if(licKey.trim().length() < 21) {
-		// JOptionPane.showMessageDialog(frame, "License Key is incomplete!");
-		// } else if(dlDir.equalsIgnoreCase("Choose Download Folder") != true )
-		// {
-
-		// JOptionPane.showMessageDialog(frame, "QR Code Generated in " +
-		// fileLocation);
-		// } else {
-		// JOptionPane.showMessageDialog(frame, "Choose a directory!");
-		// System.out.println("No QR Generated");
-		// }
-
-		// Buttons Listener
 		genBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -174,7 +154,6 @@ public class JavaQR extends JPanel implements Runnable {
 						ImageIO.write(image, fileType, myFile);
 						JOptionPane.showMessageDialog(Data.mainFrame, "QR Code Saved in " + dlDir);
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 
@@ -191,9 +170,6 @@ public class JavaQR extends JPanel implements Runnable {
 			}
 		});
 
-		
-
-		// Frame Config
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e1) {
