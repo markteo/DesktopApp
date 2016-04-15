@@ -116,8 +116,7 @@ public class TristateCheckBox extends JCheckBox{
         }
 
 
-        /** All these methods simply delegate to the "other" model
-         * that is being decorated. */
+     
         public boolean isArmed(){return other.isArmed();
         }
 
