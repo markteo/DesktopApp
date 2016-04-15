@@ -13,12 +13,6 @@ import javax.swing.SwingWorker;
 import main.Data;
 import ui.frame.UIFileUploadHTTP;
 
-/**
- * A utility that downloads a file from a URL.
- * 
- * @author www.codejava.net
- *
- */
 public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 	private static final int BUFFER_SIZE = 4096;
 	private String fileName = "";
@@ -28,15 +22,7 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 	private InputStream inputStream;
 	private HttpURLConnection httpConn;
 
-	/**
-	 * Downloads a file from a URL
-	 * 
-	 * @param fileURL
-	 *            HTTP URL of the file to be downloaded
-	 * @param saveDir
-	 *            path of the directory to save the file
-	 * @throws IOException
-	 */
+
 	public String downloadFile(String fileURL, String saveDir, String sessionKey) {
 		try {
 			URL url = new URL(fileURL);
@@ -44,7 +30,6 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 			httpConn.setRequestMethod("GET");
 			int responseCode = httpConn.getResponseCode();
 
-			// always check HTTP response code first
 			if (responseCode == HttpURLConnection.HTTP_OK) {
 				fileName = "";
 				disposition = httpConn.getHeaderField("Content-Disposition");
@@ -52,22 +37,16 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 				int contentLength = httpConn.getContentLength();
 
 				if (disposition != null) {
-					// extracts file name from header field
 					int index = disposition.indexOf("filename=");
 					if (index > 0) {
 						fileName = disposition.substring(index + 10, disposition.length() - 1);
 					}
 				} else {
-					// extracts file name from URL
 					fileName = fileURL.substring(fileURL.lastIndexOf("/") + 1, fileURL.length());
 				}
-
-				// opens input stream from the HTTP connection
-
 				inputStream = httpConn.getInputStream();
 				String saveFilePath = saveDir + File.separator + fileName;
 
-				// opens an output stream to save into file
 				FileOutputStream outputStream = new FileOutputStream(saveFilePath);
 
 				long totalBytesRead = 0;
@@ -136,7 +115,6 @@ public class HttpDownloadUtility extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
